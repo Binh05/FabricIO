@@ -24,6 +24,7 @@ import {
   BellIcon,
   LogOutIcon,
 } from "lucide-react";
+import UserAvatar from "../shared/UserAvatar";
 
 export function NavUser({
   user,
@@ -40,15 +41,17 @@ export function NavUser({
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
+          {/*  */}
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatarUrl} alt={user.username} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-              </Avatar>
+              <UserAvatar
+                type="sidebar"
+                username={user.username}
+                avatarUrl={user.avatarUrl}
+              />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.username}</span>
                 <span className="truncate text-xs">{user.email}</span>
@@ -56,6 +59,7 @@ export function NavUser({
               <ChevronsUpDownIcon className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
+          {/* Content */}
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
@@ -64,10 +68,11 @@ export function NavUser({
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatarUrl} alt={user.username} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-                </Avatar>
+                <UserAvatar
+                  type="sidebar"
+                  username={user.username}
+                  avatarUrl={user.avatarUrl}
+                />
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.username}</span>
                   <span className="truncate text-xs">{user.email}</span>
@@ -94,6 +99,7 @@ export function NavUser({
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
+          {/* End Content */}
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>

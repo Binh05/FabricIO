@@ -30,17 +30,6 @@ export function SiteHeader() {
         <div className="w-120">
           <SearchForm className="w-full sm:ml-auto sm:w-auto" />
         </div>
-        <div className="w-[20rem]">
-          {user != null && (
-            <NavUser
-              user={{
-                username: user?.username ?? "fabricIO",
-                email: user?.email ?? "123@gmail.com",
-                avatarUrl: user.avatarUrl ?? "",
-              }}
-            />
-          )}
-        </div>
       </div>
     </header>
   );

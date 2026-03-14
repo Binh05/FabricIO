@@ -27,6 +27,8 @@ import {
   MapIcon,
   TerminalIcon,
 } from "lucide-react";
+import { useAppSelector } from "@/store/hooks";
+import { authSelector } from "@/store/selector";
 
 const data = {
   user: {
@@ -153,6 +155,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useAppSelector(authSelector);
+
   return (
     <Sidebar
       collapsible="icon"
@@ -181,7 +185,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={data.projects} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
-      <SidebarFooter>{/* <NavUser user={data.user} /> */}</SidebarFooter>
+      <SidebarFooter>
+        {user != null && (
+          <NavUser
+            user={{
+              username: user?.username ?? "fabricIO",
+              email: user?.email ?? "123@gmail.com",
+              avatarUrl: user.avatarUrl ?? "",
+            }}
+          />
+        )}
+      </SidebarFooter>
     </Sidebar>
   );
 }
