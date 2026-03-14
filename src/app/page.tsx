@@ -12,7 +12,7 @@ export default function Page() {
       <SidebarProvider className="flex flex-col">
         <SiteHeader />
         <div className="flex flex-1">
-          <AppSidebar className="border-none" />
+          <AppSidebar className="" />
           <SidebarInset>{/* Content */}</SidebarInset>
         </div>
       </SidebarProvider>

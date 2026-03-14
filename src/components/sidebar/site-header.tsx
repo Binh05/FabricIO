@@ -3,8 +3,7 @@
 import { SearchForm } from "@/components/sidebar/search-form";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
-import { PanelLeftIcon } from "lucide-react";
-import { NavUser } from "./nav-user";
+import { Bell, PanelLeftIcon } from "lucide-react";
 import AppLogo from "../shared/AppLogo";
 import { useAppSelector } from "@/store/hooks";
 import { authSelector } from "@/store/selector";
@@ -15,8 +14,8 @@ export function SiteHeader() {
 
   return (
     <header className="bg-background sticky top-0 z-50 flex w-full items-center">
-      <div className="flex h-(--header-height) w-full items-center justify-between gap-2 px-4">
-        <div className="flex items-center gap-4">
+      <div className="flex h-(--header-height) w-full items-center gap-2 px-4">
+        <div className="flex flex-1 items-center gap-4">
           <Button
             className="h-8 w-8"
             variant="ghost"
@@ -27,9 +26,12 @@ export function SiteHeader() {
           </Button>
           <AppLogo />
         </div>
-        <div className="w-120">
-          <SearchForm className="w-full sm:ml-auto sm:w-auto" />
+        <div className="flex items-center gap-4">
+          <SearchForm className="w-full sm:w-auto lg:w-120" />
+
+          <Bell />
         </div>
+        <div className="flex-1"></div>
       </div>
     </header>
   );
