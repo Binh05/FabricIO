@@ -26,5 +26,17 @@ export function useAuth() {
     }
   }
 
-  return { Login };
+  async function SignOut() {
+    try {
+      const result = await authService.SignOut();
+
+      console.log("signout status: ", result);
+
+      dispatch(clearState());
+    } catch (error) {
+      console.error("Loi khi sign out: ", error);
+    }
+  }
+
+  return { Login, SignOut };
 }

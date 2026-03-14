@@ -6,6 +6,13 @@ async function Login(email: string, password: string) {
   return res.data;
 }
 
+async function SignOut() {
+  const res = await api.post("/auth/signout");
+
+  return res;
+}
+
 export const authService = {
   Login,
+  SignOut,
 };
