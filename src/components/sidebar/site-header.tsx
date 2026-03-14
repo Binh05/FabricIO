@@ -7,10 +7,11 @@ import { Bell, PanelLeftIcon } from "lucide-react";
 import AppLogo from "../shared/AppLogo";
 import { useAppSelector } from "@/store/hooks";
 import { authSelector } from "@/store/selector";
+import Link from "next/link";
 
 export function SiteHeader() {
   const { toggleSidebar } = useSidebar();
-  const { user } = useAppSelector(authSelector);
+  const { token } = useAppSelector(authSelector);
 
   return (
     <header className="bg-background sticky top-0 z-50 flex w-full items-center">
@@ -31,7 +32,13 @@ export function SiteHeader() {
 
           <Bell />
         </div>
-        <div className="flex-1"></div>
+        <div className="flex flex-1 justify-end">
+          {!token && (
+            <Button className="mr-12" variant="secondary" asChild>
+              <Link href={"/login"}>Sign In</Link>
+            </Button>
+          )}
+        </div>
       </div>
     </header>
   );
