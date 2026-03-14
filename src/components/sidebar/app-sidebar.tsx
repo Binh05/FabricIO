@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useAppSelector } from "@/store/hooks";
 import { authSelector } from "@/store/selector";
+import NavMain from "./NavMain";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAppSelector(authSelector);
@@ -33,7 +34,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>{/* Content */}</SidebarContent>
+      <SidebarContent>
+        {/* Content */}
+        <NavMain />
+      </SidebarContent>
       <SidebarFooter>
         {user != null && (
           <NavUser
