@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface IToolState {
+interface ITool {
+  id: string | null;
   name: string | null;
   description: string | null;
   price: number;
@@ -8,11 +9,13 @@ interface IToolState {
   loading: boolean;
 }
 
-const initialState: IToolState = {
-  name: null,
-  description: null,
-  price: 0.0,
-  userId: null,
+interface InitialToolState {
+  tools: ITool[];
+  loading: boolean;
+}
+
+const initialState: InitialToolState = {
+  tools: [],
   loading: false,
 };
 
@@ -20,20 +23,14 @@ const toolSlice = createSlice({
   name: "tool",
   initialState,
   reducers: {
-    setToolState: (state, action) => {
-      state.name = action.payload.name;
-      state.description = action.payload.description;
-      state.price = action.payload.price;
-      state.userId = action.payload.userId;
+    setToolState: (state, action: PayloadAction<ITool[]>) => {
+      state.tools = action.payload;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
     clearToolState: (state) => {
-      state.name = null;
-      state.description = null;
-      state.price = 0.0;
-      state.userId = null;
+      state.tools = [];
       state.loading = false;
     },
   },
