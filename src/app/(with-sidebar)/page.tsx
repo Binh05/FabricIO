@@ -1,5 +1,6 @@
 "use client";
 
+import ToolList from "@/components/tool/ToolList";
 import { useTools } from "@/hooks/useTools";
 import { useEffect } from "react";
 
@@ -14,5 +15,9 @@ export default function HomePage() {
     fetchTools();
   }, []);
 
-  return <div>Home page</div>;
+  return (
+    <div>
+      <ToolList />
+    </div>
+  );
 }
