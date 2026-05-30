@@ -1,10 +1,13 @@
 package fabricio.backend.modules.auth;
 
+import java.util.HexFormat;
 import java.util.List;
+import java.security.SecureRandom;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import fabricio.backend.modules.auth.dtos.JwtResponse;
 import fabricio.backend.modules.auth.dtos.LoginRequest;
 import fabricio.backend.modules.auth.dtos.RegisterRequest;
 import fabricio.backend.modules.auth.jwt.JwtTokenProvider;
@@ -39,7 +42,7 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public String login(LoginRequest req) {
+    public JwtResponse login(LoginRequest req) {
         var user = userInternalService.findByUsernameForAuth(req.username())
         .orElseThrow(() -> new RuntimeException("Tài khoản hoặc mật khẩu không đúng"));
 
@@ -49,15 +52,21 @@ public class AuthService implements IAuthService {
 
         // Tạo UserPrincipal từ thông tin trong database
         UserPrincipal userPrincipal = new UserPrincipal(
-            user.id(), 
-            user.username(), 
-            user.email(), 
-            user.hashedPassword(), 
+            user.id(),
+            user.username(),
+            user.email(),
+            user.hashedPassword(),
             List.of()
         );
 
-        // 3. Gọi TokenProvider để sinh chuỗi JWT
-        return tokenProvider.generateToken(userPrincipal);
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] bytes = new byte[64];
+        secureRandom.nextBytes(bytes);
+        
+        var refreshToken = HexFormat.of().formatHex(bytes);
+        var accessToken = tokenProvider.generateToken(userPrincipal);
+
+        return new JwtResponse(refreshToken, accessToken);
     }
 }
 

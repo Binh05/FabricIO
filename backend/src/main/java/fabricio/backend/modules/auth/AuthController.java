@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import fabricio.backend.modules.auth.dtos.JwtResponse;
 import fabricio.backend.modules.auth.dtos.LoginRequest;
 import fabricio.backend.modules.auth.dtos.RegisterRequest;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,7 +24,7 @@ public class AuthController {
     }
     
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest req) {
+    public JwtResponse login(@RequestBody LoginRequest req) {
         return authService.login(req);
     }
 }
