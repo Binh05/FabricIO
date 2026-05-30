@@ -3,16 +3,22 @@ package fabricio.backend.modules.auth;
 import java.util.HexFormat;
 import java.util.List;
 import java.security.SecureRandom;
+import java.time.Duration;
+import java.time.Instant;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import fabricio.backend.modules.auth.dtos.JwtResponse;
 import fabricio.backend.modules.auth.dtos.LoginRequest;
+import fabricio.backend.modules.auth.dtos.LoginResult;
 import fabricio.backend.modules.auth.dtos.RegisterRequest;
+import fabricio.backend.modules.auth.entities.Session;
 import fabricio.backend.modules.auth.jwt.JwtTokenProvider;
 import fabricio.backend.modules.auth.jwt.UserPrincipal;
 import fabricio.backend.modules.users.internal.IUserInternalService;
+import fabricio.backend.shared.exceptions.BadRequestException;
+import fabricio.backend.shared.exceptions.ForbiddenException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -22,16 +28,17 @@ public class AuthService implements IAuthService {
     private final IUserInternalService userInternalService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
+    private final AuthRepository authRepository;
 
     @Override
     @Transactional
     public String register(RegisterRequest req) {
         if (userInternalService.exitsByEmail(req.email())) {
-            throw new RuntimeException("Email đã được sử dụng!");
+            throw new BadRequestException("Email đã được sử dụng!");
         }
 
         if (userInternalService.existsByUsername(req.username())) {
-            throw new RuntimeException("Username đã được sử dụng!");
+            throw new BadRequestException("Username đã được sử dụng!");
         }
 
         String hashPassword = passwordEncoder.encode(req.password());
@@ -42,20 +49,20 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public JwtResponse login(LoginRequest req) {
+    public LoginResult login(LoginRequest req) {
         var user = userInternalService.findByUsernameForAuth(req.username())
-        .orElseThrow(() -> new RuntimeException("Tài khoản hoặc mật khẩu không đúng"));
+        .orElseThrow(() -> new BadRequestException("Tài khoản hoặc mật khẩu không đúng"));
 
-        if (!passwordEncoder.matches(req.password(), user.hashedPassword())) {
-            throw new RuntimeException("Tài khoản hoặc mật khẩu không đúng");
+        if (!passwordEncoder.matches(req.password(), user.getHashedPassword())) {
+            throw new BadRequestException("Tài khoản hoặc mật khẩu không đúng");
         }
 
         // Tạo UserPrincipal từ thông tin trong database
         UserPrincipal userPrincipal = new UserPrincipal(
-            user.id(),
-            user.username(),
-            user.email(),
-            user.hashedPassword(),
+            user.getId(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getHashedPassword(),
             List.of()
         );
 
@@ -66,7 +73,46 @@ public class AuthService implements IAuthService {
         var refreshToken = HexFormat.of().formatHex(bytes);
         var accessToken = tokenProvider.generateToken(userPrincipal);
 
-        return new JwtResponse(refreshToken, accessToken);
+        Session session = new Session();
+        session.setUser(user);
+        session.setToken(refreshToken);
+        session.setExpiresAt(Instant.now().plus(Duration.ofDays(7)));
+        
+        authRepository.save(session);
+
+        return new LoginResult(refreshToken, accessToken);
+    }
+
+    @Override
+    public void signout(String token) {
+        var session = authRepository.findByToken(token);
+
+        authRepository.delete(session);
+    }
+
+    @Override
+    public JwtResponse refresh(String token) {
+        var session = authRepository.findByToken(token);
+
+        if (session == null) {
+            throw new ForbiddenException("Token đã hết hạn hoặc không hợp lệ");
+        }
+
+        if (session.getExpiresAt().isBefore(Instant.now())) {
+            throw new ForbiddenException("Token đã hết hạn hoặc không hợp lệ");
+        }
+
+        var user = session.getUser();
+        UserPrincipal userPrincipal = new UserPrincipal(
+            user.getId(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getHashedPassword(),
+            List.of());
+
+        var newToken = tokenProvider.generateToken(userPrincipal);
+
+        return new JwtResponse(newToken);
     }
 }
 

@@ -39,9 +39,8 @@ public class UserService implements IUserService, IUserInternalService {
     }
 
     @Override
-    public Optional<UserAuthDTO> findByUsernameForAuth(String username) {
-        return userRepository.findByUsername(username)
-            .map(user -> new UserAuthDTO(user.getId(), user.getEmail(), user.getUsername(), user.getFullName(), user.getHashedPassword()));
+    public Optional<User> findByUsernameForAuth(String username) {
+        return userRepository.findByUsername(username);
     }
 
     @Override
