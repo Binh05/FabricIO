@@ -1,6 +1,6 @@
 package fabricio.backend.modules.users.dtos;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
@@ -19,6 +19,6 @@ public class UserResponse {
     public String fullName;
     public String bio;
     public String avatarUrl;
-    public LocalDateTime createdAt;
-    public LocalDateTime updatedAt;
+    public Instant createdAt;
+    public Instant updatedAt;
 }

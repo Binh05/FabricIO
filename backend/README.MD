@@ -25,7 +25,8 @@ src/main/java/fabricio/backend/
 │       │   └── TokenResponse.java (Chứa access_token, refresh_token)
 │       └── jwt/                  <-- Các class xử lý Token (JwtTokenProvider/Filter)
 │           ├── JwtAuthenticationFilter.java
-│           └── JwtTokenProvider.java
+│           ├── JwtTokenProvider.java
+│           └── UserPrincipal.java
 │
 ├── shared/
 │   ├── exceptions/
