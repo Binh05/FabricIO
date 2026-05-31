@@ -5,71 +5,51 @@ Dưới đây là cấu trúc thư mục tiêu chuẩn cho dự án FabricIO Bac
 ```text
 src/main/java/fabricio/backend/
 ├── modules/                  # Chứa các module nghiệp vụ (Business Logic)
-│   ├── users/                # Quản lý người dùng
+│   ├── users/                # Quản lý người dùng (Cấu trúc phẳng)
 │   │   ├── UserController.java
 │   │   ├── IUserService.java
 │   │   ├── UserService.java
 │   │   ├── UserRepository.java
 │   │   ├── entities/
-│   │   │   └── UserEntity.java
 │   │   ├── dtos/
-│   │   │   ├── UserRequest.java
-│   │   │   └── UserResponse.java
-│   │   └── internal/         # Cung cấp dữ liệu cho các module khác (VD: Auth)
-│   │       ├── UserAuthDTO.java
-│   │       └── UserInternalService.java
+│   │   └── internal/
 │   │
-│   ├── auth/                 # Quản lý xác thực và phân quyền
+│   ├── auth/                 # Quản lý xác thực
 │   │   ├── AuthController.java
 │   │   ├── IAuthService.java
 │   │   ├── AuthService.java
-│   │   ├── AuthRepository.java
 │   │   ├── entities/
 │   │   ├── dtos/
-│   │   │   ├── LoginRequest.java
-│   │   │   ├── RegisterRequest.java
-│   │   │   └── TokenResponse.java
-│   │   └── jwt/              # Xử lý JWT Token
-│   │       ├── JwtAuthenticationFilter.java
-│   │       ├── JwtTokenProvider.java
-│   │       └── UserPrincipal.java
+│   │   └── jwt/              # Xử lý JWT Token (JwtTokenProvider, UserPrincipal)
 │   │
-│   ├── games/                # Quản lý sản phẩm/vải
-│   │   ├── GameController.java
-│   │   ├── IGameService.java
-│   │   ├── GameService.java
-│   │   ├── GameRepository.java
-│   │   ├── entities/
-│   │   └── dtos/
+│   ├── games/                # Quản lý Game (Cấu trúc phân lớp sub-folder)
+│   │   ├── controllers/      # GameController, GameTagController
+│   │   ├── services/         # GameService, GameTagService
+│   │   ├── repositories/     # GameRepository, GameTagRepository, ...
+│   │   ├── entities/         # Game, GameMedia, GameTag, ...
+│   │   └── dtos/             # GameRequest, GameResponse, ...
 │   │
-│   ├── interactions/         # Quản lý tương tác (Vibe, Comment, ...)
-│   │   └── entities/
+│   ├── interactions/         # Quản lý tương tác (Rating, Favorite, Play)
+│   │   ├── controllers/      # GameRatingController, ...
+│   │   ├── services/         # GameRatingService, ...
+│   │   ├── repositories/     # GameRatingRepository, ...
+│   │   ├── entities/         # GameRating, GameFavorite, GamePlay
+│   │   └── dtos/             # GameRatingRequest, GameRatingResponse, ...
 │   │
 │   └── purchases/            # Quản lý mua sắm
-│       └── entities/
+│       └── entities/         # Purchase, PurchaseDetail
 │
 ├── shared/                   # Các thành phần dùng chung toàn dự án
 │   ├── base/                 # Các class cơ sở
 │   │   ├── BaseEntity.java   (id, createdAt, updatedAt)
-│   │   └── ApiResponse.java  (Cấu trúc response chuẩn)
+│   │   ├── ApiResponse.java  (Cấu trúc response chuẩn)
+│   │   └── PageResponse.java (Cấu trúc phân trang chuẩn)
 │   │
-│   ├── configs/              # Cấu hình hệ thống
-│   │   ├── SecurityConfig.java
-│   │   └── OpenApiConfig.java (Swagger)
-│   │
-│   ├── exceptions/           # Xử lý lỗi tập trung
-│   │   ├── GlobalExceptionHandler.java
-│   │   ├── NotFoundException.java
-│   │   ├── BadRequestException.java
-│   │   ├── UnauthorizedException.java
-│   │   └── ForbiddenException.java
-│   │
-│   └── enums/                # Các hằng số, Enum dùng chung
-│       ├── MediaType.java
-│       ├── StatusPurchase.java
-│       └── UserRole.java
+│   ├── configs/              # Cấu hình hệ thống (Security, OpenAPI/Swagger)
+│   ├── exceptions/           # Xử lý lỗi tập trung (GlobalExceptionHandler, Custom Exceptions)
+│   └── enums/                # Các hằng số, Enum dùng chung (UserRole, MediaType, ...)
 │
-└── BackendApplication.java   # File chạy chính của ứng dụng
+└── BackendApplication.java   # File chạy chính của ứng dụng (Spring Boot Entry Point)
 ```
 
 ### Quy tắc quan trọng:
