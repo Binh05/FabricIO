@@ -34,15 +34,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String username = tokenProvider.getUsernameFromJWT(jwt);
                 String idStr = tokenProvider.getIdFromJWT(jwt);
                 String email = tokenProvider.getEmailFromJWT(jwt);
+                String roleStr = tokenProvider.getRoleFromJWT(jwt);
+                List<String> authoritiesList = tokenProvider.getAuthoritiesFromJWT(jwt);
 
-                if (username != null && idStr != null) {
+                if (username != null && idStr != null && roleStr != null) {
+                    fabricio.backend.shared.enums.UserRole role = fabricio.backend.shared.enums.UserRole.valueOf(roleStr);
+                    List<org.springframework.security.core.authority.SimpleGrantedAuthority> authorities = authoritiesList != null 
+                        ? authoritiesList.stream()
+                            .map(org.springframework.security.core.authority.SimpleGrantedAuthority::new)
+                            .collect(java.util.stream.Collectors.toList())
+                        : List.of();
+
                     // Tạo UserPrincipal từ thông tin trong Token
                     UserPrincipal userDetails = new UserPrincipal(
                         UUID.fromString(idStr), 
                         username, 
                         email, 
                         "", // Không cần password ở bước này
-                        List.of()
+                        role,
+                        authorities
                     );
 
                     UsernamePasswordAuthenticationToken authentication = 

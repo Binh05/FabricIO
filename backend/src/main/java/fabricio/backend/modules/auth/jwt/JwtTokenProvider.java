@@ -23,10 +23,16 @@ public class JwtTokenProvider {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
 
+        java.util.List<String> auths = principal.getAuthorities().stream()
+                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
+                .collect(java.util.stream.Collectors.toList());
+
         return Jwts.builder()
                 .subject(principal.getUsername())
                 .claim("id", principal.getId().toString())
                 .claim("email", principal.getEmail())
+                .claim("role", principal.getRole().name())
+                .claim("authorities", auths)
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(getSigningKey())
@@ -35,19 +41,26 @@ public class JwtTokenProvider {
 
 
 
-    // 2. Lấy username từ JWT
     public String getUsernameFromJWT(String token) {
         return getClaimsFromToken(token).getSubject();
     }
 
-    // Lấy ID từ JWT
     public String getIdFromJWT(String token) {
         return getClaimsFromToken(token).get("id", String.class);
     }
 
-    // Lấy Email từ JWT
     public String getEmailFromJWT(String token) {
         return getClaimsFromToken(token).get("email", String.class);
+    }
+
+    public String getRoleFromJWT(String token) {
+        return getClaimsFromToken(token).get("role", String.class);
+    }
+
+    // Lấy Authorities từ JWT
+    @SuppressWarnings("unchecked")
+    public java.util.List<String> getAuthoritiesFromJWT(String token) {
+        return getClaimsFromToken(token).get("authorities", java.util.List.class);
     }
 
     private Claims getClaimsFromToken(String token) {

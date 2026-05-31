@@ -1,5 +1,6 @@
 package fabricio.backend.modules.auth;
 
+import java.util.ArrayList;
 import java.util.HexFormat;
 import java.util.List;
 import java.security.SecureRandom;
@@ -17,10 +18,16 @@ import fabricio.backend.modules.auth.entities.Session;
 import fabricio.backend.modules.auth.jwt.JwtTokenProvider;
 import fabricio.backend.modules.auth.jwt.UserPrincipal;
 import fabricio.backend.modules.users.internal.IUserInternalService;
+import fabricio.backend.shared.enums.UserRole;
 import fabricio.backend.shared.exceptions.BadRequestException;
 import fabricio.backend.shared.exceptions.ForbiddenException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import fabricio.backend.modules.users.RolePermissionRepository;
+import fabricio.backend.modules.users.entities.RolePermission;
+
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +36,7 @@ public class AuthService implements IAuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
     private final AuthRepository authRepository;
+    private final RolePermissionRepository rolePermissionRepository;
 
     @Override
     @Transactional
@@ -57,13 +65,16 @@ public class AuthService implements IAuthService {
             throw new BadRequestException("Tài khoản hoặc mật khẩu không đúng");
         }
 
+        List<SimpleGrantedAuthority> authorities = getAuthorities(user.getRole());
+
         // Tạo UserPrincipal từ thông tin trong database
         UserPrincipal userPrincipal = new UserPrincipal(
             user.getId(),
             user.getUsername(),
             user.getEmail(),
             user.getHashedPassword(),
-            List.of()
+            user.getRole(),
+            authorities
         );
 
         SecureRandom secureRandom = new SecureRandom();
@@ -103,16 +114,31 @@ public class AuthService implements IAuthService {
         }
 
         var user = session.getUser();
+        List<SimpleGrantedAuthority> authorities = getAuthorities(user.getRole());
+        
         UserPrincipal userPrincipal = new UserPrincipal(
             user.getId(),
             user.getUsername(),
             user.getEmail(),
             user.getHashedPassword(),
-            List.of());
+            user.getRole(),
+            authorities
+        );
 
         var newToken = tokenProvider.generateToken(userPrincipal);
 
         return new JwtResponse(newToken);
+    }
+
+    private List<SimpleGrantedAuthority> getAuthorities(UserRole role) {
+        List<RolePermission> rolePermissions = rolePermissionRepository.findByRole(role);
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        
+        for (RolePermission rp : rolePermissions) {
+            authorities.add(new SimpleGrantedAuthority(rp.getPermission().getName()));
+        }
+        return authorities;
     }
 }
 

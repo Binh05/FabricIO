@@ -28,8 +28,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@IdClass(RolePermissionEntity.RolePermissionId.class)
-public class RolePermissionEntity {
+@IdClass(RolePermission.RolePermissionId.class)
+public class RolePermission {
 
     @Id
     @Enumerated(EnumType.STRING)

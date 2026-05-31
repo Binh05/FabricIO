@@ -8,6 +8,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -30,7 +31,7 @@ import lombok.Setter;
 @Builder
 public class GameMedia extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "game_id", nullable = false)
+    @JoinColumn(name = "game_id", nullable = false)
     private Game gameId;
 
     @Column(name = "media_url", nullable = false)
