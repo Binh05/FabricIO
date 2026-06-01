@@ -10,7 +10,8 @@ import fabricio.backend.modules.auth.dtos.JwtResponse;
 import fabricio.backend.modules.auth.dtos.LoginRequest;
 import fabricio.backend.modules.auth.dtos.RegisterRequest;
 import fabricio.backend.shared.base.ApiResponse;
-import fabricio.backend.shared.exceptions.ForbiddenException;
+import fabricio.backend.shared.enums.ErrorCode;
+import fabricio.backend.shared.exceptions.AppException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -59,7 +60,7 @@ public class AuthController {
     @PostMapping("/refresh")
     public ApiResponse<JwtResponse> refreshToken(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
         if (refreshToken == null || refreshToken.isEmpty()) {
-            throw new ForbiddenException("Không có quyền");
+            throw new AppException(ErrorCode.ACCESS_DENIED);
         }
         var accessToken = authService.refresh(refreshToken);
 

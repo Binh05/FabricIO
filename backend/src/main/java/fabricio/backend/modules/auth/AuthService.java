@@ -18,9 +18,9 @@ import fabricio.backend.modules.auth.entities.Session;
 import fabricio.backend.modules.auth.jwt.JwtTokenProvider;
 import fabricio.backend.modules.auth.jwt.UserPrincipal;
 import fabricio.backend.modules.users.internal.IUserInternalService;
+import fabricio.backend.shared.enums.ErrorCode;
 import fabricio.backend.shared.enums.UserRole;
-import fabricio.backend.shared.exceptions.BadRequestException;
-import fabricio.backend.shared.exceptions.ForbiddenException;
+import fabricio.backend.shared.exceptions.AppException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -42,11 +42,11 @@ public class AuthService implements IAuthService {
     @Transactional
     public String register(RegisterRequest req) {
         if (userInternalService.exitsByEmail(req.email())) {
-            throw new BadRequestException("Email đã được sử dụng!");
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
 
         if (userInternalService.existsByUsername(req.username())) {
-            throw new BadRequestException("Username đã được sử dụng!");
+            throw new AppException(ErrorCode.USERNAME_EXISTED);
         }
 
         String hashPassword = passwordEncoder.encode(req.password());
@@ -59,10 +59,10 @@ public class AuthService implements IAuthService {
     @Override
     public LoginResult login(LoginRequest req) {
         var user = userInternalService.findByUsernameForAuth(req.username())
-        .orElseThrow(() -> new BadRequestException("Tài khoản hoặc mật khẩu không đúng"));
+        .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_ERROR));
 
         if (!passwordEncoder.matches(req.password(), user.getHashedPassword())) {
-            throw new BadRequestException("Tài khoản hoặc mật khẩu không đúng");
+            throw new AppException(ErrorCode.ACCOUNT_ERROR);
         }
 
         List<SimpleGrantedAuthority> authorities = getAuthorities(user.getRole());
@@ -106,11 +106,11 @@ public class AuthService implements IAuthService {
         var session = authRepository.findByToken(token);
 
         if (session == null) {
-            throw new ForbiddenException("Token đã hết hạn hoặc không hợp lệ");
+            throw new AppException(ErrorCode.ACCESS_DENIED);
         }
 
         if (session.getExpiresAt().isBefore(Instant.now())) {
-            throw new ForbiddenException("Token đã hết hạn hoặc không hợp lệ");
+            throw new AppException(ErrorCode.ACCESS_DENIED);
         }
 
         var user = session.getUser();

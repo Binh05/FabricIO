@@ -6,44 +6,18 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import fabricio.backend.shared.base.ApiResponse;
+import fabricio.backend.shared.enums.ErrorCode;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ApiResponse<Void>> handleNotFound(NotFoundException ex) {
+    @ExceptionHandler(AppException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAppException(AppException ex) {
+        ErrorCode errorCode = ex.getErrorCode();
         ApiResponse<Void> response = ApiResponse.<Void>builder()
-            .code(ex.getCode())
-            .message(ex.getMessage())
+            .code(errorCode.getStatus())
+            .message(errorCode.getMessage())
             .build();
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-    }
-
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ApiResponse<Void>> handleBadRequest(BadRequestException ex) {
-        ApiResponse<Void> response = ApiResponse.<Void>builder()
-            .code(ex.getCode())
-            .message(ex.getMessage())
-            .build();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    }
-
-    @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ApiResponse<Void>> handleUnauthorized(UnauthorizedException ex) {
-        ApiResponse<Void> response = ApiResponse.<Void>builder()
-            .code(ex.getCode())
-            .message(ex.getMessage())
-            .build();
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    }
-
-    @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<ApiResponse<Void>> handleForbidden(ForbiddenException ex) {
-        ApiResponse<Void> response = ApiResponse.<Void>builder()
-            .code(ex.getCode())
-            .message(ex.getMessage())
-            .build();
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        return ResponseEntity.status(errorCode.getStatus()).body(response);
     }
 
     @ExceptionHandler(Exception.class)

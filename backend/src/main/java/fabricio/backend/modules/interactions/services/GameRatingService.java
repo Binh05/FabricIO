@@ -20,7 +20,8 @@ import fabricio.backend.modules.interactions.repositories.GameRatingRepository;
 import fabricio.backend.modules.users.UserRepository;
 import fabricio.backend.modules.users.entities.User;
 import fabricio.backend.shared.base.PageResponse;
-import fabricio.backend.shared.exceptions.NotFoundException;
+import fabricio.backend.shared.enums.ErrorCode;
+import fabricio.backend.shared.exceptions.AppException;
 
 @Service
 @Transactional
@@ -41,10 +42,10 @@ public class GameRatingService implements IGameRatingService {
     @Override
     public GameRatingResponse upsertRating(UUID gameId, UUID userId, GameRatingRequest request) {
         Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy game với id: " + gameId));
+                .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
         
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy user với id: " + userId));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         GameRating rating = gameRatingRepository.findByGameIdAndUserId(gameId, userId)
                 .orElse(null);
@@ -68,7 +69,8 @@ public class GameRatingService implements IGameRatingService {
     @Override
     public void deleteRating(UUID gameId, UUID userId) {
         GameRating rating = gameRatingRepository.findByGameIdAndUserId(gameId, userId)
-                .orElseThrow(() -> new NotFoundException("Bạn chưa đánh giá game này!"));
+                .orElseThrow(() -> new AppException(ErrorCode.RATING_NOT_FOUND));
+
         gameRatingRepository.delete(rating);
     }
 
@@ -76,7 +78,7 @@ public class GameRatingService implements IGameRatingService {
     @Transactional(readOnly = true)
     public PageResponse<GameRatingResponse> getGameRatingsByGame(UUID gameId, int page, int size) {
         if (!gameRepository.existsById(gameId)) {
-            throw new NotFoundException("Không tìm thấy game với id: " + gameId);
+            throw new AppException(ErrorCode.GAME_NOT_FOUND);
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());

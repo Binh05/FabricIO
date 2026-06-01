@@ -29,7 +29,9 @@ import fabricio.backend.modules.games.repositories.GameTagRepository;
 import fabricio.backend.modules.users.UserRepository;
 import fabricio.backend.modules.users.entities.User;
 import fabricio.backend.shared.base.PageResponse;
+import fabricio.backend.shared.enums.ErrorCode;
 import fabricio.backend.shared.enums.MediaType;
+import fabricio.backend.shared.exceptions.AppException;
 
 @Service
 @Transactional
@@ -149,7 +151,7 @@ public class GameService implements IGameService {
             .orElseThrow(() -> new RuntimeException("Game not found or has been deleted with id: " + id));
 
         if (!game.getOwnerId().getId().equals(ownerId)) {
-            throw new fabricio.backend.shared.exceptions.ForbiddenException("Bạn không phải chủ sở hữu của game này!");
+            throw new AppException(ErrorCode.ACCESS_DENIED);
         }
 
         MultipartFile thumbnail = request.getThumbnail();
