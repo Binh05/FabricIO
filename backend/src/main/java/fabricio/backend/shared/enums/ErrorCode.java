@@ -10,7 +10,10 @@ public enum ErrorCode {
     ACCESS_DENIED(403, "Không có quyền truy cập"),
     EMAIL_EXISTED(409, "Email đã được sử dụng"),
     USERNAME_EXISTED(409, "Username đã được sử dụng"),
-    ACCOUNT_ERROR(400, "Tài khoản hoặc mật khẩu không đúng");
+    ACCOUNT_ERROR(400, "Tài khoản hoặc mật khẩu không đúng"),
+    FAILED_UPLOAD_FILE(500, "Lỗi khi upload file"),
+    FAILED_GET_FILE(500, "Lỗi khi get file"),
+    FAILED_DELETE_FILE(500, "Lỗi khi delete file");
 
     private final int status;
     private final String message;

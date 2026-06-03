@@ -5,18 +5,25 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import fabricio.backend.modules.users.dtos.UserResponse;
 import fabricio.backend.modules.users.entities.User;
 import fabricio.backend.modules.users.internal.IUserInternalService;
 import fabricio.backend.modules.users.internal.UserAuthDTO;
+import fabricio.backend.shared.enums.ErrorCode;
+import fabricio.backend.shared.exceptions.AppException;
+import fabricio.backend.shared.storage.IStorageService;
+import jakarta.transaction.Transactional;
 
 @Service
 public class UserService implements IUserService, IUserInternalService {
     private final UserRepository userRepository;
+    private final IStorageService storageService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, IStorageService storageService) {
         this.userRepository = userRepository;
+        this.storageService = storageService;
     }
 
     public UserResponse getUserById(UUID id) {
@@ -64,5 +71,21 @@ public class UserService implements IUserService, IUserInternalService {
     @Override
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
+    }
+
+    @Override
+    @Transactional
+    public String uploadAvatar(UUID userId, MultipartFile file) {
+        var userExist = userRepository.findById(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        String objectname = userId + "/avatar-" + UUID.randomUUID();
+        
+        String avatarPath = storageService.uploadFile(objectname, file);
+
+        userExist.setAvatarUrl(avatarPath);
+        userRepository.save(userExist);
+
+        return storageService.getFullUrl(avatarPath);
     }
 }
