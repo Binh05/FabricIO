@@ -2,6 +2,7 @@ package fabricio.backend.modules.users.entities;
 
 import java.time.Instant;
 
+import fabricio.backend.modules.users.dtos.UserUpdateRequest;
 import fabricio.backend.shared.base.BaseEntity;
 import fabricio.backend.shared.enums.UserRole;
 import jakarta.persistence.Column;
@@ -57,4 +58,14 @@ public class User extends BaseEntity {
     @Builder.Default
     private boolean isDeleted = false;
     private Instant deletedAt;
+
+    public void updateFromDTO(UserUpdateRequest req) {
+        if (req.getBio() != null) {
+            this.bio = req.getBio();
+        }
+
+        if (req.getFullName() != null) {
+            this.fullName = req.getFullName();
+        }
+    }
 }
