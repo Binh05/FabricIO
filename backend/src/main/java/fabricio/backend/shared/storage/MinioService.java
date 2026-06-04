@@ -78,7 +78,7 @@ public class MinioService implements IStorageService {
     }
 
     @Override
-    public String attractAndUploadFile(MultipartFile zipFile) {
+    public String extractAndUploadFile(String objectName, MultipartFile zipFile) {
         try (ZipInputStream zipInputStream = new ZipInputStream(zipFile.getInputStream())) {
             ZipEntry entry;
             while((entry = zipInputStream.getNextEntry()) != null) {
@@ -103,7 +103,7 @@ public class MinioService implements IStorageService {
                     minioClient.putObject(
                         PutObjectArgs.builder()
                             .bucket(bucket)
-                            .object(fileName)
+                            .object(objectName)
                             .stream(entryInputStream, fileBytes.length, -1)
                             .contentType(contentType)
                             .build()
@@ -117,7 +117,7 @@ public class MinioService implements IStorageService {
                 zipInputStream.closeEntry();
             }
 
-            return bucket;
+            return objectName;
         }
         catch (Exception e)
         {
