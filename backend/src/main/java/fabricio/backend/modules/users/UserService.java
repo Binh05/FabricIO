@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import fabricio.backend.modules.users.dtos.UserResponse;
+import fabricio.backend.modules.users.dtos.UserUpdateRequest;
 import fabricio.backend.modules.users.entities.User;
 import fabricio.backend.modules.users.internal.IUserInternalService;
 import fabricio.backend.modules.users.internal.UserAuthDTO;
@@ -28,7 +29,7 @@ public class UserService implements IUserService, IUserInternalService {
 
     public UserResponse getUserById(UUID id) {
         var entity = userRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("User not found with id: " + id));;
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));;
 
         return UserResponse.builder()
             .id(entity.getId())
@@ -87,5 +88,26 @@ public class UserService implements IUserService, IUserInternalService {
         userRepository.save(userExist);
 
         return storageService.getFullUrl(avatarPath);
+    }
+
+    @Override
+    @Transactional
+    public UserResponse updateProfile(UUID userId, UserUpdateRequest req) {
+        var user = userRepository.findById(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        user.updateFromDTO(req);
+
+        return UserResponse
+            .builder()
+            .id(user.getId())
+            .email(user.getEmail())
+            .username(user.getUsername())
+            .fullName(user.getFullName())
+            .bio(user.getBio())
+            .avatarUrl(user.getAvatarUrl())
+            .createdAt(user.getCreatedAt())
+            .updatedAt(user.getUpdatedAt())
+            .build();
     }
 }
