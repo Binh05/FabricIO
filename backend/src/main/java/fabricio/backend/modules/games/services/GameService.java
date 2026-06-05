@@ -97,7 +97,7 @@ public class GameService implements IGameService {
         String thumbnailObjectName = ownerId + "/thumbnail"; 
         String thumbnailUrl = storageService.uploadFile(thumbnailObjectName, thumbnail);
         
-        String gameObjectName = owner + "assets-game";
+        String gameObjectName = owner.getId() + "/assets-game";
         String gameUrl = storageService.extractAndUploadFile(gameObjectName, request.getSourceGame());
 
         Game game = Game.builder()
