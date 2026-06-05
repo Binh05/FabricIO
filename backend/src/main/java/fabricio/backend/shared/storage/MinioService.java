@@ -99,16 +99,19 @@ public class MinioService implements IStorageService {
 
                 String contentType = getContentType(fileName);
 
+                String entryPath = objectName.endsWith("/") ? objectName + fileName : objectName + "/" + fileName;
+
                 try (InputStream entryInputStream = new ByteArrayInputStream(fileBytes)) {
                     minioClient.putObject(
                         PutObjectArgs.builder()
                             .bucket(bucket)
-                            .object(objectName)
+                            .object(entryPath)
                             .stream(entryInputStream, fileBytes.length, -1)
                             .contentType(contentType)
                             .build()
                     );
                 }
+
                 catch (Exception e) 
                 {
                     throw new AppException(ErrorCode.FAILED_UPLOAD_FILE, e);
