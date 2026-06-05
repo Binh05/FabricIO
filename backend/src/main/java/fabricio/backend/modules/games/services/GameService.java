@@ -32,6 +32,7 @@ import fabricio.backend.shared.base.PageResponse;
 import fabricio.backend.shared.enums.ErrorCode;
 import fabricio.backend.shared.enums.MediaType;
 import fabricio.backend.shared.exceptions.AppException;
+import fabricio.backend.shared.storage.IStorageService;
 
 @Service
 @Transactional
@@ -42,20 +43,20 @@ public class GameService implements IGameService {
     private final UserRepository userRepository;
     private final GameTagRepository gameTagRepository;
     private final GameTagMapRepository gameTagMapRepository;
-
-    private static final String DEFAULT_THUMBNAIL = "https://placehold.co/600x400/png?text=Thumbnail+Placeholder";
-    private static final String DEFAULT_GAME_ZIP = "https://placehold.co/files/game-placeholder.zip";
+    private final IStorageService storageService;
 
     public GameService(GameRepository gameRepository,
                        GameMediaRepository gameMediaRepository,
                        UserRepository userRepository,
                        GameTagRepository gameTagRepository,
-                       GameTagMapRepository gameTagMapRepository) {
+                       GameTagMapRepository gameTagMapRepository,
+                       IStorageService storageService) {
         this.gameRepository = gameRepository;
         this.gameMediaRepository = gameMediaRepository;
         this.userRepository = userRepository;
         this.gameTagRepository = gameTagRepository;
         this.gameTagMapRepository = gameTagMapRepository;
+        this.storageService = storageService;
     }
 
     @Override
@@ -86,7 +87,6 @@ public class GameService implements IGameService {
         User owner = userRepository.findById(ownerId)
             .orElseThrow(() -> new AppException(ErrorCode.ACCESS_DENIED));
 
-        // Validate files
         validateMediaFile(thumbnail);
         if (media != null) {
             for (MultipartFile file : media) {
@@ -94,18 +94,18 @@ public class GameService implements IGameService {
             }
         }
 
-        // Determine thumbnail URL (MinIO placeholder logic)
-        String thumbnailUrl = DEFAULT_THUMBNAIL;
-        if (thumbnail != null && !thumbnail.isEmpty()) {
-            thumbnailUrl = "https://placehold.co/600x400/png?text=Uploaded_" + thumbnail.getOriginalFilename();
-        }
+        String thumbnailObjectName = ownerId + "/thumbnail"; 
+        String thumbnailUrl = storageService.uploadFile(thumbnailObjectName, thumbnail);
+        
+        String gameObjectName = owner + "assets-game";
+        String gameUrl = storageService.extractAndUploadFile(gameObjectName, request.getSourceGame());
 
         Game game = Game.builder()
             .ownerId(owner)
             .title(request.getTitle())
             .description(request.getDescription())
             .thumbnailUrl(thumbnailUrl)
-            .gameUrl(DEFAULT_GAME_ZIP) // Will be implemented in the future, currently fallback
+            .gameUrl(gameUrl) // Will be implemented in the future, currently fallback
             .price(request.getPrice())
             .isDeleted(false)
             .build();
@@ -139,7 +139,6 @@ public class GameService implements IGameService {
             savedMedia = gameMediaRepository.saveAll(mediaEntities);
         }
 
-        // Xử lý tags
         List<GameTag> savedTags = saveTagMappings(savedGame.getId(), request.getTagIds());
 
         return mapToGameResponse(savedGame, savedMedia, savedTags);
