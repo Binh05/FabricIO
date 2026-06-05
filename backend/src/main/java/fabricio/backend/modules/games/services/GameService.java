@@ -75,7 +75,7 @@ public class GameService implements IGameService {
     @Transactional(readOnly = true)
     public GameResponse getGameById(UUID id) {
         Game game = gameRepository.findByIdAndIsDeletedFalse(id)
-            .orElseThrow(() -> new RuntimeException("Game not found or has been deleted with id: " + id));
+            .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
         return mapToGameResponse(game);
     }
 
@@ -84,7 +84,7 @@ public class GameService implements IGameService {
         MultipartFile thumbnail = request.getThumbnail();
         List<MultipartFile> media = request.getMedia();
         User owner = userRepository.findById(ownerId)
-            .orElseThrow(() -> new RuntimeException("Owner not found with id: " + ownerId));
+            .orElseThrow(() -> new AppException(ErrorCode.ACCESS_DENIED));
 
         // Validate files
         validateMediaFile(thumbnail);
@@ -148,7 +148,7 @@ public class GameService implements IGameService {
     @Override
     public GameResponse updateGame(UUID id, GameRequest request, UUID ownerId) {
         Game game = gameRepository.findByIdAndIsDeletedFalse(id)
-            .orElseThrow(() -> new RuntimeException("Game not found or has been deleted with id: " + id));
+            .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
 
         if (!game.getOwnerId().getId().equals(ownerId)) {
             throw new AppException(ErrorCode.ACCESS_DENIED);
@@ -158,7 +158,7 @@ public class GameService implements IGameService {
         List<MultipartFile> media = request.getMedia();
 
         User owner = userRepository.findById(ownerId)
-            .orElseThrow(() -> new RuntimeException("Owner not found with id: " + ownerId));
+            .orElseThrow(() -> new AppException(ErrorCode.ACCESS_DENIED));
 
         // Validate files
         validateMediaFile(thumbnail);
@@ -229,7 +229,7 @@ public class GameService implements IGameService {
     @Override
     public void deleteGame(UUID id) {
         Game game = gameRepository.findByIdAndIsDeletedFalse(id)
-            .orElseThrow(() -> new RuntimeException("Game not found or has been deleted with id: " + id));
+            .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
 
         game.setDeleted(true);
         game.setDeletedAt(Instant.now());
