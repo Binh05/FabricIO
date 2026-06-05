@@ -117,7 +117,7 @@ public class MinioService implements IStorageService {
                 zipInputStream.closeEntry();
             }
 
-            return objectName;
+            return "/" + objectName;
         }
         catch (Exception e)
         {

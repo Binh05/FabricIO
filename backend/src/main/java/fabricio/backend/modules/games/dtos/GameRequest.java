@@ -25,9 +25,12 @@ public class GameRequest {
     @Builder.Default
     private BigDecimal price = BigDecimal.ZERO;
 
+    @NotBlank(message = "Source game không được để trống")
+    private MultipartFile sourceGame;
+
+    @NotBlank(message = "Thumbnail game không được để trống")
     private MultipartFile thumbnail;
     private List<MultipartFile> media;
 
-    // Danh sách tag id gắn cho game, có thể null
     private List<UUID> tagIds;
 }
