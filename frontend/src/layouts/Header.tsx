@@ -1,5 +1,6 @@
 import { Search } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const nav = [
   { href: "/", label: "Home", key: "/" },
@@ -24,7 +25,7 @@ export default function Header({ user }) {
         </span>
         <span>GameStore</span>
       </Link>
-      <label className="border-border text-muted flex h-12 max-w-[500px] flex-1 items-center gap-3 rounded-full border bg-white/5 px-4">
+      <label className="border-border text-muted flex h-12 max-w-125 flex-1 items-center gap-3 rounded-full border bg-white/5 px-4">
         <Search size={18} />
         <input
           className="w-full border-none bg-transparent text-white outline-none"
@@ -45,12 +46,9 @@ export default function Header({ user }) {
           ))}
         </nav>
         {!token ? (
-          <Link
-            to="/signin"
-            className="text-muted cursor-pointer rounded-sm border-none bg-transparent px-5 py-2.5 font-semibold transition-all duration-200 hover:bg-white/5 hover:text-white"
-          >
-            Login
-          </Link>
+          <Button variant="ghost" asChild>
+            <Link to="/signin">Login</Link>
+          </Button>
         ) : (
           <Link
             className="border-border flex items-center gap-2.5 rounded-full border bg-white/5 py-1.5 pr-3.5 pl-1.5 font-semibold transition-all duration-200 hover:bg-white/10"

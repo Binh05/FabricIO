@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { GameCard } from "@/components/games/GameCard";
+import { Button } from "@/components/ui/button";
 
 const SectionHeading = ({ title, subtitle = "", action = null }) => (
   <div className="mb-8 flex items-end justify-between">
@@ -19,7 +20,7 @@ export const Home = () => {
 
   return (
     <>
-      <section className="from-primary/10 border-border mb-16 grid grid-cols-1 items-center gap-[60px] rounded-[40px] border bg-linear-to-br to-transparent p-10 md:p-[60px] xl:grid-cols-2">
+      <section className="from-primary/10 border-border mb-16 grid grid-cols-1 items-center gap-15 rounded-[40px] border bg-linear-to-br to-transparent p-10 md:p-15 xl:grid-cols-2">
         <div className="hero-copy">
           <span className="text-primary mb-2 block text-[13px] font-bold tracking-[2px] uppercase">
             Featured Drop
@@ -32,18 +33,12 @@ export const Home = () => {
             for player interaction and creator storytelling.
           </p>
           <div className="flex gap-4">
-            <Link
-              className="from-primary to-primary-glow shadow-glow inline-flex cursor-pointer items-center justify-center rounded-sm border-none bg-linear-to-br px-6 py-3 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110"
-              to={`/game-detail/${games[0].id}`}
-            >
-              Play Now
-            </Link>
-            <Link
-              className="text-muted border-border inline-flex cursor-pointer items-center justify-center rounded-sm border bg-transparent px-5 py-2.5 font-semibold transition-all duration-200 hover:bg-white/5 hover:text-white"
-              to="/games"
-            >
-              View Games
-            </Link>
+            <Button variant="gradient" asChild className="p-6 text-xl">
+              <Link to={`/game-detail/${games[0].id}`} >Play Now</Link>
+            </Button>
+            <Button variant="outline" asChild className="p-6 text-xl">
+              <Link to="/games">View Games</Link>
+            </Button>
           </div>
         </div>
         <div className="relative">
@@ -72,15 +67,12 @@ export const Home = () => {
           title="Featured Games"
           subtitle="Curated highlights with strong cover art, ratings, and tags."
           action={
-            <Link
-              className="text-muted border-border inline-flex cursor-pointer items-center justify-center rounded-sm border bg-transparent px-5 py-2.5 font-semibold transition-all duration-200 hover:bg-white/5 hover:text-white"
-              to="/games"
-            >
-              Browse all
-            </Link>
+            <Button variant="outline" asChild>
+              <Link to="/games">Browse all</Link>
+            </Button>
           }
         />
-        <div className="grid grid-cols-1 gap-[30px] md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2 xl:grid-cols-3">
           {featured.map((game) => (
             <GameCard key={game.id} game={game} />
           ))}
@@ -94,7 +86,7 @@ export const Home = () => {
         />
         <div className="scrollbar-hide flex gap-5 overflow-x-auto pb-5">
           {trending.map((game) => (
-            <GameCard game={game} compact={true} className="min-w-[360px]" />
+            <GameCard game={game} compact={true} className="min-w-90" />
           ))}
         </div>
       </section>
