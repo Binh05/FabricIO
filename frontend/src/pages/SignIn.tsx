@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const SignIn = () => {
   const navigate = useNavigate();
@@ -81,13 +82,14 @@ export const SignIn = () => {
                     onChange={handleChange("password")}
                     className="border-border placeholder:text-muted/50 focus:border-primary w-full rounded-2xl border bg-black/20 px-4 py-3 pr-12 text-sm text-white transition outline-none disabled:cursor-not-allowed disabled:opacity-60"
                   />
-                  <button
+                  <Button
+                    variant="ghost"
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    className="text-muted absolute top-1/2 right-4 -translate-y-1/2 text-sm transition hover:text-white"
+                    className="text-muted absolute top-1/2 right-4 -translate-y-1/2 text-sm"
                   >
                     {showPassword ? "Ẩn" : "Hiện"}
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -105,12 +107,13 @@ export const SignIn = () => {
                 </span>
               </div>
 
-              <button
+              <Button
+                variant="gradient"
                 type="submit"
-                className="from-primary to-primary-glow shadow-primary/20 w-full rounded-2xl bg-linear-to-br px-6 py-3 font-bold text-white shadow-lg transition hover:brightness-110 active:scale-95"
+                className="shadow-primary/20 w-full rounded-2xl shadow-lg active:scale-95"
               >
                 Đăng nhập
-              </button>
+              </Button>
             </form>
 
             <div className="text-muted/50 my-5 flex items-center gap-3 text-xs tracking-[0.2em] uppercase">
@@ -119,12 +122,13 @@ export const SignIn = () => {
               <div className="h-px flex-1 bg-white/10"></div>
             </div>
 
-            <button
+            <Button
+              variant="outline"
               type="button"
-              className="border-border w-full rounded-2xl border bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+              className="w-full rounded-2xl"
             >
               Tiếp tục với Google
-            </button>
+            </Button>
 
             <p className="text-muted mt-5 text-center text-sm">
               Chưa có tài khoản?{" "}

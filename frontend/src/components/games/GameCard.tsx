@@ -3,6 +3,7 @@ import { useApp } from "@/context/AppContext";
 import { Stars } from "@/components/games/Stars";
 import { Heart, ThumbsUp, ThumbsDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
 
 export const GameCard = ({
   game,
@@ -37,7 +38,7 @@ export const GameCard = ({
         "bg-card border-border hover:border-primary/30 overflow-hidden rounded-lg border transition-all duration-300 ease-in-out hover:-translate-y-2",
       )}
     >
-      <div className="h-[200px] overflow-hidden">
+      <div className="h-50 overflow-hidden">
         <img
           className="h-full w-full object-cover"
           src={game.heroImage}
@@ -50,12 +51,12 @@ export const GameCard = ({
             <h3 className="text-lg font-bold">{game.title}</h3>
             <div className="text-muted text-sm">{game.developer}</div>
           </div>
-          <button
+          <Button
             className={`border-border hover:bg-primary/10 hover:border-primary/30 hover:text-primary flex h-10 w-10 items-center justify-center rounded-xl border bg-white/5 transition-all duration-200 ${isFavorite ? "bg-primary/10 border-primary/30 text-primary" : "text-muted"}`}
             onClick={() => toggleFavorite(game.id)}
           >
             <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
-          </button>
+          </Button>
         </div>
         <div className="flex flex-wrap gap-2">
           {game.tags.map((tag) => (
@@ -84,19 +85,21 @@ export const GameCard = ({
             </p>
             <div className="mt-auto flex items-center gap-2">
               {game.price === 0 ? (
-                <Link
-                  className="from-primary to-primary-glow shadow-glow inline-flex cursor-pointer items-center justify-center rounded-sm border-none bg-linear-to-br px-6 py-3 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110"
-                  to={`/play/${game.id}`}
-                >
-                  Play
-                </Link>
+                <Button variant="gradient" className="p-6" asChild>
+                  <Link
+                    to={`/play/${game.id}`}
+                  >
+                    Play
+                  </Link>
+                </Button>
               ) : (
-                <button
-                  className="text-muted border-border cursor-pointer rounded-sm border bg-transparent px-5 py-2.5 font-semibold transition-all duration-200 hover:bg-white/5 hover:text-white"
+                <Button
+                  variant="gradient"
+                  className="p-6"
                   onClick={() => showToast("Buyed")}
                 >
                   Buy
-                </button>
+                </Button>
               )}
               {isMyGame() && (
                 <Link
@@ -106,12 +109,12 @@ export const GameCard = ({
                   Edit
                 </Link>
               )}
-              <button className="border-border text-muted hover:bg-primary/10 hover:border-primary/30 hover:text-primary flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border bg-white/5 transition-all duration-200">
+              <Button className="border-border text-muted hover:bg-primary/10 hover:border-primary/30 hover:text-primary flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border bg-white/5 transition-all duration-200">
                 <ThumbsUp size={16} />
-              </button>
-              <button className="border-border text-muted hover:bg-primary/10 hover:border-primary/30 hover:text-primary flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border bg-white/5 transition-all duration-200">
+              </Button>
+              <Button className="border-border text-muted hover:bg-primary/10 hover:border-primary/30 hover:text-primary flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border bg-white/5 transition-all duration-200">
                 <ThumbsDown size={16} />
-              </button>
+              </Button>
             </div>
           </>
         )}

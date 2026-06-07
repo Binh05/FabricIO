@@ -16,8 +16,8 @@ export const MainLayout = ({ children }) => {
   return (
     <div className="flex min-h-screen flex-col">
       <Header user={user} />
-      <div className="mx-auto flex w-full max-w-[1600px] flex-1 flex-col gap-10 p-10 lg:flex-row">
-        <aside className="flex w-full flex-col gap-8 lg:w-[280px]">
+      <div className="mx-auto flex w-full max-w-400 flex-1 flex-col gap-10 p-10 lg:flex-row">
+        <aside className="flex w-full flex-col gap-8 lg:w-70">
           <div className="flex flex-col gap-4">
             <h3 className="text-muted text-[12px] font-bold tracking-wider uppercase">
               Discover

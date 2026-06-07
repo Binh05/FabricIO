@@ -1,5 +1,6 @@
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useApp } from "../context/AppContext";
+import { Button } from "@/components/ui/button";
 
 export const GameReview = () => {
   const { draft, addGame, updateGame, showToast } = useApp();
@@ -16,12 +17,9 @@ export const GameReview = () => {
             Hãy tạo hoặc chỉnh sửa game trước khi mở trang review.
           </p>
           <div className="flex justify-center">
-            <Link
-              className="from-primary to-primary-glow shadow-glow inline-flex cursor-pointer items-center justify-center rounded-sm border-none bg-linear-to-br px-6 py-3 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110"
-              to="/submit-game"
-            >
-              Tạo game mới
-            </Link>
+            <Button variant="gradient" asChild>
+              <Link to="/submit-game">Tạo game mới</Link>
+            </Button>
           </div>
         </div>
       </section>
@@ -57,22 +55,18 @@ export const GameReview = () => {
             </p>
           </div>
           <div className="flex gap-4">
-            <Link
-              className="text-muted border-border inline-flex cursor-pointer items-center justify-center rounded-sm border bg-transparent px-5 py-2.5 font-semibold transition-all duration-200 hover:bg-white/5 hover:text-white"
-              to={`/submit-game${editId ? `?edit=${editId}` : ""}`}
-            >
-              Quay lại chỉnh sửa
-            </Link>
-            <button
-              className="from-primary to-primary-glow shadow-glow inline-flex cursor-pointer items-center justify-center rounded-sm border-none bg-linear-to-br px-6 py-3 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110"
-              onClick={handlePublish}
-            >
+            <Button variant="outline" asChild>
+              <Link to={`/submit-game${editId ? `?edit=${editId}` : ""}`}>
+                Quay lại chỉnh sửa
+              </Link>
+            </Button>
+            <Button variant="gradient" onClick={handlePublish}>
               {editId ? "Lưu thay đổi" : "Đăng game"}
-            </button>
+            </Button>
           </div>
         </div>
 
-        <div className="border-border relative h-[400px] overflow-hidden rounded-lg border">
+        <div className="border-border relative h-100 overflow-hidden rounded-lg border">
           <img
             className="h-full w-full object-cover"
             src={draft.heroImage}

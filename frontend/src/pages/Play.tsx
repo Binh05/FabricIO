@@ -1,5 +1,6 @@
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
+import { Button } from "@/components/ui/button";
 
 export const Play = () => {
   const { id } = useParams();
@@ -38,12 +39,9 @@ export const Play = () => {
             Trải nghiệm bản WebGL trực tiếp trong trình duyệt.
           </p>
         </div>
-        <Link
-          className="text-muted border-border inline-flex cursor-pointer items-center justify-center rounded-sm border bg-transparent px-5 py-2.5 font-semibold transition-all duration-200 hover:bg-white/5 hover:text-white"
-          to={`/game-detail/${game.id}`}
-        >
-          Game details
-        </Link>
+        <Button variant="outline" asChild>
+          <Link to={`/game-detail/${game.id}`}>Game details</Link>
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 gap-10 xl:grid-cols-[1fr_340px]">
@@ -62,18 +60,18 @@ export const Play = () => {
               </div>
               <div className="bg-card border-border mt-4 flex flex-wrap items-center justify-between gap-4 rounded-xl border p-4">
                 <div className="flex gap-3">
-                  <button
-                    className="text-muted border-border cursor-pointer rounded-sm border bg-transparent px-5 py-2.5 font-semibold transition-all duration-200 hover:bg-white/5 hover:text-white"
+                  <Button
+                    variant="outline"
                     onClick={() => handleAction("reload")}
                   >
                     Reload
-                  </button>
-                  <button
-                    className="text-muted border-border cursor-pointer rounded-sm border bg-transparent px-5 py-2.5 font-semibold transition-all duration-200 hover:bg-white/5 hover:text-white"
+                  </Button>
+                  <Button
+                    variant="outline"
                     onClick={() => handleAction("fullscreen")}
                   >
                     Fullscreen
-                  </button>
+                  </Button>
                 </div>
                 <div className="text-muted text-[12px] italic">
                   Tip: WebGL chạy ổn nhất khi mở qua local server
@@ -92,23 +90,19 @@ export const Play = () => {
                 host).
               </p>
               <div className="flex justify-center gap-4">
-                <Link
-                  className="from-primary to-primary-glow shadow-glow inline-flex cursor-pointer items-center justify-center rounded-sm border-none bg-linear-to-br px-6 py-3 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110"
-                  to={`/submit-game?edit=${game.id}`}
-                >
-                  Thêm link WebGL
-                </Link>
-                <Link
-                  className="text-muted border-border inline-flex cursor-pointer items-center justify-center rounded-sm border bg-transparent px-5 py-2.5 font-semibold transition-all duration-200 hover:bg-white/5 hover:text-white"
-                  to={`/game-detail/${game.id}`}
-                >
-                  Về trang game
-                </Link>
+                <Button variant="gradient" asChild>
+                  <Link to={`/submit-game?edit=${game.id}`}>
+                    Thêm link WebGL
+                  </Link>
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link to={`/game-detail/${game.id}`}>Về trang game</Link>
+                </Button>
               </div>
             </div>
           )}
         </div>
-        <aside className="bg-card border-border sticky top-[120px] flex h-fit w-full flex-col gap-6 rounded-lg border p-6 lg:w-[340px]">
+        <aside className="bg-card border-border sticky top-30 flex h-fit w-full flex-col gap-6 rounded-lg border p-6 lg:w-85">
           <div className="bg-primary/10 text-primary border-primary/20 self-start rounded-full border px-3 py-1 text-[13px] font-bold tracking-wider uppercase">
             {game.status}
           </div>

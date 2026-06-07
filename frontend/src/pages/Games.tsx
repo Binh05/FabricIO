@@ -65,7 +65,7 @@ export const Games = () => {
         </div>
       </div>
       <div className="flex flex-col gap-10 lg:flex-row">
-        <aside className="bg-card border-border top-[120px] h-fit w-full rounded-lg border p-6 lg:w-[280px]">
+        <aside className="bg-card border-border top-30 h-fit w-full rounded-lg border p-6 lg:w-70">
           <div className="mb-6">
             <h3 className="text-muted mb-4 text-[12px] font-bold tracking-wider uppercase">
               Price
@@ -97,7 +97,7 @@ export const Games = () => {
             <h3 className="text-muted mb-4 text-[12px] font-bold tracking-wider uppercase">
               Tags
             </h3>
-            <div className="flex max-h-[300px] scrollbar-thin flex-col gap-2.5 overflow-y-auto pr-2">
+            <div className="flex max-h-75 scrollbar-thin flex-col gap-2.5 overflow-y-auto pr-2">
               {ALL_TAGS.map((tag: string) => (
                 <label
                   key={tag}
@@ -169,7 +169,7 @@ export const Games = () => {
             </div>
           </div>
           {filteredGames.length ? (
-            <div className="grid grid-cols-1 gap-[30px] md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2">
               {filteredGames.map((game) => (
                 <GameCard key={game.id} game={game} />
               ))}
