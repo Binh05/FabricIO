@@ -1,12 +1,12 @@
-import { Link } from 'react-router-dom';
-import { useApp } from '@/context/AppContext';
-import { GameCard } from '@/components/games/GameCard';
+import { Link } from "react-router-dom";
+import { useApp } from "@/context/AppContext";
+import { GameCard } from "@/components/games/GameCard";
 
 const SectionHeading = ({ title, subtitle = "", action = null }) => (
-  <div className="section-head">
+  <div className="mb-8 flex items-end justify-between">
     <div>
-      <h2>{title}</h2>
-      {subtitle && <p>{subtitle}</p>}
+      <h2 className="text-[32px] font-extrabold tracking-[-1px]">{title}</h2>
+      {subtitle && <p className="text-muted">{subtitle}</p>}
     </div>
     {action}
   </div>
@@ -19,44 +19,83 @@ export const Home = () => {
 
   return (
     <>
-      <section className="section hero">
+      <section className="from-primary/10 border-border mb-16 grid grid-cols-1 items-center gap-[60px] rounded-[40px] border bg-linear-to-br to-transparent p-10 md:p-[60px] xl:grid-cols-2">
         <div className="hero-copy">
-          <span className="eyebrow">Featured Drop</span>
-          <h1>Discover indie games and creator updates in one dark, modern hub.</h1>
-          <p>GameStore blends dense discovery with a modern interface designed for player interaction and creator storytelling.</p>
-          <div className="hero-actions">
-            <Link className="primary-button" to={`/game-detail/${games[0].id}`}>Play Now</Link>
-            <Link className="ghost-button ghost-outline" to="/games">View Games</Link>
+          <span className="text-primary mb-2 block text-[13px] font-bold tracking-[2px] uppercase">
+            Featured Drop
+          </span>
+          <h1 className="mb-6 text-[32px] leading-[1.1] font-extrabold tracking-[-2px] md:text-[48px]">
+            Discover indie games and creator updates in one dark, modern hub.
+          </h1>
+          <p className="text-muted mb-8 text-lg">
+            GameStore blends dense discovery with a modern interface designed
+            for player interaction and creator storytelling.
+          </p>
+          <div className="flex gap-4">
+            <Link
+              className="from-primary to-primary-glow shadow-glow inline-flex cursor-pointer items-center justify-center rounded-sm border-none bg-linear-to-br px-6 py-3 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110"
+              to={`/game-detail/${games[0].id}`}
+            >
+              Play Now
+            </Link>
+            <Link
+              className="text-muted border-border inline-flex cursor-pointer items-center justify-center rounded-sm border bg-transparent px-5 py-2.5 font-semibold transition-all duration-200 hover:bg-white/5 hover:text-white"
+              to="/games"
+            >
+              View Games
+            </Link>
           </div>
         </div>
-        <div className="hero-media">
-          <img src={games[0].heroImage} alt={games[0].title} />
-          <div className="floating-card">
-            <div className="muted-text">Trending tonight</div>
-            <h3>{games[1].title}</h3>
-            <div className="meta-row">
-              <span className="price paid">${games[1].price}</span>
-              <span className="tag accent">{games[1].tags[0]}</span>
+        <div className="relative">
+          <img
+            className="w-full rounded-lg shadow-[0_30px_60px_rgba(0,0,0,0.5)]"
+            src={games[0].heroImage}
+            alt={games[0].title}
+          />
+          <div className="border-border absolute -bottom-5 -left-5 hidden rounded-[20px] border bg-[#1a1a1a]/80 p-5 shadow-[0_15px_30px_rgba(0,0,0,0.3)] backdrop-blur-xl md:block">
+            <div className="text-muted mb-1 text-sm">Trending tonight</div>
+            <h3 className="text-lg font-bold">{games[1].title}</h3>
+            <div className="mt-2 flex items-center justify-between gap-4">
+              <span className="text-warning font-extrabold">
+                ${games[1].price}
+              </span>
+              <span className="bg-primary/10 text-primary border-primary/20 rounded-full border px-3 py-1 text-[13px] font-bold">
+                {games[1].tags[0]}
+              </span>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="section">
-        <SectionHeading 
-          title="Featured Games" 
+      <section className="mb-16">
+        <SectionHeading
+          title="Featured Games"
           subtitle="Curated highlights with strong cover art, ratings, and tags."
-          action={<Link className="ghost-button ghost-outline" to="/games">Browse all</Link>}
+          action={
+            <Link
+              className="text-muted border-border inline-flex cursor-pointer items-center justify-center rounded-sm border bg-transparent px-5 py-2.5 font-semibold transition-all duration-200 hover:bg-white/5 hover:text-white"
+              to="/games"
+            >
+              Browse all
+            </Link>
+          }
         />
-        <div className="grid game-grid">
-          {featured.map((game) => <GameCard key={game.id} game={game} />)}
+        <div className="grid grid-cols-1 gap-[30px] md:grid-cols-2 xl:grid-cols-3">
+          {featured.map((game) => (
+            <GameCard key={game.id} game={game} />
+          ))}
         </div>
       </section>
 
-      <section className="section">
-        <SectionHeading title="Trending Now" subtitle="A horizontal discovery rail inspired by storefront browsing." />
-        <div className="trending-row">
-          {trending.map((game) => <GameCard key={game.id} game={game} compact={true} />)}
+      <section className="mb-16">
+        <SectionHeading
+          title="Trending Now"
+          subtitle="A horizontal discovery rail inspired by storefront browsing."
+        />
+        <div className="scrollbar-hide flex gap-5 overflow-x-auto pb-5">
+          {trending.map((game) => (
+            <GameCard game={game} compact={true} className="min-w-[360px]" />
+          ))}
         </div>
       </section>
     </>

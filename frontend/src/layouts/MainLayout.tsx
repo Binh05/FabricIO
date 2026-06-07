@@ -1,88 +1,80 @@
-import { Link, useLocation } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
-import { Search } from 'lucide-react';
+import { Link } from "react-router-dom";
+import { useApp } from "../context/AppContext";
+import Header from "@/layouts/Header";
 
 export const MainLayout = ({ children }) => {
   const { user, games, toasts } = useApp();
-  const location = useLocation();
-  const path = location.pathname;
-
-  const nav = [
-    { href: "/", label: "Home", key: "/" },
-    { href: "/games", label: "Games", key: "/games" },
-    { href: "/submit-game", label: "Submit Game", key: "/submit-game" }
-  ];
 
   const sidebarLinks = [
     { href: "/profile", label: "Profile" },
     { href: "/game-detail/2", label: "Spotlight" },
-    { href: "/submit-game", label: "Upload Game" }
+    { href: "/submit-game", label: "Upload Game" },
   ];
 
   const ALL_TAGS = [...new Set(games.flatMap((game) => game.tags))];
 
   return (
-    <div className="app-shell">
-      <header className="topbar">
-        <Link className="brand" to="/">
-          <span className="brand-mark">G</span>
-          <span>GameStore</span>
-        </Link>
-        <label className="searchbar">
-          <Search size={18} />
-          <input type="search" placeholder="Search games, tags, creators..." />
-        </label>
-        <div className="topbar-right">
-          <nav className="nav-links">
-            {nav.map((item) => (
-              <Link key={item.key} className={`nav-link ${path === item.href ? "active" : ""}`} to={item.href}>
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-          <Link className="ghost-button mobile-nav-toggle" to="/games">Browse</Link>
-          <button className="ghost-button">Login</button>
-          <Link className="pill-button" to="/profile">
-            <img className="avatar" src={user.avatar} alt={user.username} />
-            {user.username}
-          </Link>
-        </div>
-      </header>
-      <div className="layout">
-        <aside className="sidebar">
-          <div className="sidebar-group">
-            <h3 className="sidebar-title">Discover</h3>
-            <div className="sidebar-links">
+    <div className="flex min-h-screen flex-col">
+      <Header user={user} />
+      <div className="mx-auto flex w-full max-w-[1600px] flex-1 flex-col gap-10 p-10 lg:flex-row">
+        <aside className="flex w-full flex-col gap-8 lg:w-[280px]">
+          <div className="flex flex-col gap-4">
+            <h3 className="text-muted text-[12px] font-bold tracking-wider uppercase">
+              Discover
+            </h3>
+            <div className="flex flex-col gap-1">
               {sidebarLinks.map((item) => (
-                <Link key={item.href} className="ghost-button" to={item.href}>{item.label}</Link>
+                <Link
+                  key={item.href}
+                  className="text-muted cursor-pointer rounded-sm border-none bg-transparent px-5 py-2.5 text-left font-semibold transition-all duration-200 hover:bg-white/5 hover:text-white"
+                  to={item.href}
+                >
+                  {item.label}
+                </Link>
               ))}
             </div>
           </div>
-          <div className="sidebar-group">
-            <h3 className="sidebar-title">Popular Tags</h3>
-            <div className="chip-row">
+          <div className="flex flex-col gap-4">
+            <h3 className="text-muted text-[12px] font-bold tracking-wider uppercase">
+              Popular Tags
+            </h3>
+            <div className="flex flex-wrap gap-2">
               {ALL_TAGS.slice(0, 8).map((tag: string) => (
-                <span key={tag} className="tag">{tag}</span>
+                <span
+                  key={tag}
+                  className="text-muted border-border rounded-full border bg-white/5 px-3 py-1 text-[13px]"
+                >
+                  {tag}
+                </span>
               ))}
             </div>
           </div>
-          <div className="sidebar-group">
-            <h3 className="sidebar-title">Community Pulse</h3>
-            <div className="stack">
-              <div className="panel">
-                <div className="meta">Live players</div>
-                <h2>124.5K</h2>
+          <div className="flex flex-col gap-4">
+            <h3 className="text-muted text-[12px] font-bold tracking-wider uppercase">
+              Community Pulse
+            </h3>
+            <div className="flex flex-col gap-3">
+              <div className="bg-card border-border rounded-lg border p-6">
+                <div className="text-muted mb-1 text-sm">Live players</div>
+                <h2 className="text-3xl font-bold">124.5K</h2>
               </div>
             </div>
           </div>
         </aside>
-        <main className="main">{children}</main>
+        <main className="min-w-0 flex-1">{children}</main>
       </div>
-      <footer className="footer">GameStore UI concept built with React.</footer>
-      
-      <div className="toast-stack">
-        {toasts.map(toast => (
-          <div key={toast.id} className="toast">{toast.message}</div>
+      <footer className="border-border text-muted border-t p-10 text-center text-sm">
+        GameStore UI concept built with React.
+      </footer>
+
+      <div className="fixed right-10 bottom-10 z-1000 flex flex-col gap-3">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className="bg-card border-primary animate-slideIn rounded-xl border-l-4 px-6 py-4 text-white shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
+          >
+            {toast.message}
+          </div>
         ))}
       </div>
     </div>
