@@ -1,6 +1,7 @@
 import { Search } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 
 const nav = [
   { href: "/", label: "Home", key: "/" },
@@ -9,10 +10,9 @@ const nav = [
 ];
 
 export default function Header({ user }) {
+  const { token } = useAuth()
   const location = useLocation();
   const path = location.pathname;
-
-  const token = localStorage.getItem("access_token");
 
   return (
     <header className="border-border sticky top-0 z-100 flex h-20 items-center justify-between gap-6 border-b bg-[#0f0f0f]/85 px-10 backdrop-blur-lg">

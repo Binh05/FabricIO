@@ -4,8 +4,10 @@ import { useApp } from "@/context/AppContext";
 import { users } from "@/data/mockData";
 import { GameCard } from "@/components/games/GameCard";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 
 export const Profile = () => {
+  const { signOut } = useAuth()
   const [searchParams] = useSearchParams();
   const { user: currentUser, games, favorites } = useApp();
   const userId = searchParams.get("user");
@@ -26,6 +28,11 @@ export const Profile = () => {
 
   const tabs = isSelf ? ["games", "favorites"] : ["games"];
 
+  const onSignOut = async (e) => {
+    e.preventDefault()
+    await signOut()
+  }
+
   return (
     <section className="mb-16">
       <div className="bg-card border-border mb-10 flex flex-col items-center gap-8 rounded-lg border p-10 md:flex-row md:items-start">
@@ -43,13 +50,16 @@ export const Profile = () => {
           </div>
           <p className="text-muted">{profileUser.bio}</p>
         </div>
-        {isSelf ? (
-          <Button variant="gradient" asChild>
-            <Link to="/submit-game">Đăng game</Link>
-          </Button>
-        ) : (
-          <Button variant="gradient">Follow</Button>
-        )}
+        <div className="flex flex-col gap-2 justify-center">
+          {isSelf ? (
+            <Button variant="gradient" asChild>
+              <Link to="/submit-game">Đăng game</Link>
+            </Button>
+          ) : (
+            <Button variant="gradient">Follow</Button>
+          )}
+          <Button variant="outline" className="hover:bg-accent-foreground" onClick={(e) => onSignOut(e)}>Đăng xuất</Button>
+        </div>
       </div>
 
       <div className="border-border mb-8 flex gap-2 border-b px-2 pb-3">
