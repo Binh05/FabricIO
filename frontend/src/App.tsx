@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AppProvider } from "./context/AppContext";
-import { MainLayout } from "./layouts/MainLayout";
+import { MainLayout } from "./components/layouts/MainLayout";
 import { Home } from "./pages/Home";
 import { Games } from "./pages/Games";
 import { GameDetail } from "./pages/GameDetail";
