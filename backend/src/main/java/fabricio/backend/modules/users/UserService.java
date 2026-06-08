@@ -31,11 +31,15 @@ public class UserService implements IUserService, IUserInternalService {
         var entity = userRepository.findById(id)
             .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));;
 
+        String fullAvatarUrl = storageService.getFullUrl(entity.getAvatarUrl());
+
         return UserResponse.builder()
             .id(entity.getId())
             .username(entity.getUsername())
             .fullName(entity.getFullName())
             .email(entity.getEmail())
+            .bio(entity.getBio())
+            .avatarUrl(fullAvatarUrl)
             .createdAt(entity.getCreatedAt())
             .updatedAt(entity.getUpdatedAt())
             .build();
