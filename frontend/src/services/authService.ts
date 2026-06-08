@@ -1,31 +1,39 @@
-import { api } from "@/lib/api"
-import type { Login, LoginForm, RegisterForm } from "@/types/Auth"
-import type { BaseResponse } from "@/types/BaseResponse"
+import { api } from "@/lib/api";
+import type { Login, LoginForm, RegisterForm } from "@/types/Auth";
+import type { ApiResponse } from "@/types/BaseResponse";
 
 export class authService {
-  static async login({username, password}: LoginForm): Promise<BaseResponse<Login>> {
+  static async login({
+    username,
+    password,
+  }: LoginForm): Promise<ApiResponse<Login>> {
     const res = await api.post("/auth/login", {
       username,
-      password
-    })
+      password,
+    });
 
-    return res.data
+    return res.data;
   }
 
-  static async signOut(): Promise<BaseResponse<void>> {
-    const res = await api.post("/auth/signout")
+  static async signOut(): Promise<ApiResponse<void>> {
+    const res = await api.post("/auth/signout");
 
-    return res.data
+    return res.data;
   }
 
-  static async resgister({username, fullName, email, password}: RegisterForm): Promise<BaseResponse<void>> {
+  static async resgister({
+    username,
+    fullName,
+    email,
+    password,
+  }: RegisterForm): Promise<ApiResponse<void>> {
     const res = await api.post("/auth/register", {
       email,
       username,
       fullName,
-      password
-    })
+      password,
+    });
 
-    return res.data
+    return res.data;
   }
 }
