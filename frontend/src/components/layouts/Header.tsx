@@ -2,6 +2,8 @@ import { Search } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import UserAvatar from "./UserAvatar";
+import type { User } from "@/types/User";
 
 const nav = [
   { href: "/", label: "Home", key: "/" },
@@ -9,7 +11,7 @@ const nav = [
   { href: "/submit-game", label: "Submit Game", key: "/submit-game" },
 ];
 
-export default function Header({ user }) {
+export default function Header({ user }: {user: User}) {
   const { token } = useAuth()
   const location = useLocation();
   const path = location.pathname;
@@ -51,15 +53,9 @@ export default function Header({ user }) {
           </Button>
         ) : (
           <Link
-            className="border-border flex items-center gap-2.5 rounded-full border bg-white/5 py-1.5 pr-3.5 pl-1.5 font-semibold transition-all duration-200 hover:bg-white/10"
             to="/profile"
           >
-            <img
-              className="h-8 w-8 rounded-full object-cover"
-              src={user?.avatar || user.username.slice(1)}
-              alt={user.username}
-            />
-            {user.username}
+            <UserAvatar name={user.username} avatarUrl={user.avatarUrl} type="header"/>
           </Link>
         )}
       </div>

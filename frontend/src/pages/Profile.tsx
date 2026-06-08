@@ -5,9 +5,11 @@ import { users } from "@/data/mockData";
 import { GameCard } from "@/components/games/GameCard";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import UserAvatar from "@/components/layouts/UserAvatar";
+import AvatarUpload from "@/components/profile/AvatarUpload";
 
 export const Profile = () => {
-  const { signOut } = useAuth()
+  const { user, signOut } = useAuth()
   const [searchParams] = useSearchParams();
   const { user: currentUser, games, favorites } = useApp();
   const userId = searchParams.get("user");
@@ -36,21 +38,20 @@ export const Profile = () => {
   return (
     <section className="mb-16">
       <div className="bg-card border-border mb-10 flex flex-col items-center gap-8 rounded-lg border p-10 md:flex-row md:items-start">
-        <img
-          className="h-24 w-24 rounded-full border-4 border-white/5 object-cover"
-          src={profileUser.avatar}
-          alt={profileUser.username}
-        />
+        <div className="relative">
+          <UserAvatar name={user.username} avatarUrl={user.avatarUrl} type="profile" />
+          <AvatarUpload />
+        </div>
         <div className="flex-1 text-center md:text-left">
           <h1 className="text-3xl font-extrabold tracking-tight">
-            {profileUser.name}
+            {user.fullName}
           </h1>
           <div className="text-primary mb-2 font-semibold">
-            @{profileUser.username}
+            @{user.email}
           </div>
-          <p className="text-muted">{profileUser.bio}</p>
+          <p className="text-muted">{user?.bio ?? "Hãy giới thiệu về bản thân."}</p>
         </div>
-        <div className="flex flex-col gap-2 justify-center">
+        <div className="flex flex-col gap-3 my-auto">
           {isSelf ? (
             <Button variant="gradient" asChild>
               <Link to="/submit-game">Đăng game</Link>
@@ -58,7 +59,12 @@ export const Profile = () => {
           ) : (
             <Button variant="gradient">Follow</Button>
           )}
-          <Button variant="outline" className="hover:bg-accent-foreground" onClick={(e) => onSignOut(e)}>Đăng xuất</Button>
+          <Button 
+            variant="outline" 
+            className="transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110" 
+            onClick={(e) => onSignOut(e)}>
+              Đăng xuất
+          </Button>
         </div>
       </div>
 

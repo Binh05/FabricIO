@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { useApp } from "../context/AppContext";
-import Header from "@/layouts/Header";
+import { useApp } from "../../context/AppContext";
+import Header from "@/components/layouts/Header";
 import { useAuth } from "@/hooks/useAuth";
 
 export const MainLayout = ({ children }) => {
