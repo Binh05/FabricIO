@@ -1,9 +1,13 @@
 import { Link } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import Header from "@/layouts/Header";
+import { useAuth } from "@/hooks/useAuth";
 
 export const MainLayout = ({ children }) => {
-  const { user, games, toasts } = useApp();
+  const {  games, toasts } = useApp();
+  const { user, loading } = useAuth()
+
+  if (loading) return null
 
   const sidebarLinks = [
     { href: "/profile", label: "Profile" },

@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { Button } from '../ui/button'
 import { Link } from 'react-router-dom'
+import { useAuth } from '@/hooks/useAuth'
 
 const SignUpForm = () => {
+  const { signUp } = useAuth()
   const [formData, setFormData] = useState({
     username: "",
     fullName: "",
@@ -26,12 +28,11 @@ const SignUpForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle signup logic
+    await signUp(formData)
   };
 
   return (
     <div className="border-border grid w-full max-w-7xl grid-cols-1 overflow-hidden rounded-lg border bg-[#141418]/70 shadow-2xl backdrop-blur-md md:rounded-lg lg:grid-cols-2">
-        {/* Form is order-2 on mobile, order-1 on desktop -> places it on the LEFT on desktop */}
         <div className="order-2 flex w-full items-center justify-center bg-linear-to-b from-white/2 to-white/1 px-4 py-5 sm:px-6 md:px-8 lg:order-1 lg:px-9">
           <div className="border-border w-full max-w-lg rounded-3xl border bg-[#141414]/80 p-5 shadow-xl sm:p-6 md:p-8">
             <h2 className="mb-2 text-2xl font-extrabold md:text-3xl">
@@ -43,13 +44,13 @@ const SignUpForm = () => {
             </p>
 
             {error && (
-              <div className="mt-3 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-2.5 text-sm text-red-500">
+              <div className="mt-3 rounded-2xl border border-primary/20 bg-primary/10 px-4 py-2.5 text-sm text-primary">
                 {error}
               </div>
             )}
 
             {successMessage && (
-              <div className="mt-3 rounded-2xl border border-green-500/20 bg-green-500/10 px-4 py-2.5 text-sm text-green-500">
+              <div className="mt-3 rounded-2xl border border-success/20 bg-success/10 px-4 py-2.5 text-sm text-success">
                 {successMessage}
               </div>
             )}
@@ -72,13 +73,13 @@ const SignUpForm = () => {
 
                 <div className="flex flex-col gap-2 text-left">
                   <label className="text-muted block text-sm font-medium">
-                    Tên hiển thị
+                    Họ tên
                   </label>
                   <input
                     type="text"
                     placeholder="Tên hiển thị"
                     value={formData.fullName}
-                    onChange={handleChange("displayName")}
+                    onChange={handleChange("fullName")}
                     disabled={loading}
                     className="border-border placeholder:text-muted/50 focus:border-primary w-full rounded-2xl border bg-black/20 px-4 py-2.5 text-sm text-white outline-none"
                   />
