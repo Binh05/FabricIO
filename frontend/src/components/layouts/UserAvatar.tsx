@@ -15,7 +15,7 @@ function UserAvatar({
   avatarUrl,
   className,
 }: IUserAvatarProps) {
-  const bgColor = !avatarUrl ? "bg-blue-500" : "";
+  const bgColor = !avatarUrl ? "bg-gray-500" : "";
 
   return (
     <Avatar
@@ -25,7 +25,7 @@ function UserAvatar({
         type === "profile" && "size-24 text-4xl shadow-md",
       )}
     >
-      <AvatarImage src={avatarUrl} alt="avatar friend" />
+      <AvatarImage src={avatarUrl} alt="avatar" className="rounded-full"/>
       <AvatarFallback className={cn(`${bgColor} font-semibold text-white`, type === "profile" && "text-4xl")}>
         {name.charAt(0).toUpperCase()}
       </AvatarFallback>

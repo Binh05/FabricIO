@@ -1,11 +1,11 @@
 import { Camera } from "lucide-react";
 import { Button } from "../ui/button";
 import { useRef } from "react";
-// import { useAuth } from "@/hooks/useAuth";
+import { useUser } from "@/hooks/useUser";
 
 const AvatarUpload = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-//   const { uploadAvatar } = useAuth();
+  const { uploadAvatar } = useUser();
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -18,9 +18,9 @@ const AvatarUpload = () => {
 
     const formData = new FormData();
 
-    formData.append("file", file);
+    formData.append("imageFile", file);
 
-    // await uploadAvatar(formData);
+    await uploadAvatar(formData);
   };
 
   return (

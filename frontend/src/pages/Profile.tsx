@@ -35,6 +35,8 @@ export const Profile = () => {
     await signOut()
   }
 
+  if (!user) return
+
   return (
     <section className="mb-16">
       <div className="bg-card border-border mb-10 flex flex-col items-center gap-8 rounded-lg border p-10 md:flex-row md:items-start">

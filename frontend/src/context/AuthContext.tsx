@@ -3,9 +3,9 @@ import type { User } from "@/types/User";
 import { createContext, useEffect, useState } from "react";
 
 interface AuthContext {
-    user: User,
+    user: User | null,
     setUser: React.Dispatch<React.SetStateAction<User>>,
-    token: string,
+    token: string | null,
     setToken: React.Dispatch<React.SetStateAction<string>>,
     loading: boolean
 }
@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
                 if (!user) {
                     const { data: user } = await userService.fetchMe()
+                    console.log(user)
                     setUser(user)
                 }
             }
