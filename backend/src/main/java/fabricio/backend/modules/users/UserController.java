@@ -8,6 +8,7 @@ import fabricio.backend.modules.users.dtos.UploadAvatarResponse;
 import fabricio.backend.modules.users.dtos.UserResponse;
 import fabricio.backend.modules.users.dtos.UserUpdateRequest;
 import fabricio.backend.modules.users.entities.User;
+import fabricio.backend.shared.base.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
@@ -33,28 +34,30 @@ public class UserController {
     }
 
     @GetMapping("/user/me")
-    public UserResponse fetchMe(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        return userService.getUserById(userPrincipal.getId());
+    public ApiResponse<UserResponse> fetchMe(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        var res = userService.getUserById(userPrincipal.getId());
+        return ApiResponse.success(res);
     }
 
     @GetMapping("/user/{id}")
-    public UserResponse getUserById(@PathVariable UUID id) {
-        return userService.getUserById(id);
+    public ApiResponse<UserResponse> getUserById(@PathVariable UUID id) {
+        return ApiResponse.success(userService.getUserById(id));
     }
 
     @GetMapping("/user")
-    public List<User> getAllUser() {
-        return userService.getAllUser();
+    public ApiResponse<List<User>> getAllUser() {
+        return ApiResponse.success(userService.getAllUser());
     }
 
     @PostMapping(value = "/user/avatar", consumes = {"multipart/form-data"})
-    public UploadAvatarResponse uploadAvatar(@ModelAttribute MultipartFile imageFile, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public ApiResponse<UploadAvatarResponse> uploadAvatar(@ModelAttribute MultipartFile imageFile, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         String url = userService.uploadAvatar(userPrincipal.getId(), imageFile);
-        return new UploadAvatarResponse(url);
+        return ApiResponse.success(new UploadAvatarResponse(url));
     }
 
     @PatchMapping("/user")
-    public UserResponse updateProfile(@RequestBody UserUpdateRequest req, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        return userService.updateProfile(userPrincipal.getId(), req);
+    public ApiResponse<UserResponse> updateProfile(@RequestBody UserUpdateRequest req, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        var res = userService.updateProfile(userPrincipal.getId(), req);
+        return ApiResponse.success(res);
     }
 }
