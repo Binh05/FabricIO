@@ -25,8 +25,9 @@ public class AuthController {
     private final IAuthService authService;
 
     @PostMapping("/register")
-    public String register(@RequestBody RegisterRequest req) {
-        return authService.register(req);
+    public ApiResponse<Void> register(@RequestBody RegisterRequest req) {
+        authService.register(req);
+        return ApiResponse.noContent();
     }
     
     @PostMapping("/login")
