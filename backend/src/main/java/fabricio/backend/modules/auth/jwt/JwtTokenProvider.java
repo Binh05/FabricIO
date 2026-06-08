@@ -11,7 +11,7 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
     private final String JWT_SECRET = "Mzk4YWYwY2EtNTM0Yi00ZDU0LThmMGYtNzMxOTZkNzVlY2I1Cg==";
-    private final long JWT_EXPIRATION = 86400000L;
+    private final long JWT_EXPIRATION = (long)(10 * 60 *1000);
 
     private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(JWT_SECRET);
