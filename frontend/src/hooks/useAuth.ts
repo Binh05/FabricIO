@@ -24,6 +24,7 @@ export const useAuth = () => {
 
     const login = useCallback(async (username: string, password: string) => {
         try {
+            localStorage.clear()
             const { data } = await authService.login({username, password})
 
             context.setToken(data.accessToken)
