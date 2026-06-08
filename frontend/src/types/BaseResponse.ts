@@ -1,5 +1,14 @@
-export interface BaseResponse<T> {
-    code: number,
-    message: string,
-    data: T
+export interface ApiResponse<T> {
+  code: number;
+  message: string;
+  data: T;
+}
+
+export interface PageResponse<T> {
+  content: T[];
+  pageNumber: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
 }
