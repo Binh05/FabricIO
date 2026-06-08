@@ -28,12 +28,13 @@ api.interceptors.response.use(
 
     originRequest._retryCount = originRequest._retryCount || 0;
 
-    if (error.response?.status == 401 && originRequest._retryCount < 1) {
+    if (error.response?.status == 403 && originRequest._retryCount < 1) {
       originRequest._retryCount += 1;
 
       const res = await api.post("auth/refresh");
 
-      const { accessToken } = res.data
+      const { data } = res.data
+      const accessToken = data.accessToken
 
       if (!accessToken) {
         return Promise.reject(error);
