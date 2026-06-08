@@ -31,8 +31,7 @@ export const GameCard = ({
     price === 0 ? "Free" : `$${price.toFixed(2)}`;
 
   return (
-    <Link
-      to={`/game-detail/${game.id}`}
+    <div
       className={cn(
         className,
         "bg-card border-border hover:border-primary/30 overflow-hidden rounded-lg border transition-all duration-300 ease-in-out hover:-translate-y-2",
@@ -119,6 +118,6 @@ export const GameCard = ({
           </>
         )}
       </div>
-    </Link>
+    </div>
   );
 };

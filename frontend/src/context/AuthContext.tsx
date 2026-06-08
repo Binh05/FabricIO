@@ -1,20 +1,42 @@
-import { createContext, useEffect, useLayoutEffect, useState } from "react";
+import { userService } from "@/services/userService";
+import type { User } from "@/types/User";
+import { createContext, useEffect, useState } from "react";
 
-export const AuthContext = createContext(null)
+interface AuthContext {
+    user: User,
+    setUser: React.Dispatch<React.SetStateAction<User>>,
+    token: string,
+    setToken: React.Dispatch<React.SetStateAction<string>>,
+    loading: boolean
+}
+
+export const AuthContext = createContext<AuthContext | null>(null)
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [loading, setLoading] = useState<boolean>(true)
     const [token, setToken] = useState<string | null>(null)
+    const [user, setUser] = useState<User | null>(null);
 
-    useLayoutEffect(() => {
-        const token = localStorage.getItem("access_token")
-        if (token) {
-            setToken(token)
+    useEffect(() => {
+        const initData = async () => {
+            setLoading(true)
+            const accToken = localStorage.getItem("access_token")
+            if (accToken) {
+                setToken(accToken)
+
+                if (!user) {
+                    const { data: user } = await userService.fetchMe()
+                    setUser(user)
+                }
+            }
+
+            setLoading(false)
         }
-        setLoading(false)
+        
+        initData()
     }, [])
 
-    return <AuthContext.Provider value={{ token, loading }}>
+    return <AuthContext.Provider value={{ token, setToken, user, setUser, loading }}>
         {children}
     </AuthContext.Provider>
 }

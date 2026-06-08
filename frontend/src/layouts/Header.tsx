@@ -56,7 +56,7 @@ export default function Header({ user }) {
           >
             <img
               className="h-8 w-8 rounded-full object-cover"
-              src={user.avatar}
+              src={user?.avatar || user.username.slice(1)}
               alt={user.username}
             />
             {user.username}
