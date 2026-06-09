@@ -11,6 +11,7 @@ export interface Game {
   updatedAt: Date;
   media: GameMedia[];
   tags: GameTag[];
+  ratingAvg: number;
 }
 
 export interface GameMedia {

@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import { useApp } from "@/context/AppContext";
 import { GameCard } from "@/components/games/GameCard";
 import { Button } from "@/components/ui/button";
+import { useGame } from "@/hooks/useGame";
+import { useEffect } from "react";
 
 const SectionHeading = ({ title, subtitle = "", action = null }) => (
   <div className="mb-8 flex items-end justify-between">
@@ -14,9 +15,17 @@ const SectionHeading = ({ title, subtitle = "", action = null }) => (
 );
 
 export const Home = () => {
-  const { games } = useApp();
-  const featured = games.filter((game) => game.status === "featured");
-  const trending = games.filter((game) => game.status === "trending");
+  const { games, loading, fetchGames } = useGame();
+
+  useEffect(() => {
+    const init = async () => {
+      await fetchGames();
+    };
+
+    init();
+  }, []);
+
+  if (loading || games.length < 1) return;
 
   return (
     <>
@@ -34,7 +43,7 @@ export const Home = () => {
           </p>
           <div className="flex gap-4">
             <Button variant="gradient" asChild className="p-6 text-xl">
-              <Link to={`/game-detail/${games[0].id}`} >Play Now</Link>
+              <Link to={`/game-detail/${games[0].id}`}>Play Now</Link>
             </Button>
             <Button variant="outline" asChild className="p-6 text-xl">
               <Link to="/games">View Games</Link>
@@ -44,7 +53,7 @@ export const Home = () => {
         <div className="relative">
           <img
             className="w-full rounded-lg shadow-[0_30px_60px_rgba(0,0,0,0.5)]"
-            src={games[0].heroImage}
+            src={games[0].thumbnailUrl}
             alt={games[0].title}
           />
           <div className="border-border absolute -bottom-5 -left-5 hidden rounded-[20px] border bg-[#1a1a1a]/80 p-5 shadow-[0_15px_30px_rgba(0,0,0,0.3)] backdrop-blur-xl md:block">
@@ -55,7 +64,7 @@ export const Home = () => {
                 ${games[1].price}
               </span>
               <span className="bg-primary/10 text-primary border-primary/20 rounded-full border px-3 py-1 text-[13px] font-bold">
-                {games[1].tags[0]}
+                {games[1]?.tags[0].name}
               </span>
             </div>
           </div>
@@ -73,13 +82,13 @@ export const Home = () => {
           }
         />
         <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2 xl:grid-cols-3">
-          {featured.map((game) => (
+          {games.map((game) => (
             <GameCard key={game.id} game={game} />
           ))}
         </div>
       </section>
 
-      <section className="mb-16">
+      {/* <section className="mb-16">
         <SectionHeading
           title="Trending Now"
           subtitle="A horizontal discovery rail inspired by storefront browsing."
@@ -89,7 +98,7 @@ export const Home = () => {
             <GameCard game={game} compact={true} className="min-w-90" />
           ))}
         </div>
-      </section>
+      </section> */}
     </>
   );
 };

@@ -20,7 +20,12 @@ export class gameService {
   static async fetchGames(): Promise<ApiResponse<PageResponse<Game>>> {
     const res = await api.get("/games");
 
-    console.log(res.data);
+    return res.data;
+  }
+
+  static async getGameById(id: string): Promise<ApiResponse<Game>> {
+    const res = await api.get(`/games/${id}`);
+
     return res.data;
   }
 }

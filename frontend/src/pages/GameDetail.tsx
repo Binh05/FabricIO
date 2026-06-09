@@ -1,33 +1,40 @@
-import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { Stars } from "../components/games/Stars";
-import { ThumbsUp, ThumbsDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useGame } from "@/hooks/useGame";
+import GameDetailPanel from "@/components/games/GameDetailPanel";
 
 const tabRow = ["description", "ratings"];
 
 export const GameDetail = () => {
   const { id } = useParams();
-  const { games, ratings, rateGame, toggleFavorite, favorites, showToast } =
-    useApp();
-  const game = games.find((g) => g.id === Number(id)) || games[0];
+  const { rateGame } = useApp();
+  const { games, loading, fetchGameById } = useGame();
 
   const [activeTab, setActiveTab] = useState("description");
   const [carouselIndex, setCarouselIndex] = useState(0);
 
-  const currentImage = game.gallery[carouselIndex % game.gallery.length];
-  const isFavorite = favorites.has(game.id);
+  useEffect(() => {
+    if (!games.some((game) => game.id === id)) {
+      fetchGameById(id);
+    }
+  }, []);
+
+  const game = games.find((g) => g.id === id) || games[0];
+
+  if (loading || !game) return null;
+
+  const currentImage = game.media[carouselIndex % game.media.length];
 
   const nextSlide = () =>
-    setCarouselIndex((prev) => (prev + 1) % game.gallery.length);
+    setCarouselIndex((prev) => (prev + 1) % game.media.length);
   const prevSlide = () =>
     setCarouselIndex(
-      (prev) => (prev - 1 + game.gallery.length) % game.gallery.length,
+      (prev) => (prev - 1 + game.media.length) % game.media.length,
     );
-
-  const formatCompact = (value) =>
-    Intl.NumberFormat("en", { notation: "compact" }).format(value);
 
   return (
     <section className="mb-16">
@@ -37,7 +44,7 @@ export const GameDetail = () => {
             <div className="relative aspect-video overflow-hidden rounded-lg">
               <img
                 className="h-full w-full object-cover"
-                src={currentImage}
+                src={currentImage.mediaUrl}
                 alt={game.title}
               />
               <div className="absolute right-5 bottom-5 flex gap-2.5">
@@ -52,7 +59,7 @@ export const GameDetail = () => {
           </div>
           <iframe
             className="border-border aspect-video w-full rounded-lg border bg-black"
-            src={game.video}
+            src={"https://www.youtube.com/embed/dQw4w9WgXcQ"}
             title={`${game.title} video`}
             allowFullScreen
           />
@@ -73,7 +80,7 @@ export const GameDetail = () => {
               {activeTab === "description" && (
                 <div className="bg-card border-border rounded-lg border p-6">
                   <h3 className="mb-4 text-xl font-bold">Game Overview</h3>
-                  <p className="text-muted leading-7">{game.longDescription}</p>
+                  <p className="text-muted leading-7">{game.description}</p>
                 </div>
               )}
               {activeTab === "ratings" && (
@@ -83,7 +90,7 @@ export const GameDetail = () => {
                     Set a local star rating to preview UI interactions.
                   </p>
                   <Stars
-                    rating={ratings[game.id] || 0}
+                    rating={game.ratingAvg || 0.0}
                     interactive={true}
                     onRate={rateGame}
                     gameId={game.id}
@@ -94,72 +101,7 @@ export const GameDetail = () => {
           </div>
         </div>
 
-        <aside className="detail-sidebar">
-          <div className="bg-card border-border flex flex-col gap-6 rounded-lg border p-6">
-            <div className="bg-primary/10 text-primary border-primary/20 self-start rounded-full border px-3 py-1 text-[13px] font-bold tracking-wider uppercase">
-              {game.status}
-            </div>
-            <h1 className="text-3xl font-extrabold tracking-tight">
-              {game.title}
-            </h1>
-            <div className="text-muted">
-              by{" "}
-              <span className="font-medium text-white">{game.developer}</span>
-            </div>
-            <div className="border-border flex items-center justify-between border-y py-2">
-              <span
-                className={`text-2xl font-extrabold ${game.price === 0 ? "text-success" : "text-warning"}`}
-              >
-                {game.price === 0 ? "Free" : `$${game.price}`}
-              </span>
-              <div className="text-muted flex flex-col items-end text-[12px]">
-                <span>{formatCompact(game.views)} views</span>
-                <span>{formatCompact(game.downloads)} downloads</span>
-              </div>
-            </div>
-            <Stars rating={game.rating} />
-            <div className="flex flex-wrap gap-2">
-              {game.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="text-muted border-border rounded-full border bg-white/5 px-3 py-1 text-[13px]"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-            <div className="flex flex-col gap-3">
-              <Button
-                variant="gradient"
-                onClick={() => showToast("Added to cart")}
-              >
-                {game.price === 0 ? "Download" : "Buy Now"}
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to={`/play/${game.id}`}>Play</Link>
-              </Button>
-              <Button
-                variant="outline"
-                className={
-                  isFavorite
-                    ? "bg-primary/10 border-primary/30 text-primary"
-                    : ""
-                }
-                onClick={() => toggleFavorite(game.id)}
-              >
-                {isFavorite ? "Favorited" : "Add to Favorite"}
-              </Button>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="icon">
-                <ThumbsUp size={18} />
-              </Button>
-              <Button variant="icon">
-                <ThumbsDown size={18} />
-              </Button>
-            </div>
-          </div>
-        </aside>
+        <GameDetailPanel game={game} />
       </div>
     </section>
   );

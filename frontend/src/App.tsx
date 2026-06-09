@@ -11,15 +11,18 @@ import { Profile } from "./pages/Profile";
 import { SignIn } from "./pages/SignIn";
 import { SignUp } from "./pages/SignUp";
 import { Toaster } from "./components/ui/sonner";
+import { GameProvider } from "./context/GameContext";
 
 function App() {
   return (
-    <AppProvider>
-      <Toaster />
-      <div className="bg-background text-foreground min-h-screen">
-        <AppRouter />
-      </div>
-    </AppProvider>
+    <GameProvider>
+      <AppProvider>
+        <Toaster />
+        <div className="bg-background text-foreground min-h-screen">
+          <AppRouter />
+        </div>
+      </AppProvider>
+    </GameProvider>
   );
 }
 

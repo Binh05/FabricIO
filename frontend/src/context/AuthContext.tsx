@@ -27,7 +27,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (!user) {
           const { data: user } = await userService.fetchMe();
-          console.log(user);
           setUser(user);
         }
       }
