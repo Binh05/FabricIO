@@ -1,5 +1,6 @@
 import { GameContext } from "@/context/GameContext";
 import { gameService } from "@/services/gameService";
+import type { PostGameRequest } from "@/types/Game";
 import { useContext } from "react";
 import { toast } from "sonner";
 
@@ -12,14 +13,25 @@ export const useGame = () => {
 
   const { games, setGames, loading, setLoading } = context;
 
+  const uploadGame = async (formData: PostGameRequest) => {
+    try {
+      const { data } = await gameService.uploadGame(formData);
+
+      setGames((prev) => [...prev, data]);
+    } catch (error) {
+      console.error("Lỗi khi upload games", error);
+      toast.error(
+        error?.response?.data?.message ?? "Đã xảy ra lỗi. Hãy thử lại!",
+      );
+    }
+  };
+
   const fetchGames = async () => {
     try {
       setLoading(true);
       const { data } = await gameService.fetchGames();
 
       setGames(data.content);
-
-      console.log("game", data);
     } catch (error) {
       console.error("Lỗi khi fetch games", error);
       toast.error(
@@ -46,5 +58,13 @@ export const useGame = () => {
     }
   };
 
-  return { fetchGames, fetchGameById, games, setGames, loading, setLoading };
+  return {
+    uploadGame,
+    fetchGames,
+    fetchGameById,
+    games,
+    setGames,
+    loading,
+    setLoading,
+  };
 };

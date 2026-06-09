@@ -58,13 +58,13 @@ export const Home = () => {
           />
           <div className="border-border absolute -bottom-5 -left-5 hidden rounded-[20px] border bg-[#1a1a1a]/80 p-5 shadow-[0_15px_30px_rgba(0,0,0,0.3)] backdrop-blur-xl md:block">
             <div className="text-muted mb-1 text-sm">Trending tonight</div>
-            <h3 className="text-lg font-bold">{games[1].title}</h3>
+            <h3 className="text-lg font-bold">{games[0].title}</h3>
             <div className="mt-2 flex items-center justify-between gap-4">
               <span className="text-warning font-extrabold">
-                ${games[1].price}
+                ${games[0].price}
               </span>
               <span className="bg-primary/10 text-primary border-primary/20 rounded-full border px-3 py-1 text-[13px] font-bold">
-                {games[1]?.tags[0].name}
+                {games[0]?.tags[0]?.name ?? ""}
               </span>
             </div>
           </div>
