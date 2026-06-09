@@ -26,6 +26,8 @@ import fabricio.backend.modules.games.repositories.GameMediaRepository;
 import fabricio.backend.modules.games.repositories.GameRepository;
 import fabricio.backend.modules.games.repositories.GameTagMapRepository;
 import fabricio.backend.modules.games.repositories.GameTagRepository;
+import fabricio.backend.modules.interactions.internal.GameRatingAVG;
+import fabricio.backend.modules.interactions.internal.IGameRatingInternalService;
 import fabricio.backend.modules.users.UserRepository;
 import fabricio.backend.modules.users.entities.User;
 import fabricio.backend.shared.base.PageResponse;
@@ -44,19 +46,22 @@ public class GameService implements IGameService {
     private final GameTagRepository gameTagRepository;
     private final GameTagMapRepository gameTagMapRepository;
     private final IStorageService storageService;
+    private final IGameRatingInternalService gameRatingInternalService;
 
     public GameService(GameRepository gameRepository,
                        GameMediaRepository gameMediaRepository,
                        UserRepository userRepository,
                        GameTagRepository gameTagRepository,
                        GameTagMapRepository gameTagMapRepository,
-                       IStorageService storageService) {
+                       IStorageService storageService,
+                       IGameRatingInternalService gameRatingInternalService) {
         this.gameRepository = gameRepository;
         this.gameMediaRepository = gameMediaRepository;
         this.userRepository = userRepository;
         this.gameTagRepository = gameTagRepository;
         this.gameTagMapRepository = gameTagMapRepository;
         this.storageService = storageService;
+        this.gameRatingInternalService = gameRatingInternalService;
     }
 
     @Override
@@ -141,7 +146,7 @@ public class GameService implements IGameService {
 
         List<GameTag> savedTags = saveTagMappings(savedGame.getId(), request.getTagIds());
 
-        return mapToGameResponse(savedGame, savedMedia, savedTags);
+        return mapToGameResponse(savedGame, savedMedia, savedTags, 0);
     }
 
     @Override
@@ -222,7 +227,7 @@ public class GameService implements IGameService {
                     .collect(Collectors.toList());
         }
 
-        return mapToGameResponse(updatedGame, savedMedia, savedTags);
+        return mapToGameResponse(updatedGame, savedMedia, savedTags, 0);
     }
 
     @Override
@@ -264,10 +269,11 @@ public class GameService implements IGameService {
         List<GameTag> tags = gameTagMapRepository.findByGameId(game.getId()).stream()
                 .map(GameTagMap::getTag)
                 .collect(Collectors.toList());
-        return mapToGameResponse(game, media, tags);
+        GameRatingAVG avgRatings = gameRatingInternalService.getRatingAvgByGameId(game.getId());
+        return mapToGameResponse(game, media, tags, avgRatings.ratingAvg());
     }
 
-    private GameResponse mapToGameResponse(Game game, List<GameMedia> media, List<GameTag> tags) {
+    private GameResponse mapToGameResponse(Game game, List<GameMedia> media, List<GameTag> tags, double avg) {
         List<GameMediaResponse> mediaResponses = media.stream()
             .map(m -> GameMediaResponse.builder()
                 .id(m.getId())
@@ -285,19 +291,22 @@ public class GameService implements IGameService {
                         .build())
                 .collect(Collectors.toList());
 
+        String thumbnail = storageService.getFullUrl(game.getThumbnailUrl());
+
         return GameResponse.builder()
             .id(game.getId())
             .ownerId(game.getOwnerId().getId())
             .ownerName(game.getOwnerId().getFullName())
             .title(game.getTitle())
             .description(game.getDescription())
-            .thumbnailUrl(game.getThumbnailUrl())
+            .thumbnailUrl(thumbnail)
             .gameUrl(game.getGameUrl())
             .price(game.getPrice())
             .createdAt(game.getCreatedAt())
             .updatedAt(game.getUpdatedAt())
             .media(mediaResponses)
             .tags(tagResponses)
+            .ratingAvg(avg)
             .build();
     }
 

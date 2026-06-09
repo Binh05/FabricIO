@@ -16,6 +16,8 @@ import fabricio.backend.modules.games.repositories.GameRepository;
 import fabricio.backend.modules.interactions.dtos.GameRatingRequest;
 import fabricio.backend.modules.interactions.dtos.GameRatingResponse;
 import fabricio.backend.modules.interactions.entities.GameRating;
+import fabricio.backend.modules.interactions.internal.GameRatingAVG;
+import fabricio.backend.modules.interactions.internal.IGameRatingInternalService;
 import fabricio.backend.modules.interactions.repositories.GameRatingRepository;
 import fabricio.backend.modules.users.UserRepository;
 import fabricio.backend.modules.users.entities.User;
@@ -25,7 +27,7 @@ import fabricio.backend.shared.exceptions.AppException;
 
 @Service
 @Transactional
-public class GameRatingService implements IGameRatingService {
+public class GameRatingService implements IGameRatingService, IGameRatingInternalService {
 
     private final GameRatingRepository gameRatingRepository;
     private final GameRepository gameRepository;
@@ -102,5 +104,12 @@ public class GameRatingService implements IGameRatingService {
                 .review(rating.getReview())
                 .createdAt(rating.getCreatedAt())
                 .build();
+    }
+
+    @Override
+    public GameRatingAVG getRatingAvgByGameId(UUID gameId) {
+        double avg = gameRatingRepository.getAvgByGameId(gameId);
+
+        return new GameRatingAVG(avg);
     }
 }
