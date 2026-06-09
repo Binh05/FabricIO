@@ -26,4 +26,5 @@ public class GameResponse {
     private Instant updatedAt;
     private List<GameMediaResponse> media;
     private List<GameTagResponse> tags;
+    private double ratingAvg;
 }
