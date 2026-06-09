@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 
 export const SubmitGame = () => {
-  const { user, games, draft, setDraft, showToast } = useApp();
+  const { games, draft, setDraft, showToast } = useApp();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get("edit");
@@ -14,7 +16,7 @@ export const SubmitGame = () => {
 
   const [formData, setFormData] = useState({
     title: "",
-    developer: user.name,
+    ownerName: user.username,
     platform: "windows",
     price: 0,
     description: "",
@@ -160,7 +162,7 @@ export const SubmitGame = () => {
               <input
                 className="border-border focus:border-primary w-full rounded-xl border bg-black/20 px-4 py-3 text-white outline-none"
                 name="developer"
-                value={formData.developer}
+                value={formData.ownerName}
                 onChange={handleChange}
                 required
               />
