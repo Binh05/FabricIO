@@ -1,18 +1,22 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useGame } from "@/hooks/useGame";
 import { Play as PlayGame } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 export const Play = () => {
   const { id } = useParams();
   const { games, fetchGamePlayUrl, fetchGameById } = useGame();
+  const { token, loading } = useAuth();
   const [gamePlayUrl, setGamePlayUrl] = useState<string>("");
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isFetching, setIsFetching] = useState<boolean>(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const init = async () => {
+      if (!token) navigate("/signin");
       try {
         if (!games.some((game) => game.id === id)) {
           await fetchGameById(id);
@@ -31,7 +35,7 @@ export const Play = () => {
   if (isFetching) return;
   const game = games.find((game) => game.id === id);
 
-  if (!game) return;
+  if (!game || loading) return;
 
   const handleAction = (action) => {
     const frame = document.getElementById("webgl-iframe") as HTMLIFrameElement;

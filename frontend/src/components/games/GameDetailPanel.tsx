@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
-import { useApp } from "@/context/AppContext";
 import { Stars } from "./Stars";
 import type { Game } from "@/types/Game";
 
@@ -9,12 +8,10 @@ interface GameDetailPanelProps {
 }
 
 const GameDetailPanel = ({ game }: GameDetailPanelProps) => {
-  const { toggleFavorite, favorites, showToast } = useApp();
+  // const isFavorite = favorites.has(game.id);
 
-  const isFavorite = favorites.has(game.id);
-
-  const formatCompact = (value) =>
-    Intl.NumberFormat("en", { notation: "compact" }).format(value);
+  // const formatCompact = (value) =>
+  //   Intl.NumberFormat("en", { notation: "compact" }).format(value);
 
   return (
     <aside className="detail-sidebar">
@@ -37,10 +34,6 @@ const GameDetailPanel = ({ game }: GameDetailPanelProps) => {
           >
             {game.price === 0 ? "Free" : `$${game.price}`}
           </span>
-          <div className="text-muted flex flex-col items-end text-[12px]">
-            <span>{formatCompact(90000)} views</span>
-            <span>{formatCompact(12000)} downloads</span>
-          </div>
         </div>
         <Stars rating={game.ratingAvg} />
         <div className="flex flex-wrap gap-2">
@@ -54,13 +47,10 @@ const GameDetailPanel = ({ game }: GameDetailPanelProps) => {
           ))}
         </div>
         <div className="flex flex-col gap-3">
-          <Button variant="gradient" onClick={() => showToast("Added to cart")}>
-            {game.price === 0 ? "Download" : "Buy Now"}
-          </Button>
-          <Button variant="outline" asChild>
+          <Button variant="gradient" asChild>
             <Link to={`/play/${game.id}`}>Play</Link>
           </Button>
-          <Button
+          {/* <Button
             variant="outline"
             className={
               isFavorite ? "bg-primary/10 border-primary/30 text-primary" : ""
@@ -68,7 +58,7 @@ const GameDetailPanel = ({ game }: GameDetailPanelProps) => {
             onClick={() => toggleFavorite(game.id)}
           >
             {isFavorite ? "Favorited" : "Add to Favorite"}
-          </Button>
+          </Button> */}
         </div>
       </div>
     </aside>

@@ -5,9 +5,16 @@ import NotGame from "@/components/games/NotGame";
 import { useGame } from "@/hooks/useGame";
 import type { GameTag } from "@/types/Game";
 
+interface Filter {
+  price: string;
+  tags: GameTag[];
+  rating: number;
+  sort: string;
+}
+
 export const Games = () => {
   const { loading, games, tags, fetchGames } = useGame();
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Filter>({
     price: "all",
     tags: [],
     rating: 0,
@@ -35,7 +42,9 @@ export const Games = () => {
       result = result.filter((game) => game.ratingAvg >= filters.rating);
     if (filters.tags.length) {
       result = result.filter((game) =>
-        filters.tags.every((tag) => game.tags.includes(tag)),
+        filters.tags.every((filterTag) =>
+          game.tags.some((gameTag) => gameTag.id === filterTag.id),
+        ),
       );
     }
 
@@ -48,11 +57,11 @@ export const Games = () => {
     return result.sort(sorters[filters.sort]);
   }, [games, filters]);
 
-  const toggleTag = (tag) => {
+  const toggleTag = (tag: GameTag) => {
     setFilters((prev) => ({
       ...prev,
-      tags: prev.tags.includes(tag)
-        ? prev.tags.filter((t) => t !== tag)
+      tags: prev.tags.some((t) => t.id === tag.id)
+        ? prev.tags.filter((t) => t.id !== tag.id)
         : [...prev.tags, tag],
     }));
   };
@@ -113,7 +122,7 @@ export const Games = () => {
                 >
                   <input
                     type="checkbox"
-                    checked={filters.tags.includes(tag)}
+                    checked={filters.tags.some((t) => t.id === tag.id)}
                     onChange={() => toggleTag(tag)}
                     className="accent-primary rounded"
                   />
@@ -170,11 +179,11 @@ export const Games = () => {
               <div className="flex flex-wrap gap-2">
                 {filters.tags.map((tag) => (
                   <span
-                    key={tag}
+                    key={tag.id}
                     className="bg-primary/10 text-primary border-primary/20 cursor-pointer rounded-full border px-3 py-1 text-[13px]"
                     onClick={() => toggleTag(tag)}
                   >
-                    {tag} ×
+                    {tag.name} ×
                   </span>
                 ))}
               </div>

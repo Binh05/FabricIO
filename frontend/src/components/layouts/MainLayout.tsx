@@ -1,17 +1,18 @@
 import { Link } from "react-router-dom";
-import { useApp } from "../../context/AppContext";
 import Header from "@/components/layouts/Header";
 import { useAuth } from "@/hooks/useAuth";
+import { useGame } from "@/hooks/useGame";
+import type { GameTag } from "@/types/Game";
+import GameTagSkeleton from "../games/GameTagSkeleton";
 
 export const MainLayout = ({ children }) => {
-  const { games, toasts } = useApp();
+  const { games, loading: gameLoading } = useGame();
   const { user, loading } = useAuth();
 
   if (loading) return null;
 
   const sidebarLinks = [
     { href: "/profile", label: "Profile" },
-    { href: "/game-detail/2", label: "Spotlight" },
     { href: "/submit-game", label: "Upload Game" },
   ];
 
@@ -43,14 +44,18 @@ export const MainLayout = ({ children }) => {
               Popular Tags
             </h3>
             <div className="flex flex-wrap gap-2">
-              {ALL_TAGS.slice(0, 8).map((tag: string) => (
-                <span
-                  key={tag}
-                  className="text-muted border-border rounded-full border bg-white/5 px-3 py-1 text-[13px]"
-                >
-                  {tag}
-                </span>
-              ))}
+              {gameLoading
+                ? Array.from({ length: 8 }).map((_, index) => (
+                    <GameTagSkeleton key={index} />
+                  ))
+                : ALL_TAGS.slice(0, 8).map((tag: GameTag) => (
+                    <span
+                      key={tag.id}
+                      className="text-muted border-border rounded-full border bg-white/5 px-3 py-1 text-[13px]"
+                    >
+                      {tag.name}
+                    </span>
+                  ))}
             </div>
           </div>
         </aside>
@@ -59,17 +64,6 @@ export const MainLayout = ({ children }) => {
       <footer className="border-border text-muted border-t p-10 text-center text-sm">
         GameStore UI concept built with React.
       </footer>
-
-      <div className="fixed right-10 bottom-10 z-1000 flex flex-col gap-3">
-        {toasts.map((toast) => (
-          <div
-            key={toast.id}
-            className="bg-card border-primary animate-slideIn rounded-xl border-l-4 px-6 py-4 text-white shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
-          >
-            {toast.message}
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
