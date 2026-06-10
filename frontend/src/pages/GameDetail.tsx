@@ -15,7 +15,7 @@ export const GameDetail = () => {
   const { games, loading, fetchGameById } = useGame();
 
   const [activeTab, setActiveTab] = useState("description");
-  const [carouselIndex, setCarouselIndex] = useState(0);
+  // const [carouselIndex, setCarouselIndex] = useState(0);
 
   useEffect(() => {
     if (!games.some((game) => game.id === id)) {
@@ -27,14 +27,15 @@ export const GameDetail = () => {
 
   if (loading || !game) return null;
 
-  const currentImage = game.media[carouselIndex % game.media.length];
+  // const images = [game.thumbnailUrl, ...game.media.map((m) => m.mediaUrl)];
+  // const currentImage = images[carouselIndex % game.media.length];
 
-  const nextSlide = () =>
-    setCarouselIndex((prev) => (prev + 1) % game.media.length);
-  const prevSlide = () =>
-    setCarouselIndex(
-      (prev) => (prev - 1 + game.media.length) % game.media.length,
-    );
+  const nextSlide = () => {};
+  // setCarouselIndex((prev) => (prev + 1) % game.media.length);
+  const prevSlide = () => {};
+  // setCarouselIndex(
+  //   (prev) => (prev - 1 + game.media.length) % game.media.length,
+  // );
 
   return (
     <section className="mb-16">
@@ -44,7 +45,7 @@ export const GameDetail = () => {
             <div className="relative aspect-video overflow-hidden rounded-lg">
               <img
                 className="h-full w-full object-cover"
-                src={currentImage.mediaUrl}
+                src={game.thumbnailUrl}
                 alt={game.title}
               />
               <div className="absolute right-5 bottom-5 flex gap-2.5">
