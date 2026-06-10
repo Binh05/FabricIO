@@ -1,71 +1,66 @@
 import { useState } from "react";
-import { useSearchParams, Link } from "react-router-dom";
-import { useApp } from "@/context/AppContext";
-import { users } from "@/data/mockData";
 import { GameCard } from "@/components/games/GameCard";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import UserAvatar from "@/components/layouts/UserAvatar";
 import AvatarUpload from "@/components/profile/AvatarUpload";
+import { useGame } from "@/hooks/useGame";
+import { Link, Navigate } from "react-router-dom";
+import { HomeSkeleton } from "@/components/games/HomeSkeleton";
 
 export const Profile = () => {
-  const { user, signOut } = useAuth()
-  const [searchParams] = useSearchParams();
-  const { user: currentUser, games, favorites } = useApp();
-  const userId = searchParams.get("user");
-  const profileUser = users.find((u) => u.id === Number(userId)) || currentUser;
-  const isSelf = profileUser.id === currentUser.id;
-
+  const { user, loading, signOut } = useAuth();
+  const { games } = useGame();
   const [activeTab, setActiveTab] = useState("games");
 
-  const authoredGames = games.filter((g) => {
-    const dev = String(g.developer).toLowerCase();
-    return (
-      dev === profileUser.name.toLowerCase() ||
-      dev === profileUser.username.toLowerCase()
-    );
-  });
-
-  const favoriteGames = games.filter((g) => favorites.has(g.id));
-
-  const tabs = isSelf ? ["games", "favorites"] : ["games"];
-
-  const onSignOut = async (e) => {
-    e.preventDefault()
-    await signOut()
+  if (loading) {
+    return <HomeSkeleton />;
   }
 
-  if (!user) return
+  if (!user) return <Navigate to={"/signin"} replace />;
+
+  const authoredGames = games.filter((g) => g.ownerId === user.id);
+
+  // const favoriteGames = games.filter((g) => favorites.has(g.id));
+  // const tabs = isSelf ? ["games", "favorites"] : ["games"];
+  const tabs = ["games"];
+
+  const onSignOut = async (e) => {
+    e.preventDefault();
+    await signOut();
+  };
 
   return (
     <section className="mb-16">
       <div className="bg-card border-border mb-10 flex flex-col items-center gap-8 rounded-lg border p-10 md:flex-row md:items-start">
         <div className="relative">
-          <UserAvatar name={user.username} avatarUrl={user.avatarUrl} type="profile" />
+          <UserAvatar
+            name={user.username}
+            avatarUrl={user.avatarUrl}
+            type="profile"
+          />
           <AvatarUpload />
         </div>
         <div className="flex-1 text-center md:text-left">
           <h1 className="text-3xl font-extrabold tracking-tight">
             {user.fullName}
           </h1>
-          <div className="text-primary mb-2 font-semibold">
-            @{user.email}
-          </div>
-          <p className="text-muted">{user?.bio ?? "Hãy giới thiệu về bản thân."}</p>
+          <div className="text-primary mb-2 font-semibold">@{user.email}</div>
+          <p className="text-muted">
+            {user?.bio ?? "Hãy giới thiệu về bản thân."}
+          </p>
         </div>
-        <div className="flex flex-col gap-3 my-auto">
-          {isSelf ? (
-            <Button variant="gradient" asChild>
-              <Link to="/submit-game">Đăng game</Link>
-            </Button>
-          ) : (
-            <Button variant="gradient">Follow</Button>
-          )}
-          <Button 
-            variant="outline" 
-            className="transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110" 
-            onClick={(e) => onSignOut(e)}>
-              Đăng xuất
+        <div className="my-auto flex flex-col gap-3">
+          <Button variant="gradient" asChild>
+            <Link to="/submit-game">Đăng game</Link>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110"
+            onClick={(e) => onSignOut(e)}
+          >
+            Đăng xuất
           </Button>
         </div>
       </div>
@@ -84,15 +79,15 @@ export const Profile = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2 xl:grid-cols-3">
-        {(activeTab === "games" ? authoredGames : favoriteGames).map((game) => (
+        {authoredGames.map((game) => (
           <GameCard key={game.id} game={game} />
         ))}
-        {(activeTab === "games" ? authoredGames : favoriteGames).length ===
+        {/* {(activeTab === "games" ? authoredGames : favoriteGames).length ===
           0 && (
           <div className="bg-card border-border rounded-lg border p-12 text-center md:col-span-2 xl:col-span-3">
             <h3 className="text-xl font-bold">Chưa có game nào</h3>
           </div>
-        )}
+        )} */}
       </div>
     </section>
   );
