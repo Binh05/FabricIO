@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import fabricio.backend.modules.auth.jwt.UserPrincipal;
+import fabricio.backend.modules.games.dtos.GamePlayResponse;
 import fabricio.backend.modules.games.dtos.GameRequest;
 import fabricio.backend.modules.games.dtos.GameResponse;
 import fabricio.backend.modules.games.services.IGameService;
@@ -67,5 +68,10 @@ public class GameController {
     public ApiResponse<Void> deleteGame(@PathVariable UUID id) {
         gameService.deleteGame(id);
         return ApiResponse.noContent();
+    }
+
+    @GetMapping("/{gameId}/play")
+    public ApiResponse<GamePlayResponse> getGamePlayUrl(@PathVariable UUID gameId) {
+        return ApiResponse.success(gameService.getGamePlayUrl(gameId));
     }
 }
