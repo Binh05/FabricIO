@@ -34,13 +34,13 @@ export const useAuth = () => {
   const login = useCallback(
     async (username: string, password: string) => {
       try {
-        localStorage.clear();
+        sessionStorage.clear();
         context.clearAuthState();
 
         const { data } = await authService.login({ username, password });
 
         context.setToken(data.accessToken);
-        localStorage.setItem("access_token", data.accessToken);
+        sessionStorage.setItem("access_token", data.accessToken);
 
         const { data: user } = await userService.fetchMe();
         context.setUser(user);
@@ -61,7 +61,7 @@ export const useAuth = () => {
     try {
       await authService.signOut();
 
-      localStorage.clear();
+      sessionStorage.clear();
       context.clearAuthState();
 
       navigate("/");

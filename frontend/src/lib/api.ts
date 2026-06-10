@@ -12,7 +12,7 @@ export const api: AxiosInstance = axios.create({
 });
 
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = localStorage.getItem("access_token");
+  const token = sessionStorage.getItem("access_token");
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -44,14 +44,14 @@ api.interceptors.response.use(
         return Promise.reject(error);
       }
 
-      localStorage.setItem("access_token", accessToken);
+      sessionStorage.setItem("access_token", accessToken);
 
       originRequest.headers.Authorization = `Bearer ${accessToken}`;
       return api(originRequest);
     }
 
     if (error.response?.status === 403 && originRequest._retryCount > 0) {
-      localStorage.clear();
+      sessionStorage.clear();
     }
 
     return Promise.reject(error);

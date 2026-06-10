@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const initData = async () => {
       setLoading(true);
-      const accToken = localStorage.getItem("access_token");
+      const accToken = sessionStorage.getItem("access_token");
       if (accToken) {
         setToken(accToken);
 
