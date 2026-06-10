@@ -1,9 +1,12 @@
-import { useState, useMemo } from "react";
-import { useApp } from "@/context/AppContext";
+import { useState, useMemo, useEffect } from "react";
 import { GameCard } from "@/components/games/GameCard";
+import { GamePageSkeleton } from "@/components/games/GamePageSkeleton";
+import NotGame from "@/components/games/NotGame";
+import { useGame } from "@/hooks/useGame";
+import type { GameTag } from "@/types/Game";
 
 export const Games = () => {
-  const { games } = useApp();
+  const { loading, games, tags, fetchGames } = useGame();
   const [filters, setFilters] = useState({
     price: "all",
     tags: [],
@@ -11,10 +14,15 @@ export const Games = () => {
     sort: "popular",
   });
 
-  const ALL_TAGS = useMemo(
-    () => [...new Set(games.flatMap((game) => game.tags))],
-    [games],
-  );
+  useEffect(() => {
+    if (games.length === 0) {
+      fetchGames();
+    }
+  }, []);
+
+  if (loading) {
+    return <GamePageSkeleton />;
+  }
 
   const filteredGames = useMemo(() => {
     let result = [...games];
@@ -24,7 +32,7 @@ export const Games = () => {
     if (filters.price === "paid")
       result = result.filter((game) => game.price > 0);
     if (filters.rating > 0)
-      result = result.filter((game) => game.rating >= filters.rating);
+      result = result.filter((game) => game.ratingAvg >= filters.rating);
     if (filters.tags.length) {
       result = result.filter((game) =>
         filters.tags.every((tag) => game.tags.includes(tag)),
@@ -98,9 +106,9 @@ export const Games = () => {
               Tags
             </h3>
             <div className="flex max-h-75 scrollbar-thin flex-col gap-2.5 overflow-y-auto pr-2">
-              {ALL_TAGS.map((tag: string) => (
+              {tags.map((tag: GameTag) => (
                 <label
-                  key={tag}
+                  key={tag.id}
                   className="flex cursor-pointer items-center gap-2.5"
                 >
                   <input
@@ -109,7 +117,7 @@ export const Games = () => {
                     onChange={() => toggleTag(tag)}
                     className="accent-primary rounded"
                   />
-                  <span className="text-sm">{tag}</span>
+                  <span className="text-sm">{tag.name}</span>
                 </label>
               ))}
             </div>
@@ -151,40 +159,44 @@ export const Games = () => {
             </select>
           </div>
         </aside>
-        <div className="flex-1">
-          <div className="mb-8 flex items-end justify-between">
-            <h2 className="text-2xl font-bold">
-              {filteredGames.length} games found
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {filters.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="bg-primary/10 text-primary border-primary/20 cursor-pointer rounded-full border px-3 py-1 text-[13px]"
-                  onClick={() => toggleTag(tag)}
-                >
-                  {tag} ×
-                </span>
-              ))}
+        {games.length === 0 ? (
+          <NotGame />
+        ) : (
+          <div className="flex-1">
+            <div className="mb-8 flex items-end justify-between">
+              <h2 className="text-2xl font-bold">
+                {filteredGames.length} games found
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {filters.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="bg-primary/10 text-primary border-primary/20 cursor-pointer rounded-full border px-3 py-1 text-[13px]"
+                    onClick={() => toggleTag(tag)}
+                  >
+                    {tag} ×
+                  </span>
+                ))}
+              </div>
             </div>
+            {filteredGames.length ? (
+              <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2">
+                {filteredGames.map((game) => (
+                  <GameCard key={game.id} game={game} />
+                ))}
+              </div>
+            ) : (
+              <div className="bg-card border-border rounded-lg border p-12 text-center">
+                <h3 className="mb-2 text-xl font-bold">
+                  Hiện chưa có trò chơi nào
+                </h3>
+                <p className="text-muted text-sm">
+                  Try clearing a few filters to see more releases.
+                </p>
+              </div>
+            )}
           </div>
-          {filteredGames.length ? (
-            <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2">
-              {filteredGames.map((game) => (
-                <GameCard key={game.id} game={game} />
-              ))}
-            </div>
-          ) : (
-            <div className="bg-card border-border rounded-lg border p-12 text-center">
-              <h3 className="mb-2 text-xl font-bold">
-                Hiện chưa có trò chơi nào
-              </h3>
-              <p className="text-muted text-sm">
-                Try clearing a few filters to see more releases.
-              </p>
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </section>
   );
