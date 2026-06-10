@@ -36,3 +36,7 @@ export interface PostGameRequest {
   media: File[] | null;
   tagIds: string[] | null;
 }
+
+export interface GamePlayResponse {
+  gamePlayUrl: string;
+}

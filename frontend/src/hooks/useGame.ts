@@ -58,10 +58,24 @@ export const useGame = () => {
     }
   };
 
+  const fetchGamePlayUrl = async (gameId: string) => {
+    try {
+      const { data } = await gameService.getGamePlay(gameId);
+
+      return data.gamePlayUrl;
+    } catch (error) {
+      console.error("Lỗi khi fetch game by id", error);
+      toast.error(
+        error?.response?.data?.message ?? "Đã xảy ra lỗi. Hãy thử lại!",
+      );
+    }
+  };
+
   return {
     uploadGame,
     fetchGames,
     fetchGameById,
+    fetchGamePlayUrl,
     games,
     setGames,
     loading,
