@@ -9,8 +9,7 @@ import fabricio.backend.shared.base.BaseEntity;
 @Table(
     name = "game_tags",
     uniqueConstraints = {
-        @UniqueConstraint(name = "uq_game_tags_name", columnNames = "name"),
-        @UniqueConstraint(name = "uq_game_tags_slug", columnNames = "slug")
+        @UniqueConstraint(name = "uq_game_tags_name", columnNames = "name")
     }
 )
 @Getter
@@ -22,8 +21,4 @@ public class GameTag extends BaseEntity {
 
     @Column(nullable = false, unique = true, length = 100)
     private String name;
-
-    // Dùng cho URL: /tag/action-rpg
-    @Column(nullable = false, unique = true, length = 120)
-    private String slug;
 }

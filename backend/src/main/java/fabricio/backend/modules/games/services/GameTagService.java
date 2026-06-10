@@ -43,13 +43,9 @@ public class GameTagService implements IGameTagService {
         if (gameTagRepository.existsByName(request.getName())) {
             throw new IllegalArgumentException("Tên tag đã tồn tại: " + request.getName());
         }
-        if (gameTagRepository.existsBySlug(request.getSlug())) {
-            throw new IllegalArgumentException("Slug đã tồn tại: " + request.getSlug());
-        }
 
         GameTag tag = GameTag.builder()
                 .name(request.getName())
-                .slug(request.getSlug())
                 .build();
 
         return mapToResponse(gameTagRepository.save(tag));
@@ -63,12 +59,8 @@ public class GameTagService implements IGameTagService {
         if (gameTagRepository.existsByNameAndIdNot(request.getName(), id)) {
             throw new IllegalArgumentException("Tên tag đã tồn tại: " + request.getName());
         }
-        if (gameTagRepository.existsBySlugAndIdNot(request.getSlug(), id)) {
-            throw new IllegalArgumentException("Slug đã tồn tại: " + request.getSlug());
-        }
 
         tag.setName(request.getName());
-        tag.setSlug(request.getSlug());
 
         return mapToResponse(gameTagRepository.save(tag));
     }
@@ -85,7 +77,6 @@ public class GameTagService implements IGameTagService {
         return GameTagResponse.builder()
                 .id(tag.getId())
                 .name(tag.getName())
-                .slug(tag.getSlug())
                 .build();
     }
 }
