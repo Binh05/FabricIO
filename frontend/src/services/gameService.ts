@@ -1,6 +1,11 @@
 import { api } from "@/lib/api";
 import type { ApiResponse, PageResponse } from "@/types/BaseResponse";
-import type { Game, GamePlayResponse, PostGameRequest } from "@/types/Game";
+import type {
+  Game,
+  GamePlayResponse,
+  GameTag,
+  PostGameRequest,
+} from "@/types/Game";
 
 export class gameService {
   static async uploadGame(data: PostGameRequest): Promise<ApiResponse<Game>> {
@@ -56,6 +61,12 @@ export class gameService {
     gameId: string,
   ): Promise<ApiResponse<GamePlayResponse>> {
     const res = await api.get(`/games/${gameId}/play`);
+
+    return res.data;
+  }
+
+  static async getGameTags(): Promise<ApiResponse<GameTag[]>> {
+    const res = await api.get("/game-tags");
 
     return res.data;
   }

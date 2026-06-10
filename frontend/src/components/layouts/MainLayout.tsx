@@ -4,10 +4,10 @@ import Header from "@/components/layouts/Header";
 import { useAuth } from "@/hooks/useAuth";
 
 export const MainLayout = ({ children }) => {
-  const {  games, toasts } = useApp();
-  const { user, loading } = useAuth()
+  const { games, toasts } = useApp();
+  const { user, loading } = useAuth();
 
-  if (loading) return null
+  if (loading) return null;
 
   const sidebarLinks = [
     { href: "/profile", label: "Profile" },
@@ -51,17 +51,6 @@ export const MainLayout = ({ children }) => {
                   {tag}
                 </span>
               ))}
-            </div>
-          </div>
-          <div className="flex flex-col gap-4">
-            <h3 className="text-muted text-[12px] font-bold tracking-wider uppercase">
-              Community Pulse
-            </h3>
-            <div className="flex flex-col gap-3">
-              <div className="bg-card border-border rounded-lg border p-6">
-                <div className="text-muted mb-1 text-sm">Live players</div>
-                <h2 className="text-3xl font-bold">124.5K</h2>
-              </div>
             </div>
           </div>
         </aside>

@@ -24,7 +24,6 @@ export interface GameMedia {
 export interface GameTag {
   id: string;
   name: string;
-  slug: string;
 }
 
 export interface PostGameRequest {
