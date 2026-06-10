@@ -100,10 +100,9 @@ public class GameService implements IGameService {
             }
         }
 
-        String thumbnailObjectName = ownerId + "/thumbnail"; 
-        String thumbnailUrl = storageService.uploadFile(thumbnailObjectName, thumbnail);
         
-        String gameObjectName = owner.getId() + "/assets-game";
+        String gameObjectName = owner.getId() + "/assets-game" + "/source-" + UUID.randomUUID();
+        String thumbnailUrl = storageService.uploadFile(gameObjectName + "/thumbnail", thumbnail);
         String gameUrl = storageService.extractAndUploadFile(gameObjectName, request.getSourceGame());
 
         Game game = Game.builder()
@@ -111,7 +110,7 @@ public class GameService implements IGameService {
             .title(request.getTitle())
             .description(request.getDescription())
             .thumbnailUrl(thumbnailUrl)
-            .gameUrl(gameUrl) // Will be implemented in the future, currently fallback
+            .gameUrl(gameUrl)
             .price(request.getPrice())
             .isDeleted(false)
             .build();
