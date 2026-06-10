@@ -297,7 +297,6 @@ public class GameService implements IGameService {
                 .map(t -> GameTagResponse.builder()
                         .id(t.getId())
                         .name(t.getName())
-                        .slug(t.getSlug())
                         .build())
                 .collect(Collectors.toList());
 

@@ -14,5 +14,4 @@ import lombok.NoArgsConstructor;
 public class GameTagResponse {
     private UUID id;
     private String name;
-    private String slug;
 }

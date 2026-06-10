@@ -10,7 +10,5 @@ import fabricio.backend.modules.games.entities.GameTag;
 @Repository
 public interface GameTagRepository extends JpaRepository<GameTag, UUID> {
     boolean existsByName(String name);
-    boolean existsBySlug(String slug);
     boolean existsByNameAndIdNot(String name, UUID id);
-    boolean existsBySlugAndIdNot(String slug, UUID id);
 }
