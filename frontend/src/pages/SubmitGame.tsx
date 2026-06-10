@@ -1,15 +1,25 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import SubmitGameForm from "@/components/games/SubmitGameForm";
+import { useGame } from "@/hooks/useGame";
+import { useEffect } from "react";
 
 export const SubmitGame = () => {
   const { user } = useAuth();
+  const { tags, fetchGameTags } = useGame();
   const navigate = useNavigate();
 
-  if (!user) {
-    navigate("/sign-in");
-    return null;
-  }
+  useEffect(() => {
+    if (!user) {
+      navigate("/signin");
+    }
+
+    if (tags.length < 1) {
+      fetchGameTags();
+    }
+  }, []);
+
+  if (!user) return null;
 
   return (
     <section className="mb-16">
@@ -21,8 +31,8 @@ export const SubmitGame = () => {
           Đăng game mới lên cửa hàng
         </h1>
         <p className="text-muted mt-2">
-          Tải build cho Windows, Android hoặc WebGL, thêm ảnh đại diện, ảnh
-          show game và giá bán.
+          Tải build cho Windows, Android hoặc WebGL, thêm ảnh đại diện, ảnh show
+          game và giá bán.
         </p>
       </div>
 

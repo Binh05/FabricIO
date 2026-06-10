@@ -11,7 +11,7 @@ export const useGame = () => {
     throw new Error("useGame phải được sử dụng bên trong GameProvider");
   }
 
-  const { games, setGames, loading, setLoading } = context;
+  const { games, setGames, loading, setLoading, tags, setTags } = context;
 
   const uploadGame = async (formData: PostGameRequest) => {
     try {
@@ -71,14 +71,29 @@ export const useGame = () => {
     }
   };
 
+  const fetchGameTags = async () => {
+    try {
+      const { data } = await gameService.getGameTags();
+
+      setTags(data);
+    } catch (error) {
+      console.error("Lỗi khi fetch tags game", error);
+      toast.error(
+        error?.response?.data?.message ?? "Đã xảy ra lỗi. Hãy thử lại!",
+      );
+    }
+  };
+
   return {
     uploadGame,
     fetchGames,
     fetchGameById,
     fetchGamePlayUrl,
+    fetchGameTags,
     games,
     setGames,
     loading,
     setLoading,
+    tags,
   };
 };

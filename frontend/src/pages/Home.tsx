@@ -15,11 +15,11 @@ const SectionHeading = ({ title, subtitle = "", action = null }) => (
 );
 
 export const Home = () => {
-  const { games, loading, fetchGames } = useGame();
+  const { games, loading, fetchGames, fetchGameTags } = useGame();
 
   useEffect(() => {
     const init = async () => {
-      await fetchGames();
+      await Promise.all([fetchGames, fetchGameTags]);
     };
 
     init();

@@ -68,15 +68,8 @@ const FileDropZone = ({
 /* ────────────────────────────────────────────────────────── */
 
 const SubmitGameForm = () => {
-  const { games, uploadGame } = useGame();
+  const { tags, uploadGame } = useGame();
   const navigate = useNavigate();
-
-  // Unique tags derived from all games in context
-  const ALL_TAGS = [
-    ...new Map(
-      games.flatMap((g) => g.tags).map((tag) => [tag.id, tag]),
-    ).values(),
-  ];
 
   const {
     register,
@@ -232,13 +225,13 @@ const SubmitGameForm = () => {
           />
 
           {/* Tags */}
-          {ALL_TAGS.length > 0 && (
+          {tags.length > 0 && (
             <div className="flex flex-col gap-2 md:col-span-2">
               <label className="flex items-center gap-2 text-sm font-semibold">
                 <Tag size={14} /> Tags
               </label>
               <div className="flex flex-wrap gap-2">
-                {ALL_TAGS.map((tag) => {
+                {tags.map((tag) => {
                   const active = watchedTagIds.includes(tag.id);
                   return (
                     <button
@@ -323,7 +316,7 @@ const SubmitGameForm = () => {
             <div className="flex flex-wrap gap-1 pt-1">
               {watchedTagIds.length > 0 ? (
                 watchedTagIds.map((id) => {
-                  const tag = ALL_TAGS.find((t) => t.id === id);
+                  const tag = tags.find((t) => t.id === id);
                   return tag ? (
                     <span
                       key={id}
