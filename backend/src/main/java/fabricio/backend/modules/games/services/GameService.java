@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import fabricio.backend.modules.games.dtos.GameMediaResponse;
+import fabricio.backend.modules.games.dtos.GamePlayResponse;
 import fabricio.backend.modules.games.dtos.GameRequest;
 import fabricio.backend.modules.games.dtos.GameResponse;
 import fabricio.backend.modules.games.dtos.GameTagResponse;
@@ -239,6 +240,16 @@ public class GameService implements IGameService {
         game.setDeletedAt(Instant.now());
         gameRepository.save(game);
     }
+
+    @Override
+    public GamePlayResponse getGamePlayUrl(UUID gameId) {
+        Game game = gameRepository.findById(gameId)
+            .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
+
+        String gamePlayUrl = storageService.getFullUrl(game.getGameUrl()) + "/index.html";
+
+        return new GamePlayResponse(gamePlayUrl);
+    } 
 
     private void validateMediaFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
