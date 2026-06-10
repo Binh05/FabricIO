@@ -3,6 +3,7 @@ package fabricio.backend.shared.storage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -88,6 +89,10 @@ public class MinioService implements IStorageService {
                 }
 
                 String fileName = entry.getName();
+                int firstIndex = fileName.indexOf("/");
+                if (firstIndex != -1) {
+                    fileName = fileName.substring(firstIndex + 1);
+                }
 
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 byte[] buffer = new byte[1024];
@@ -98,20 +103,24 @@ public class MinioService implements IStorageService {
                 byte[] fileBytes = byteArrayOutputStream.toByteArray();
 
                 String contentType = getContentType(fileName);
+                String contentEncoding = getContentEncoding(fileName);
 
                 String entryPath = objectName.endsWith("/") ? objectName + fileName : objectName + "/" + fileName;
 
                 try (InputStream entryInputStream = new ByteArrayInputStream(fileBytes)) {
-                    minioClient.putObject(
-                        PutObjectArgs.builder()
+                    var builder = PutObjectArgs.builder()
                             .bucket(bucket)
                             .object(entryPath)
                             .stream(entryInputStream, fileBytes.length, -1)
-                            .contentType(contentType)
-                            .build()
-                    );
-                }
+                            .contentType(contentType);
 
+                    // Nếu là file nén (.br hoặc .gz), cấu hình Content-Encoding vào metadata
+                    if (contentEncoding != null) {
+                        builder.headers(Map.of("Content-Encoding", contentEncoding));
+                    }
+
+                    minioClient.putObject(builder.build());
+                }
                 catch (Exception e) 
                 {
                     throw new AppException(ErrorCode.FAILED_UPLOAD_FILE, e);
@@ -133,7 +142,17 @@ public class MinioService implements IStorageService {
             return "application/octet-stream";
         }
         
-        String extension = filename.substring(filename.lastIndexOf(".")).toLowerCase();
+        // Loại bỏ đuôi nén .br hoặc .gz nếu có để lấy đuôi file gốc (e.g., .js.br -> .js)
+        String cleanFilename = filename;
+        if (filename.endsWith(".br") || filename.endsWith(".gz")) {
+            cleanFilename = filename.substring(0, filename.lastIndexOf("."));
+        }
+
+        if (!cleanFilename.contains(".")) {
+            return "application/octet-stream";
+        }
+
+        String extension = cleanFilename.substring(cleanFilename.lastIndexOf(".")).toLowerCase();
 
         return switch (extension) {
             case ".html", ".htm" -> "text/html";
@@ -142,14 +161,20 @@ public class MinioService implements IStorageService {
             case ".css"         -> "text/css";
             case ".json"        -> "application/json";
             case ".data"        -> "application/octet-stream";
-
-            case ".br"          -> "application/x-brotli";
-            case ".gz"          -> "application/gzip";     
             default             -> "application/octet-stream";
         };
     }
 
+    public String getContentEncoding(String filename) {
+        if (filename != null) {
+            if (filename.endsWith(".br")) return "br";
+            if (filename.endsWith(".gz")) return "gzip";
+        }
+        return null;
+    }
+
     public String getFullUrl(String objectName) {
-        return storageUrl + "/" + bucket + "/" + objectName;
+        String domain = storageUrl + "/" + bucket;
+        return objectName.startsWith("/") ? domain + objectName : domain + "/" + objectName;
     }
 }
