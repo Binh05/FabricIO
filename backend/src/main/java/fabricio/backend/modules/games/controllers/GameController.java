@@ -36,8 +36,9 @@ public class GameController {
     @GetMapping
     public ApiResponse<PageResponse<GameResponse>> getAllGames(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return ApiResponse.success(gameService.getAllGames(page, size));
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") String keyword) {
+        return ApiResponse.success(gameService.getAllGames(page, size, keyword));
     }
 
     @GetMapping("/{id}")
