@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useApp } from "../context/AppContext";
 import { Stars } from "../components/games/Stars";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,6 @@ const tabRow = ["description", "ratings"];
 
 export const GameDetail = () => {
   const { id } = useParams();
-  const { rateGame } = useApp();
   const { games, loading, fetchGameById } = useGame();
 
   const [activeTab, setActiveTab] = useState("description");
@@ -93,7 +91,7 @@ export const GameDetail = () => {
                   <Stars
                     rating={game.ratingAvg || 0.0}
                     interactive={true}
-                    onRate={rateGame}
+                    onRate={() => {}}
                     gameId={game.id}
                   />
                 </div>

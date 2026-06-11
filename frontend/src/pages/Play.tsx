@@ -1,4 +1,4 @@
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useGame } from "@/hooks/useGame";
@@ -8,21 +8,20 @@ import { useAuth } from "@/hooks/useAuth";
 export const Play = () => {
   const { id } = useParams();
   const { games, fetchGamePlayUrl, fetchGameById } = useGame();
-  const { token, loading } = useAuth();
+  const { loading } = useAuth();
   const [gamePlayUrl, setGamePlayUrl] = useState<string>("");
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isFetching, setIsFetching] = useState<boolean>(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const init = async () => {
-      if (!token) navigate("/signin");
       try {
         if (!games.some((game) => game.id === id)) {
+          setIsFetching(true);
           await fetchGameById(id);
         }
-        const url = await fetchGamePlayUrl(id);
 
+        const url = await fetchGamePlayUrl(id);
         setGamePlayUrl(url);
       } finally {
         setIsFetching(false);

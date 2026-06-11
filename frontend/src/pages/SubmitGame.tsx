@@ -1,25 +1,20 @@
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import SubmitGameForm from "@/components/games/SubmitGameForm";
 import { useGame } from "@/hooks/useGame";
 import { useEffect } from "react";
+import SubmitGamePageSkeleton from "@/components/skeletons/SubmitGamePageSkeleton";
 
 export const SubmitGame = () => {
   const { user } = useAuth();
   const { tags, fetchGameTags } = useGame();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
-      navigate("/signin");
-    }
-
     if (tags.length < 1) {
       fetchGameTags();
     }
   }, []);
 
-  if (!user) return null;
+  if (!user) return <SubmitGamePageSkeleton />;
 
   return (
     <section className="mb-16">

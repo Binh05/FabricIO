@@ -4,19 +4,24 @@ import { useAuth } from "@/hooks/useAuth";
 import { useGame } from "@/hooks/useGame";
 import type { GameTag } from "@/types/Game";
 import GameTagSkeleton from "../games/GameTagSkeleton";
+import { useEffect } from "react";
 
 export const MainLayout = ({ children }) => {
-  const { games, loading: gameLoading } = useGame();
+  const { tagLoading, fetchGameTags, tags } = useGame();
   const { user, loading } = useAuth();
-
-  if (loading) return null;
 
   const sidebarLinks = [
     { href: "/profile", label: "Profile" },
     { href: "/submit-game", label: "Upload Game" },
   ];
 
-  const ALL_TAGS = [...new Set(games.flatMap((game) => game.tags))];
+  useEffect(() => {
+    if (!tags.length) {
+      fetchGameTags();
+    }
+  }, []);
+
+  if (loading) return null;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -44,11 +49,11 @@ export const MainLayout = ({ children }) => {
               Popular Tags
             </h3>
             <div className="flex flex-wrap gap-2">
-              {gameLoading
+              {tagLoading
                 ? Array.from({ length: 8 }).map((_, index) => (
                     <GameTagSkeleton key={index} />
                   ))
-                : ALL_TAGS.slice(0, 8).map((tag: GameTag) => (
+                : tags.slice(0, 8).map((tag: GameTag) => (
                     <span
                       key={tag.id}
                       className="text-muted border-border rounded-full border bg-white/5 px-3 py-1 text-[13px]"

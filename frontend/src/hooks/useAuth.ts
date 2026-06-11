@@ -14,6 +14,8 @@ export const useAuth = () => {
     throw new Error("useAuth phải được sử dụng bên trong AuthProvider");
   }
 
+  const { setLoading } = context;
+
   const signUp = useCallback(
     async (formData: RegisterForm) => {
       try {
@@ -34,6 +36,7 @@ export const useAuth = () => {
   const login = useCallback(
     async (username: string, password: string) => {
       try {
+        setLoading(true);
         sessionStorage.clear();
         context.clearAuthState();
 
@@ -52,6 +55,8 @@ export const useAuth = () => {
         toast.error(
           error?.response?.data?.message ?? "Đã xảy ra lỗi. Hãy thử lại!",
         );
+      } finally {
+        setLoading(false);
       }
     },
     [navigate],
@@ -74,12 +79,30 @@ export const useAuth = () => {
     }
   }, [navigate]);
 
+  const refreshToken = useCallback(async () => {
+    try {
+      setLoading(true);
+      const { data } = await authService.refreshToken();
+
+      context.setToken(data.accessToken);
+    } catch (error) {
+      console.error("Lỗi khi refresh token", error);
+      toast.error(
+        error?.response?.data?.message ?? "Đã xảy ra lỗi. Hãy thử lại!",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     user: context.user,
     token: context.token,
     loading: context.loading,
+    setLoading,
     login,
     signOut,
     signUp,
+    refreshToken,
   };
 };
