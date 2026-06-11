@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useGame } from "@/hooks/useGame";
 import { Skeleton } from "../ui/skeleton";
+import Logo from "./Logo";
 
 const nav = [
   { href: "/", label: "Home", key: "/" },
@@ -38,15 +39,7 @@ export default function Header({ user }: { user: User }) {
 
   return (
     <header className="border-border sticky top-0 z-100 flex h-20 items-center justify-between gap-6 border-b bg-[#0f0f0f]/85 px-10 backdrop-blur-lg">
-      <Link
-        className="flex items-center gap-3 text-[22px] font-extrabold tracking-[-0.5px]"
-        to="/"
-      >
-        <span className="from-primary to-primary-glow flex h-9 w-9 items-center justify-center rounded-[10px] bg-linear-to-br text-white">
-          G
-        </span>
-        <span>GameStore</span>
-      </Link>
+      <Logo />
       <form
         onSubmit={onSearch}
         className="border-border text-muted flex h-12 max-w-125 flex-1 items-center gap-3 rounded-full border bg-white/5 px-4"
