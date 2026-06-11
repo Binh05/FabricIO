@@ -10,6 +10,6 @@ import fabricio.backend.modules.games.entities.Game;
 
 @Repository
 public interface GameRepository extends JpaRepository<Game, UUID> {
-    Page<Game> findAllByIsDeletedFalse(Pageable pageable);
+    Page<Game> findByIsDeletedFalseAndTitleContainingIgnoreCase(String keyword, Pageable pageable);
     Optional<Game> findByIdAndIsDeletedFalse(UUID id);
 }

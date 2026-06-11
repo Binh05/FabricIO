@@ -67,9 +67,9 @@ public class GameService implements IGameService {
 
     @Override
     @Transactional(readOnly = true)
-    public PageResponse<GameResponse> getAllGames(int page, int size) {
+    public PageResponse<GameResponse> getAllGames(int page, int size, String keyword) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<Game> gamePage = gameRepository.findAllByIsDeletedFalse(pageable);
+        Page<Game> gamePage = gameRepository.findByIsDeletedFalseAndTitleContainingIgnoreCase(keyword, pageable);
         
         List<GameResponse> gameResponses = gamePage.getContent().stream()
             .map(this::mapToGameResponse)
