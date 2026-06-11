@@ -53,7 +53,28 @@ src/main/java/fabricio/backend/
 ```
 
 ### Quy tắc quan trọng:
+
 1. **Module hóa:** Mỗi tính năng lớn (User, Auth, Purchase, Game) phải nằm trong module riêng.
 2. **Interface first:** Luôn định nghĩa `IService` trước khi triển khai `Service`.
 3. **DTO:** Tuyệt đối không trả về `Entity` trực tiếp qua API, luôn sử dụng `DTO` và `Mapper`.
 4. **Exception:** Sử dụng các Custom Exception trong `shared/exceptions` thay vì throw các lỗi chung chung.
+
+## Các test
+
+### Unit Test
+
+1. login success
+2. login wrong password
+3. refresh success
+4. refresh invalid token
+5. register success
+6. register duplicate email
+7. create game success
+8. search game with keyword
+9. search game pagination
+10. get game by id
+11. get game not found
+
+### Integration Test
+
+1. GET /games
