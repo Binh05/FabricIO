@@ -1,12 +1,12 @@
 import { api } from "@/lib/api";
-import type { Login, LoginForm, RegisterForm } from "@/types/Auth";
+import type { JwtResponse, LoginForm, RegisterForm } from "@/types/Auth";
 import type { ApiResponse } from "@/types/BaseResponse";
 
 export class authService {
   static async login({
     username,
     password,
-  }: LoginForm): Promise<ApiResponse<Login>> {
+  }: LoginForm): Promise<ApiResponse<JwtResponse>> {
     const res = await api.post("/auth/login", {
       username,
       password,
@@ -33,6 +33,12 @@ export class authService {
       fullName,
       password,
     });
+
+    return res.data;
+  }
+
+  static async refreshToken(): Promise<ApiResponse<JwtResponse>> {
+    const res = await api.post("/auth/refresh");
 
     return res.data;
   }

@@ -11,6 +11,7 @@ import {
   type PostGameFormValues,
 } from "@/lib/schemas/gameSchema";
 import type { PostGameRequest } from "@/types/Game";
+import { cn } from "@/lib/utils";
 
 /* ────────────────────────────────────────────────────────── */
 /*  Sub-components                                            */
@@ -66,6 +67,12 @@ const FileDropZone = ({
 /* ────────────────────────────────────────────────────────── */
 /*  Main Form                                                 */
 /* ────────────────────────────────────────────────────────── */
+
+const inputClass =
+  "w-full rounded-lg border border-border bg-input px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors outline-none focus:border-primary focus:ring-4 focus:ring-primary/20";
+
+const textareaClass =
+  "min-h-32 w-full resize-none rounded-lg border border-border bg-input px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors outline-none focus:border-primary focus:ring-4 focus:ring-primary/20";
 
 const SubmitGameForm = () => {
   const { tags, uploadGame } = useGame();
@@ -131,60 +138,68 @@ const SubmitGameForm = () => {
 
   return (
     <div className="flex flex-1 flex-col gap-10 lg:flex-row">
-      {/* ── Form ── */}
+      {/* FORM */}
       <form
-        className="bg-card border-border flex-1 rounded-xl border p-6 md:p-8"
+        className="glass-strong flex-1 rounded-xl p-6 md:p-8"
         onSubmit={handleSubmit(onSubmit)}
         noValidate
       >
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {/* Title */}
           <div className="flex flex-col gap-1.5">
-            <label className="block text-sm font-semibold">
-              Tên game <span className="text-red-400">*</span>
+            <label className="text-sm font-semibold">
+              Tên game <span className="text-primary">*</span>
             </label>
+
             <input
-              className={`border-border focus:border-primary w-full rounded-xl border bg-black/20 px-4 py-3 text-white transition-colors outline-none ${
-                errors.title ? "border-red-500/60" : ""
-              }`}
+              className={cn(inputClass, errors.title && "border-destructive")}
               placeholder="Super Platformer 3000"
               {...register("title")}
             />
+
             <FieldError message={errors.title?.message} />
           </div>
 
           {/* Price */}
           <div className="flex flex-col gap-1.5">
-            <label className="block text-sm font-semibold">
-              Giá (USD) <span className="text-red-400">*</span>
+            <label className="text-sm font-semibold">
+              Giá (USD) <span className="text-primary">*</span>
             </label>
+
             <input
-              className={`border-border focus:border-primary w-full rounded-xl border bg-black/20 px-4 py-3 text-white transition-colors outline-none ${
-                errors.price ? "border-red-500/60" : ""
-              }`}
+              className={cn(
+                inputClass,
+                "read-only:bg-muted/20 read-only:text-muted-foreground cursor-default opacity-80",
+                errors.price && "border-destructive",
+              )}
               type="number"
               min={0}
               step={0.01}
               placeholder="0"
+              readOnly
               {...register("price")}
             />
+
             <FieldError message={errors.price?.message} />
           </div>
 
           {/* Description */}
           <div className="flex flex-col gap-1.5 md:col-span-2">
-            <label className="block text-sm font-semibold">Mô tả game</label>
+            <label className="text-sm font-semibold">Mô tả game</label>
+
             <textarea
-              className={`border-border focus:border-primary min-h-32 w-full resize-none rounded-xl border bg-black/20 px-4 py-3 text-white transition-colors outline-none ${
-                errors.description ? "border-red-500/60" : ""
-              }`}
+              className={cn(
+                textareaClass,
+                errors.description && "border-destructive",
+              )}
               placeholder="Mô tả ngắn về game của bạn..."
               {...register("description")}
             />
+
             <FieldError message={errors.description?.message} />
           </div>
 
-          {/* Source Game File */}
+          {/* Source Game */}
           <div className="md:col-span-2">
             <FileDropZone
               label="File game (.zip / .apk) *"
@@ -200,7 +215,7 @@ const SubmitGameForm = () => {
           {/* Thumbnail */}
           <FileDropZone
             label="Ảnh đại diện *"
-            hint="JPG / PNG / WEBP — tối đa 10 MB"
+            hint="JPG / PNG — tối đa 10 MB"
             icon={<ImagePlus size={28} />}
             accept="image/jpeg,image/png,image/webp"
             fileName={watchedThumbnail?.[0]?.name}
@@ -208,7 +223,7 @@ const SubmitGameForm = () => {
             inputProps={register("thumbnail")}
           />
 
-          {/* Media Gallery */}
+          {/* Gallery */}
           <FileDropZone
             label="Ảnh gallery (tuỳ chọn)"
             hint="Nhiều ảnh — JPG / PNG / WEBP, mỗi ảnh tối đa 10 MB"
@@ -228,21 +243,25 @@ const SubmitGameForm = () => {
           {tags.length > 0 && (
             <div className="flex flex-col gap-2 md:col-span-2">
               <label className="flex items-center gap-2 text-sm font-semibold">
-                <Tag size={14} /> Tags
+                <Tag size={14} />
+                Tags
               </label>
+
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag) => {
                   const active = watchedTagIds.includes(tag.id);
+
                   return (
                     <button
                       key={tag.id}
                       type="button"
                       onClick={() => toggleTag(tag.id)}
-                      className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${
+                      className={cn(
+                        "rounded-full border px-3 py-1 text-xs font-medium transition-all",
                         active
-                          ? "border-primary bg-primary/20 text-white"
-                          : "border-border text-muted hover:border-white/40 hover:text-white"
-                      }`}
+                          ? "border-primary bg-primary/15 text-primary"
+                          : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground",
+                      )}
                     >
                       {tag.name}
                     </button>
@@ -265,17 +284,17 @@ const SubmitGameForm = () => {
               "Đăng game lên cửa hàng"
             )}
           </Button>
+
           <Button variant="outline" asChild>
             <Link to="/games">Quay lại thư viện</Link>
           </Button>
         </div>
       </form>
 
-      {/* ── Preview Sidebar ── */}
-      <aside className="bg-card border-border sticky top-30 h-fit w-full rounded-xl border p-6 lg:w-75">
+      {/* PREVIEW */}
+      <aside className="glass-strong sticky top-24 h-fit w-full rounded-xl p-6 lg:w-80">
         <h2 className="mb-4 text-lg font-bold">Preview</h2>
 
-        {/* Thumbnail preview */}
         {watchedThumbnail?.[0] ? (
           <img
             src={URL.createObjectURL(watchedThumbnail[0])}
@@ -283,44 +302,49 @@ const SubmitGameForm = () => {
             className="mb-4 aspect-video w-full rounded-lg object-cover"
           />
         ) : (
-          <div className="border-border mb-4 flex aspect-video w-full items-center justify-center rounded-lg border bg-white/5">
-            <ImagePlus size={32} className="text-muted" />
+          <div className="border-border bg-muted/10 mb-4 flex aspect-video w-full items-center justify-center rounded-lg border">
+            <ImagePlus size={32} className="text-muted-foreground" />
           </div>
         )}
 
-        <ul className="text-muted flex flex-col gap-2 text-sm">
+        <ul className="text-muted-foreground flex flex-col gap-2 text-sm">
           <li className="flex justify-between">
             <span>Giá</span>
-            <span className="font-semibold text-white">
+            <span className="text-foreground font-semibold">
               {!watchedPrice || watchedPrice === 0
                 ? "Miễn phí"
                 : `$${Number(watchedPrice).toFixed(2)}`}
             </span>
           </li>
+
           <li className="flex justify-between">
             <span>File game</span>
-            <span className="max-w-35 truncate text-right font-semibold text-white">
+            <span className="text-foreground max-w-35 truncate text-right font-semibold">
               {watchedSourceGame?.[0]?.name ?? "—"}
             </span>
           </li>
+
           <li className="flex justify-between">
             <span>Ảnh gallery</span>
-            <span className="font-semibold text-white">
+            <span className="text-foreground font-semibold">
               {watchedMedia && watchedMedia.length > 0
                 ? `${watchedMedia.length} ảnh`
                 : "—"}
             </span>
           </li>
+
           <li className="flex flex-col gap-1 pt-1">
             <span>Tags</span>
+
             <div className="flex flex-wrap gap-1 pt-1">
               {watchedTagIds.length > 0 ? (
                 watchedTagIds.map((id) => {
                   const tag = tags.find((t) => t.id === id);
+
                   return tag ? (
                     <span
                       key={id}
-                      className="bg-primary/20 text-primary rounded-full px-2 py-0.5 text-xs"
+                      className="bg-primary/15 text-primary rounded-full px-2 py-0.5 text-xs"
                     >
                       {tag.name}
                     </span>

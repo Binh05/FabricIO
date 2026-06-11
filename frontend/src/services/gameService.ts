@@ -43,10 +43,13 @@ export class gameService {
   }
 
   static async fetchGames(
+    keyword: string = "",
     page: number = 0,
     size: number = 10,
   ): Promise<ApiResponse<PageResponse<Game>>> {
-    const res = await api.get(`/games?page=${page}&size=${size}`);
+    const res = await api.get(
+      `/games?page=${page}&size=${size}&keyword=${keyword}`,
+    );
 
     return res.data;
   }

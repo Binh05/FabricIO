@@ -11,7 +11,8 @@ export const useGame = () => {
     throw new Error("useGame phải được sử dụng bên trong GameProvider");
   }
 
-  const { games, setGames, loading, setLoading, tags, setTags } = context;
+  const { games, setGames, loading, setLoading, tags, setTags, tagLoading } =
+    context;
 
   const uploadGame = async (formData: PostGameRequest) => {
     try {
@@ -26,10 +27,14 @@ export const useGame = () => {
     }
   };
 
-  const fetchGames = async () => {
+  const fetchGames = async (
+    keyword: string = "",
+    page: number = 0,
+    size: number = 10,
+  ) => {
     try {
       setLoading(true);
-      const { data } = await gameService.fetchGames();
+      const { data } = await gameService.fetchGames(keyword, page, size);
 
       setGames(data.content);
     } catch (error) {
@@ -95,5 +100,6 @@ export const useGame = () => {
     loading,
     setLoading,
     tags,
+    tagLoading,
   };
 };

@@ -1,3 +1,4 @@
+import { authService } from "@/services/authService";
 import { userService } from "@/services/userService";
 import type { User } from "@/types/User";
 import { createContext, useEffect, useState } from "react";
@@ -8,33 +9,47 @@ interface AuthContext {
   token: string | null;
   setToken: React.Dispatch<React.SetStateAction<string>>;
   loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   clearAuthState: () => void;
 }
 
 export const AuthContext = createContext<AuthContext | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const initData = async () => {
-      setLoading(true);
-      const accToken = sessionStorage.getItem("access_token");
-      if (accToken) {
-        setToken(accToken);
+    const init = async () => {
+      try {
+        setLoading(true);
+        let accessToken = "";
+        accessToken = sessionStorage.getItem("access_token");
 
-        if (!user) {
-          const { data: user } = await userService.fetchMe();
-          setUser(user);
+        if (!accessToken) {
+          const res = await authService.refreshToken();
+
+          accessToken = res.data.accessToken;
         }
+
+        if (accessToken) {
+          setToken(accessToken);
+          sessionStorage.setItem("access_token", accessToken);
+        }
+
+        if (accessToken && !user) {
+          const res = await userService.fetchMe();
+
+          setUser(res.data);
+        }
+      } catch (error) {
+        sessionStorage.clear();
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
-
-    initData();
+    init();
   }, []);
 
   const clearAuthState = () => {
@@ -43,9 +58,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(null);
   };
 
+  if (loading) return <p>loading...</p>;
+
   return (
     <AuthContext.Provider
-      value={{ token, setToken, user, setUser, loading, clearAuthState }}
+      value={{
+        token,
+        setToken,
+        user,
+        setUser,
+        loading,
+        setLoading,
+        clearAuthState,
+      }}
     >
       {children}
     </AuthContext.Provider>

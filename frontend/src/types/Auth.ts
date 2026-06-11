@@ -1,15 +1,15 @@
-export interface Login {
-    accessToken: string
+export interface JwtResponse {
+  accessToken: string;
 }
 
 export interface RegisterForm {
-    email: string,
-    username: string,
-    fullName: string,
-    password: string
+  email: string;
+  username: string;
+  fullName: string;
+  password: string;
 }
 
 export interface LoginForm {
-    username: string,
-    password: string
+  username: string;
+  password: string;
 }
