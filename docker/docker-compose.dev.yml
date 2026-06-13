@@ -1,10 +1,10 @@
 services:
-  minio:
+  storage:
     image: minio/minio:latest
-    container_name: minio-fabjava
+    container_name: storage-fabjava
     ports:
-      - 9000:9000
-      - 9001:9001
+      - "9000:9000"
+      - "9001:9001"
     environment:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=12345678
