@@ -174,7 +174,6 @@ public class MinioService implements IStorageService {
     }
 
     public String getFullUrl(String objectName) {
-        String domain = storageUrl + "/" + bucket;
-        return objectName.startsWith("/") ? domain + objectName : domain + "/" + objectName;
+        return objectName.startsWith("/") ? storageUrl + objectName : storageUrl + "/" + objectName;
     }
 }
