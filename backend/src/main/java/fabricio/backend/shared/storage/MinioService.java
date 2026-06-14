@@ -22,10 +22,10 @@ import io.minio.RemoveObjectArgs;
 public class MinioService implements IStorageService {
     private final MinioClient minioClient;
 
-    @Value("${minio.bucket}")
+    @Value("${storage.bucket}")
     private String bucket;
 
-    @Value("${minio.url}")
+    @Value("${storage.url}")
     private String storageUrl;
 
     public MinioService(MinioClient minioClient) {
