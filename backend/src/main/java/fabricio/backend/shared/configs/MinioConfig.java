@@ -9,13 +9,13 @@ import io.minio.MinioClient;
 @Configuration
 public class MinioConfig {
 
-    @Value("${minio.url}")
+    @Value("${storage.url}")
     private String minioUrl;
 
-    @Value("${minio.access-key}")
+    @Value("${storage.access-key}")
     private String accessKey;
 
-    @Value("${minio.secret-key}")
+    @Value("${storage.secret-key}")
     private String secretKey;
 
     @Bean
