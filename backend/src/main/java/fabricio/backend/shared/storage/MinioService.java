@@ -174,6 +174,7 @@ public class MinioService implements IStorageService {
     }
 
     public String getFullUrl(String objectName) {
+        if (objectName == null || objectName.isEmpty()) return "";
         return objectName.startsWith("/") ? storageUrl + objectName : storageUrl + "/" + objectName;
     }
 }
