@@ -8,7 +8,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,14 +19,13 @@ import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
 
 @Service
-@Primary
 public class MinioService implements IStorageService {
     private final MinioClient minioClient;
 
     @Value("${storage.bucket}")
     private String bucket;
 
-    @Value("${storage.domain}")
+    @Value("${storage.url}")
     private String storageUrl;
 
     public MinioService(MinioClient minioClient) {
@@ -176,7 +174,6 @@ public class MinioService implements IStorageService {
     }
 
     public String getFullUrl(String objectName) {
-        if (objectName == null || objectName.isEmpty()) return "";
         return objectName.startsWith("/") ? storageUrl + objectName : storageUrl + "/" + objectName;
     }
 }
