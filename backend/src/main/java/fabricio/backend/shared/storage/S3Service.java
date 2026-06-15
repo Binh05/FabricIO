@@ -1,28 +1,26 @@
 package fabricio.backend.shared.storage;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import fabricio.backend.shared.enums.ErrorCode;
 import fabricio.backend.shared.exceptions.AppException;
-import io.minio.GetObjectArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
-import io.minio.RemoveObjectArgs;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Service
-@Primary
-public class MinioService implements IStorageService {
-    private final MinioClient minioClient;
+public class S3Service implements IStorageService {
+
+    private final S3Client s3Client;
 
     @Value("${storage.bucket}")
     private String bucket;
@@ -30,24 +28,22 @@ public class MinioService implements IStorageService {
     @Value("${storage.domain}")
     private String storageUrl;
 
-    public MinioService(MinioClient minioClient) {
-        this.minioClient = minioClient;
+    public S3Service(S3Client s3Client) {
+        this.s3Client = s3Client;
     }
 
     @Override
     public String uploadFile(String objectName, MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
-            minioClient.putObject(
-                PutObjectArgs.builder()
-                        .bucket(bucket)
-                        .object(objectName)
-                        .stream(inputStream, file.getSize(), -1)
-                        .contentType(file.getContentType())
-                        .build()
-            );
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(objectName)
+                    .contentType(file.getContentType())
+                    .build();
+
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, file.getSize()));
             return "/" + objectName;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new AppException(ErrorCode.FAILED_UPLOAD_FILE, e);
         }
     }
@@ -55,12 +51,12 @@ public class MinioService implements IStorageService {
     @Override
     public InputStream getFile(String objectName) {
         try {
-            return minioClient.getObject(
-                GetObjectArgs.builder()
+            GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                     .bucket(bucket)
-                    .object(objectName)
-                    .build()
-        );
+                    .key(objectName)
+                    .build();
+            
+            return s3Client.getObject(getObjectRequest);
         } catch (Exception e) {
             throw new AppException(ErrorCode.FAILED_GET_FILE, e);
         }
@@ -69,12 +65,12 @@ public class MinioService implements IStorageService {
     @Override
     public void deleteFile(String objectName) {
         try {
-            minioClient.removeObject(
-                RemoveObjectArgs.builder()
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                     .bucket(bucket)
-                    .object(objectName)
-                    .build()
-            );
+                    .key(objectName)
+                    .build();
+
+            s3Client.deleteObject(deleteObjectRequest);
         } catch (Exception e) {
             throw new AppException(ErrorCode.FAILED_DELETE_FILE, e);
         }
@@ -84,7 +80,7 @@ public class MinioService implements IStorageService {
     public String extractAndUploadFile(String objectName, MultipartFile zipFile) {
         try (ZipInputStream zipInputStream = new ZipInputStream(zipFile.getInputStream())) {
             ZipEntry entry;
-            while((entry = zipInputStream.getNextEntry()) != null) {
+            while ((entry = zipInputStream.getNextEntry()) != null) {
                 if (entry.isDirectory()) {
                     zipInputStream.closeEntry();
                     continue;
@@ -99,32 +95,28 @@ public class MinioService implements IStorageService {
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 byte[] buffer = new byte[1024];
                 int len;
-                while((len = zipInputStream.read(buffer)) > 0) {
+                while ((len = zipInputStream.read(buffer)) > 0) {
                     byteArrayOutputStream.write(buffer, 0, len);
                 }
                 byte[] fileBytes = byteArrayOutputStream.toByteArray();
 
                 String contentType = getContentType(fileName);
                 String contentEncoding = getContentEncoding(fileName);
-
                 String entryPath = objectName.endsWith("/") ? objectName + fileName : objectName + "/" + fileName;
 
-                try (InputStream entryInputStream = new ByteArrayInputStream(fileBytes)) {
-                    var builder = PutObjectArgs.builder()
+                try {
+                    PutObjectRequest.Builder builder = PutObjectRequest.builder()
                             .bucket(bucket)
-                            .object(entryPath)
-                            .stream(entryInputStream, fileBytes.length, -1)
+                            .key(entryPath)
                             .contentType(contentType);
 
-                    // Nếu là file nén (.br hoặc .gz), cấu hình Content-Encoding vào metadata
+                    // Cấu hình Content-Encoding (cho file .br hoặc .gz của DevTool Fabric)
                     if (contentEncoding != null) {
-                        builder.headers(Map.of("Content-Encoding", contentEncoding));
+                        builder.contentEncoding(contentEncoding);
                     }
 
-                    minioClient.putObject(builder.build());
-                }
-                catch (Exception e) 
-                {
+                    s3Client.putObject(builder.build(), RequestBody.fromBytes(fileBytes));
+                } catch (Exception e) {
                     throw new AppException(ErrorCode.FAILED_UPLOAD_FILE, e);
                 }
 
@@ -132,9 +124,7 @@ public class MinioService implements IStorageService {
             }
 
             return "/" + objectName;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new AppException(ErrorCode.FAILED_UPLOAD_FILE, e);
         }
     }
@@ -143,8 +133,7 @@ public class MinioService implements IStorageService {
         if (filename == null || !filename.contains(".")) {
             return "application/octet-stream";
         }
-        
-        // Loại bỏ đuôi nén .br hoặc .gz nếu có để lấy đuôi file gốc (e.g., .js.br -> .js)
+
         String cleanFilename = filename;
         if (filename.endsWith(".br") || filename.endsWith(".gz")) {
             cleanFilename = filename.substring(0, filename.lastIndexOf("."));
@@ -158,12 +147,11 @@ public class MinioService implements IStorageService {
 
         return switch (extension) {
             case ".html", ".htm" -> "text/html";
-            case ".js"          -> "application/javascript";
-            case ".wasm"        -> "application/wasm";
-            case ".css"         -> "text/css";
-            case ".json"        -> "application/json";
-            case ".data"        -> "application/octet-stream";
-            default             -> "application/octet-stream";
+            case ".js"           -> "application/javascript";
+            case ".wasm"         -> "application/wasm";
+            case ".css"          -> "text/css";
+            case ".json"         -> "application/json";
+            default              -> "application/octet-stream";
         };
     }
 
@@ -176,7 +164,6 @@ public class MinioService implements IStorageService {
     }
 
     public String getFullUrl(String objectName) {
-        if (objectName == null || objectName.isEmpty()) return "";
         return objectName.startsWith("/") ? storageUrl + objectName : storageUrl + "/" + objectName;
     }
 }
