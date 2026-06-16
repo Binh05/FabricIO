@@ -22,7 +22,7 @@ export const Home = () => {
 
   useEffect(() => {
     const init = async () => {
-      await Promise.all([fetchGames(), fetchGameTags()]);
+      await Promise.all([fetchGames("", 0, 10), fetchGameTags()]);
     };
 
     init();
@@ -51,7 +51,7 @@ export const Home = () => {
           }
         />
         <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2 xl:grid-cols-3">
-          {games.map((game) => (
+          {games.slice(0, 3).map((game) => (
             <GameCard key={game.id} game={game} />
           ))}
         </div>

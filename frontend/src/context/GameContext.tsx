@@ -10,12 +10,18 @@ interface GameContext {
   setTags: React.Dispatch<React.SetStateAction<GameTag[]>>;
   tagLoading: boolean;
   setTagLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  totalPages: number;
+  setTotalPages: React.Dispatch<React.SetStateAction<number>>;
+  totalElements: number;
+  setTotalElements: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const GameContext = createContext<GameContext | null>(null);
 
 export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [games, setGames] = useState<Game[]>([]);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [totalElements, setTotalElements] = useState<number>(0);
   const [tags, setTags] = useState<GameTag[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [tagLoading, setTagLoading] = useState<boolean>(false);
@@ -31,6 +37,10 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
         setTags,
         tagLoading,
         setTagLoading,
+        totalPages,
+        setTotalPages,
+        totalElements,
+        setTotalElements,
       }}
     >
       {children}

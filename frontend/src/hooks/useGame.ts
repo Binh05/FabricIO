@@ -1,18 +1,45 @@
 import { GameContext } from "@/context/GameContext";
 import { gameService } from "@/services/gameService";
-import type { PostGameRequest } from "@/types/Game";
+import type { Game, GameTag, PostGameRequest } from "@/types/Game";
 import { useContext } from "react";
 import { toast } from "sonner";
 
-export const useGame = () => {
+interface UseGame {
+  uploadGame: (formData: PostGameRequest) => Promise<void>;
+  fetchGames: (keyword?: string, page?: number, size?: number) => Promise<void>;
+  fetchGameById: (id: string) => Promise<void>;
+  fetchGamePlayUrl: (gameId: string) => Promise<string>;
+  fetchGameTags: () => Promise<void>;
+  games: Game[];
+  setGames: React.Dispatch<React.SetStateAction<Game[]>>;
+  loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  tags: GameTag[];
+  tagLoading: boolean;
+  totalPages: number;
+  totalElements: number;
+}
+
+export const useGame = (): UseGame => {
   const context = useContext(GameContext);
 
   if (!context) {
     throw new Error("useGame phải được sử dụng bên trong GameProvider");
   }
 
-  const { games, setGames, loading, setLoading, tags, setTags, tagLoading } =
-    context;
+  const {
+    games,
+    setGames,
+    loading,
+    setLoading,
+    tags,
+    setTags,
+    tagLoading,
+    totalPages,
+    setTotalPages,
+    totalElements,
+    setTotalElements,
+  } = context;
 
   const uploadGame = async (formData: PostGameRequest) => {
     try {
@@ -37,6 +64,8 @@ export const useGame = () => {
       const { data } = await gameService.fetchGames(keyword, page, size);
 
       setGames(data.content);
+      setTotalPages(data.totalPages);
+      setTotalElements(data.totalElements);
     } catch (error) {
       console.error("Lỗi khi fetch games", error);
       toast.error(
@@ -101,5 +130,7 @@ export const useGame = () => {
     setLoading,
     tags,
     tagLoading,
+    totalPages,
+    totalElements,
   };
 };
