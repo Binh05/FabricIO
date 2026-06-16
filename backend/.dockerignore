@@ -1,0 +1,41 @@
+# Gradle build output
+build/
+
+# Gradle cache
+.gradle/
+
+# IDE
+.idea/
+.vscode/
+
+# Git
+.git/
+.gitignore
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.*
+
+# Temporary files
+tmp/
+temp/
+
+# Java
+*.class
+
+# IntelliJ
+*.iml
+
+# VS Code
+.history/
+
+# Docker
+Dockerfile
+docker-compose.yml
