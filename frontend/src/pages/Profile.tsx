@@ -6,7 +6,7 @@ import UserAvatar from "@/components/layouts/UserAvatar";
 import AvatarUpload from "@/components/profile/AvatarUpload";
 import { useGame } from "@/hooks/useGame";
 import { Link, Navigate } from "react-router-dom";
-import { HomeSkeleton } from "@/components/games/HomeSkeleton";
+import { HomeSkeleton } from "@/components/skeletons/HomeSkeleton";
 
 export const Profile = () => {
   const { user, loading, signOut } = useAuth();

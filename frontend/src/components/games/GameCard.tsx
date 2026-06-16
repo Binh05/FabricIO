@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { Heart } from "lucide-react";
+// import { Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
+// import { Button } from "../ui/button";
 import type { Game } from "@/types/Game";
 
 interface GameCardProps {
@@ -10,7 +10,7 @@ interface GameCardProps {
 }
 
 export const GameCard = ({ game, className }: GameCardProps) => {
-  const isFavorite = false;
+  // const isFavorite = false;
 
   // const isMyGame = () => {
   //   const dev = String(game.ownerName || "")
@@ -40,7 +40,7 @@ export const GameCard = ({ game, className }: GameCardProps) => {
           alt={game.title}
         />
       </div>
-      <Button
+      {/* <Button
         className={cn(
           "border-border hover:bg-primary/10 hover:border-primary/30 hover:text-primary bg-muted/30 absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-200",
           isFavorite
@@ -50,7 +50,7 @@ export const GameCard = ({ game, className }: GameCardProps) => {
         onClick={() => {}}
       >
         <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
-      </Button>
+      </Button> */}
       <div className="flex flex-col gap-4 px-6 py-4">
         <div className="flex justify-between">
           <div>
