@@ -3,7 +3,7 @@ import Header from "@/components/layouts/Header";
 import { useAuth } from "@/hooks/useAuth";
 import { useGame } from "@/hooks/useGame";
 import type { GameTag } from "@/types/Game";
-import GameTagSkeleton from "../games/GameTagSkeleton";
+import GameTagSkeleton from "../skeletons/GameTagSkeleton";
 import { useEffect } from "react";
 
 export const MainLayout = ({ children }) => {

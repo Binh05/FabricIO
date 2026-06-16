@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { GameCard } from "@/components/games/GameCard";
-import { GamePageSkeleton } from "@/components/games/GamePageSkeleton";
+import { GamePageSkeleton } from "@/components/skeletons/GamePageSkeleton";
 import NotGame from "@/components/games/NotGame";
 import { useGame } from "@/hooks/useGame";
 import type { GameTag } from "@/types/Game";

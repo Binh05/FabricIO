@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { GameCardSkeleton } from "../games/GameCardSkeleton";
+import { GameCardSkeleton } from "../skeletons/GameCardSkeleton";
 
 export const ProfileSkeleton = () => {
   return (

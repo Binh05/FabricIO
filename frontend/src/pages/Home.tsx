@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useGame } from "@/hooks/useGame";
 import { useEffect } from "react";
 import GameFeaturedDrop from "@/components/games/GameFeaturedDrop";
-import { HomeSkeleton } from "@/components/games/HomeSkeleton";
+import { HomeSkeleton } from "@/components/skeletons/HomeSkeleton";
 import NotGame from "@/components/games/NotGame";
 
 const SectionHeading = ({ title, subtitle = "", action = null }) => (
