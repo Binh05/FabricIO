@@ -57,8 +57,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(false);
   };
 
-  if (loading) return <p>loading...</p>;
-
   return (
     <AuthContext.Provider
       value={{
