@@ -22,7 +22,7 @@ export const postGameSchema = z.object({
     .optional(),
 
   price: z.coerce
-    .number({ invalid_type_error: "Giá phải là số" })
+    .number()
     .min(0, "Giá không được âm")
     .max(999, "Giá tối đa $999"),
 
@@ -75,4 +75,6 @@ export const postGameSchema = z.object({
   tagIds: z.array(z.string()).nullable().optional(),
 });
 
-export type PostGameFormValues = z.infer<typeof postGameSchema>;
+export type PostGameFormInput = z.input<typeof postGameSchema>;
+
+export type PostGameFormOutput = z.output<typeof postGameSchema>;

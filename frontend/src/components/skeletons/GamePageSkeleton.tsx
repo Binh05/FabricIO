@@ -13,8 +13,8 @@ export const GamePageSkeleton = () => {
 
       <div className="flex flex-col gap-10 lg:flex-row">
         {/* Sidebar */}
-        <aside className="bg-card border-border h-fit w-full rounded-lg border p-6 lg:w-70">
-          {/* Price */}
+        {/* <aside className="bg-card border-border h-fit w-full rounded-lg border p-6 lg:w-70">
+          // Price
           <div className="mb-6">
             <Skeleton className="mb-4 h-4 w-16" />
 
@@ -28,7 +28,7 @@ export const GamePageSkeleton = () => {
             </div>
           </div>
 
-          {/* Tags */}
+          // Tags
           <div className="mb-6">
             <Skeleton className="mb-4 h-4 w-12" />
 
@@ -42,18 +42,18 @@ export const GamePageSkeleton = () => {
             </div>
           </div>
 
-          {/* Rating */}
+          // Rating
           <div className="mb-6">
             <Skeleton className="mb-4 h-4 w-28" />
             <Skeleton className="h-10 w-full rounded-lg" />
           </div>
 
-          {/* Sort */}
+          //  Sort
           <div>
             <Skeleton className="mb-4 h-4 w-12" />
             <Skeleton className="h-10 w-full rounded-lg" />
           </div>
-        </aside>
+        </aside> */}
 
         {/* Content */}
         <div className="flex-1">

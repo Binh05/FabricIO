@@ -1,11 +1,18 @@
 import { Star } from "lucide-react";
 
+interface StarsProps {
+  rating?: number;
+  interactive?: boolean;
+  onRate?: (gameId: string, value: number) => void;
+  gameId?: string;
+}
+
 export const Stars = ({
   rating = 0,
   interactive = false,
-  onRate = null,
-  gameId = null,
-}) => {
+  onRate,
+  gameId,
+}: StarsProps) => {
   const rounded = Math.round(rating);
 
   return (
@@ -19,7 +26,9 @@ export const Stars = ({
               key={index}
               className={`${filled ? "text-yellow-400" : "text-white/10"} transition-colors duration-200`}
               style={interactive ? { cursor: "pointer" } : {}}
-              onClick={() => interactive && onRate && onRate(gameId, value)}
+              onClick={() =>
+                interactive && onRate && gameId && onRate(gameId, value)
+              }
             >
               <Star size={18} fill={filled ? "currentColor" : "none"} />
             </span>

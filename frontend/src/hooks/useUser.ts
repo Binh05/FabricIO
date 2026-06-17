@@ -1,29 +1,36 @@
-import { AuthContext } from "@/context/AuthContext";
+import { AuthContext, type AuthContextType } from "@/context/AuthContext";
 import { userService } from "@/services/userService";
+import type { User } from "@/types/User";
+import axios from "axios";
 import { useCallback, useContext } from "react";
 import { toast } from "sonner";
 
 export const useUser = () => {
-  const context = useContext(AuthContext);
-  const { setUser } = context;
+  const context = useContext<AuthContextType | null>(AuthContext);
 
   if (!context) {
     throw new Error("useUser phải được sử dụng bên trong AuthProvider");
   }
 
+  const { setUser } = context;
+
   const uploadAvatar = useCallback(
     async (formData: FormData) => {
       try {
         const { data } = await userService.uploadAvatar(formData);
-        setUser((prev) => ({
-          ...prev,
-          avatarUrl: data.avatarUrl,
-        }));
+        setUser((prev: User | null) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            avatarUrl: data.avatarUrl,
+          };
+        });
       } catch (error) {
         console.error("Lỗi khi upload avatar", error);
-        toast.error(
-          error?.response?.data?.message ?? "Đã xảy ra lỗi. Hãy thử lại!",
-        );
+        const message = axios.isAxiosError(error)
+          ? error.response?.data?.message
+          : undefined;
+        toast.error(message ?? "Đã xảy ra lỗi. Hãy thử lại!");
       }
     },
     [setUser],
@@ -36,9 +43,10 @@ export const useUser = () => {
       if (user) setUser(user);
     } catch (error) {
       console.error("Lỗi khi refresh token", error);
-      toast.error(
-        error?.response?.data?.message ?? "Đã xảy ra lỗi. Hãy thử lại!",
-      );
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      toast.error(message ?? "Đã xảy ra lỗi. Hãy thử lại!");
     }
   };
 

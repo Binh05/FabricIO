@@ -3,17 +3,17 @@ import { userService } from "@/services/userService";
 import type { User } from "@/types/User";
 import { createContext, useEffect, useState } from "react";
 
-interface AuthContext {
+export interface AuthContextType {
   user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User>>;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
   token: string | null;
-  setToken: React.Dispatch<React.SetStateAction<string>>;
+  setToken: React.Dispatch<React.SetStateAction<string | null>>;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   clearAuthState: () => void;
 }
 
-export const AuthContext = createContext<AuthContext | null>(null);
+export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -24,8 +24,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const init = async () => {
       try {
         setLoading(true);
-        let accessToken = "";
-        accessToken = sessionStorage.getItem("access_token");
+        let accessToken: string | null = sessionStorage.getItem("access_token");
 
         if (!accessToken) {
           const res = await authService.refreshToken();
@@ -55,7 +54,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const clearAuthState = () => {
     setUser(null);
     setToken(null);
-    setLoading(null);
+    setLoading(false);
   };
 
   if (loading) return <p>loading...</p>;

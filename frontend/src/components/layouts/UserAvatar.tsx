@@ -25,8 +25,13 @@ function UserAvatar({
         type === "profile" && "size-24 text-4xl shadow-md",
       )}
     >
-      <AvatarImage src={avatarUrl} alt="avatar" className="rounded-full"/>
-      <AvatarFallback className={cn(`${bgColor} font-semibold text-white`, type === "profile" && "text-4xl")}>
+      <AvatarImage src={avatarUrl} alt="avatar" className="rounded-full" />
+      <AvatarFallback
+        className={cn(
+          `${bgColor} font-semibold text-white`,
+          type === "profile" && "text-4xl",
+        )}
+      >
         {name.charAt(0).toUpperCase()}
       </AvatarFallback>
     </Avatar>

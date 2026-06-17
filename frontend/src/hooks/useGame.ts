@@ -1,6 +1,7 @@
 import { GameContext } from "@/context/GameContext";
 import { gameService } from "@/services/gameService";
 import type { Game, GameTag, PostGameRequest } from "@/types/Game";
+import axios from "axios";
 import { useContext } from "react";
 import { toast } from "sonner";
 
@@ -48,9 +49,10 @@ export const useGame = (): UseGame => {
       setGames((prev) => [...prev, data]);
     } catch (error) {
       console.error("Lỗi khi upload games", error);
-      toast.error(
-        error?.response?.data?.message ?? "Đã xảy ra lỗi. Hãy thử lại!",
-      );
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      toast.error(message ?? "Đã xảy ra lỗi. Hãy thử lại!");
     }
   };
 
@@ -68,9 +70,10 @@ export const useGame = (): UseGame => {
       setTotalElements(data.totalElements);
     } catch (error) {
       console.error("Lỗi khi fetch games", error);
-      toast.error(
-        error?.response?.data?.message ?? "Đã xảy ra lỗi. Hãy thử lại!",
-      );
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      toast.error(message ?? "Đã xảy ra lỗi. Hãy thử lại!");
     } finally {
       setLoading(false);
     }
@@ -84,9 +87,10 @@ export const useGame = (): UseGame => {
       setGames((prev) => [...prev, data]);
     } catch (error) {
       console.error("Lỗi khi fetch game by id", error);
-      toast.error(
-        error?.response?.data?.message ?? "Đã xảy ra lỗi. Hãy thử lại!",
-      );
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      toast.error(message ?? "Đã xảy ra lỗi. Hãy thử lại!");
     } finally {
       setLoading(false);
     }
@@ -99,9 +103,11 @@ export const useGame = (): UseGame => {
       return data.gamePlayUrl;
     } catch (error) {
       console.error("Lỗi khi fetch game by id", error);
-      toast.error(
-        error?.response?.data?.message ?? "Đã xảy ra lỗi. Hãy thử lại!",
-      );
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      toast.error(message ?? "Đã xảy ra lỗi. Hãy thử lại!");
+      throw error;
     }
   };
 
@@ -112,9 +118,10 @@ export const useGame = (): UseGame => {
       setTags(data);
     } catch (error) {
       console.error("Lỗi khi fetch tags game", error);
-      toast.error(
-        error?.response?.data?.message ?? "Đã xảy ra lỗi. Hãy thử lại!",
-      );
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      toast.error(message ?? "Đã xảy ra lỗi. Hãy thử lại!");
     }
   };
 

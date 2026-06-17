@@ -2,6 +2,7 @@ import { AuthContext } from "@/context/AuthContext";
 import { authService } from "@/services/authService";
 import { userService } from "@/services/userService";
 import type { RegisterForm } from "@/types/Auth";
+import axios from "axios";
 import { useCallback, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -25,9 +26,10 @@ export const useAuth = () => {
         toast.success("Đăng ký thành công");
       } catch (error) {
         console.error("Lỗi khi signup", error);
-        toast.error(
-          error?.response?.data?.message ?? "Đã xảy ra lỗi. Hãy thử lại!",
-        );
+        const message = axios.isAxiosError(error)
+          ? error.response?.data?.message
+          : undefined;
+        toast.error(message ?? "Đã xảy ra lỗi. Hãy thử lại!");
       }
     },
     [navigate],
@@ -52,9 +54,10 @@ export const useAuth = () => {
         toast.success("Đăng nhập thành công");
       } catch (error) {
         console.error("Lỗi khi signin", error);
-        toast.error(
-          error?.response?.data?.message ?? "Đã xảy ra lỗi. Hãy thử lại!",
-        );
+        const message = axios.isAxiosError(error)
+          ? error.response?.data?.message
+          : undefined;
+        toast.error(message ?? "Đã xảy ra lỗi. Hãy thử lại!");
       } finally {
         setLoading(false);
       }
@@ -73,9 +76,10 @@ export const useAuth = () => {
       toast.success("Đã đăng xuất");
     } catch (error) {
       console.error("Lỗi khi sign out", error);
-      toast.error(
-        error?.response?.data?.message ?? "Đã xảy ra lỗi. Hãy thử lại!",
-      );
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      toast.error(message ?? "Đã xảy ra lỗi. Hãy thử lại!");
     }
   }, [navigate]);
 
@@ -87,9 +91,10 @@ export const useAuth = () => {
       context.setToken(data.accessToken);
     } catch (error) {
       console.error("Lỗi khi refresh token", error);
-      toast.error(
-        error?.response?.data?.message ?? "Đã xảy ra lỗi. Hãy thử lại!",
-      );
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      toast.error(message ?? "Đã xảy ra lỗi. Hãy thử lại!");
     } finally {
       setLoading(false);
     }

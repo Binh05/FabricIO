@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { useGame } from "@/hooks/useGame";
 import {
   postGameSchema,
-  type PostGameFormValues,
+  type PostGameFormInput,
+  type PostGameFormOutput,
 } from "@/lib/schemas/gameSchema";
 import type { PostGameRequest } from "@/types/Game";
 import { cn } from "@/lib/utils";
@@ -84,7 +85,7 @@ const SubmitGameForm = () => {
     watch,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<PostGameFormValues>({
+  } = useForm<PostGameFormInput, any, PostGameFormOutput>({
     resolver: zodResolver(postGameSchema),
     defaultValues: {
       title: "",
@@ -102,7 +103,7 @@ const SubmitGameForm = () => {
   const watchedMedia = watch("media") as FileList | undefined;
 
   /* ── Submit ── */
-  const onSubmit = async (values: PostGameFormValues) => {
+  const onSubmit = async (values: PostGameFormOutput) => {
     const sourceFiles = values.sourceGame as FileList;
     const thumbFiles = values.thumbnail as FileList;
     const mediaFiles = values.media as FileList | undefined | null;
