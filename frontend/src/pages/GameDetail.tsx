@@ -9,17 +9,20 @@ import GameDetailPanel from "@/components/games/GameDetailPanel";
 const tabRow = ["description", "ratings"];
 
 export const GameDetail = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const { games, loading, fetchGameById } = useGame();
 
   const [activeTab, setActiveTab] = useState("description");
   // const [carouselIndex, setCarouselIndex] = useState(0);
 
   useEffect(() => {
+    if (!id) return;
     if (!games.some((game) => game.id === id)) {
       fetchGameById(id);
     }
-  }, []);
+  }, [id]);
+
+  if (!id) return;
 
   const game = games.find((g) => g.id === id) || games[0];
 

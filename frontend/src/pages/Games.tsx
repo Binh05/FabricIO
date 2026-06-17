@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { GameCard } from "@/components/games/GameCard";
 import { GamePageSkeleton } from "@/components/skeletons/GamePageSkeleton";
 import NotGame from "@/components/games/NotGame";
@@ -34,32 +34,6 @@ export const Games = () => {
   if (loading) {
     return <GamePageSkeleton />;
   }
-
-  const filteredGames = useMemo(() => {
-    let result = [...games];
-
-    if (filters.price === "free")
-      result = result.filter((game) => game.price === 0);
-    if (filters.price === "paid")
-      result = result.filter((game) => game.price > 0);
-    if (filters.rating > 0)
-      result = result.filter((game) => game.ratingAvg >= filters.rating);
-    if (filters.tags.length) {
-      result = result.filter((game) =>
-        filters.tags.every((filterTag) =>
-          game.tags.some((gameTag) => gameTag.id === filterTag.id),
-        ),
-      );
-    }
-
-    const sorters = {
-      newest: (a, b) => b.id - a.id,
-      popular: (a, b) => (b.likes || 0) - (a.likes || 0),
-      price: (a, b) => a.price - b.price,
-    };
-
-    return result.sort(sorters[filters.sort]);
-  }, [games, filters]);
 
   const toggleTag = (tag: GameTag) => {
     setFilters((prev) => ({
@@ -123,10 +97,10 @@ export const Games = () => {
                 ))}
               </div>
             </div>
-            {filteredGames.length ? (
+            {games.length ? (
               <>
                 <div className="grid grid-cols-1 gap-7.5 md:grid-cols-3">
-                  {filteredGames.map((game) => (
+                  {games.map((game) => (
                     <GameCard key={game.id} game={game} />
                   ))}
                 </div>

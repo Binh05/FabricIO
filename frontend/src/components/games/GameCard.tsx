@@ -22,7 +22,7 @@ export const GameCard = ({ game, className }: GameCardProps) => {
   //   );
   // };
 
-  const formatPrice = (price) =>
+  const formatPrice = (price: number) =>
     price === 0 ? "Free" : `$${price.toFixed(2)}`;
 
   return (

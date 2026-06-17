@@ -6,7 +6,7 @@ import { Play as PlayGame } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 export const Play = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const { games, fetchGamePlayUrl, fetchGameById } = useGame();
   const { loading } = useAuth();
   const [gamePlayUrl, setGamePlayUrl] = useState<string>("");
@@ -16,6 +16,7 @@ export const Play = () => {
   useEffect(() => {
     const init = async () => {
       try {
+        if (!id) return;
         if (!games.some((game) => game.id === id)) {
           setIsFetching(true);
           await fetchGameById(id);
@@ -36,7 +37,7 @@ export const Play = () => {
 
   if (!game || loading) return;
 
-  const handleAction = (action) => {
+  const handleAction = (action: "reload" | "fullscreen") => {
     const frame = document.getElementById("webgl-iframe") as HTMLIFrameElement;
     if (!frame) return;
     if (action === "reload") {

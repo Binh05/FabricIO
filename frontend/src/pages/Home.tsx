@@ -2,12 +2,22 @@ import { Link } from "react-router-dom";
 import { GameCard } from "@/components/games/GameCard";
 import { Button } from "@/components/ui/button";
 import { useGame } from "@/hooks/useGame";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import GameFeaturedDrop from "@/components/games/GameFeaturedDrop";
 import { HomeSkeleton } from "@/components/skeletons/HomeSkeleton";
 import NotGame from "@/components/games/NotGame";
 
-const SectionHeading = ({ title, subtitle = "", action = null }) => (
+interface SectionHeadingProps {
+  title: string;
+  subtitle: string;
+  action: React.ReactElement | null;
+}
+
+const SectionHeading = ({
+  title,
+  subtitle = "",
+  action = null,
+}: SectionHeadingProps) => (
   <div className="mb-8 flex items-end justify-between">
     <div>
       <h2 className="text-[32px] font-extrabold tracking-[-1px]">{title}</h2>

@@ -25,7 +25,9 @@ export const Profile = () => {
   // const tabs = isSelf ? ["games", "favorites"] : ["games"];
   const tabs = ["games"];
 
-  const onSignOut = async (e) => {
+  const onSignOut = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
     e.preventDefault();
     await signOut();
   };
@@ -36,7 +38,7 @@ export const Profile = () => {
         <div className="relative">
           <UserAvatar
             name={user.username}
-            avatarUrl={user.avatarUrl}
+            avatarUrl={user?.avatarUrl ?? undefined}
             type="profile"
           />
           <AvatarUpload />

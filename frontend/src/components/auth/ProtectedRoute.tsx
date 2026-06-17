@@ -2,9 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigate, Outlet } from "react-router-dom";
 
 const ProtectedRoute = () => {
-  const { token, loading } = useAuth();
-
-  if (loading) return <p className="text-center">loading...</p>;
+  const { token } = useAuth();
 
   return token ? <Outlet /> : <Navigate to="/signin" replace />;
 };

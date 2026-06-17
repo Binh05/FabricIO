@@ -16,7 +16,7 @@ const nav = [
   { href: "/submit-game", label: "Submit Game", key: "/submit-game" },
 ];
 
-export default function Header({ user }: { user: User }) {
+export default function Header({ user }: { user: User | null }) {
   const { token } = useAuth();
   const { fetchGames, loading } = useGame();
   const location = useLocation();

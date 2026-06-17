@@ -6,7 +6,7 @@ import type { GameTag } from "@/types/Game";
 import GameTagSkeleton from "../skeletons/GameTagSkeleton";
 import { useEffect } from "react";
 
-export const MainLayout = ({ children }) => {
+export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { tagLoading, fetchGameTags, tags } = useGame();
   const { user, loading } = useAuth();
 
