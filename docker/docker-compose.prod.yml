@@ -1,25 +1,24 @@
-version: "3.8"
-
 services:
   frontend:
-    image: bin05/fab-fe:1.0.0
-    restart: always
+    image: bin05/fab-fe:1.0.1
+    restart: unless-stopped
     environment:
       - NODE_ENV=production
-    ports:
-      - "3000:80"
+    networks:
+      - fab-network
 
   backend:
     image: bin05/fab-be:1.0.0
-    restart: always
-    env_file:
+    restart: unless-stopped
+    environment:
       - .env
-    ports:
-      - "8000:8080"
+    networks:
+      - fab-network
 
   nginx:
     image: nginx:alpine
-    restart: always
+    container_name: nginx_proxy
+    restart: unless-stopped
     ports:
       - "80:80"
     volumes:
@@ -27,3 +26,9 @@ services:
     depends_on:
       - frontend
       - backend
+    networks:
+      - fab-network
+
+networks:
+  fab-network:
+    driver: bridge
