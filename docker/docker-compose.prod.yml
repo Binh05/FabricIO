@@ -1,14 +1,16 @@
 services:
   frontend:
-    image: bin05/fab-fe:1.0.1
+    image: bin05/fab-fe:${APP_VERSION:-latest}
     restart: unless-stopped
     environment:
       - NODE_ENV=production
+    volumes:
+      - ./nginx/default:/etc/nginx/conf.d/default.conf:ro
     networks:
       - fab-network
 
   backend:
-    image: bin05/fab-be:1.0.0
+    image: bin05/fab-be:${APP_VERSION:-latest}
     restart: unless-stopped
     environment:
       - .env
