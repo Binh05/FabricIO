@@ -20,6 +20,11 @@ export const GameDetail = () => {
     if (!games.some((game) => game.id === id)) {
       fetchGameById(id);
     }
+
+    window.scroll({
+      top: 0,
+      behavior: "smooth",
+    });
   }, [id]);
 
   if (!id) return;

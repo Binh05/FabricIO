@@ -40,7 +40,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/games", "/api/v1/games/{id}", "/api/v1/game-tags").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/games", "/api/v1/games/{id}", "/api/v1/game-tags", "api/v1/games/{gameId}/play").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
