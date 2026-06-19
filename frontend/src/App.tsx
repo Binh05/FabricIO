@@ -38,11 +38,11 @@ const AppRouter = () => {
           <Route index element={<Home />} />
           <Route path="/games" element={<Games />} />
           <Route path="/game-detail/:id" element={<GameDetail />} />
+          <Route path="/play/:id" element={<Play />} />
 
           <Route element={<ProtectedRoute />}>
             <Route path="/submit-game" element={<SubmitGame />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/play/:id" element={<Play />} />
           </Route>
         </Route>
       </Routes>

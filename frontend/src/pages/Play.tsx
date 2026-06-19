@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useGame } from "@/hooks/useGame";
 import { Play as PlayGame } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { PlayPageSkeleton } from "@/components/skeletons/PlayPageSkeleton";
 
 export const Play = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,12 +31,12 @@ export const Play = () => {
     };
 
     init();
-  }, [fetchGamePlayUrl]);
+  }, []);
 
-  if (isFetching) return;
+  if (isFetching) return <PlayPageSkeleton />;
   const game = games.find((game) => game.id === id);
 
-  if (!game || loading) return;
+  if (!game || loading) return <PlayPageSkeleton />;
 
   const handleAction = (action: "reload" | "fullscreen") => {
     const frame = document.getElementById("webgl-iframe") as HTMLIFrameElement;
@@ -90,7 +91,7 @@ export const Play = () => {
                   variant="ghost"
                   className="bg-muted/20 absolute top-6/12 left-6/12 z-50 size-20 -translate-6/12 rounded-full brightness-110"
                 >
-                  <PlayGame className="text-muted z-50 size-8 stroke-1" />
+                  <PlayGame className="text-muted size-8 stroke-1" />
                 </Button>
               )}
             </div>
