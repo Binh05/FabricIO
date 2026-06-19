@@ -137,6 +137,7 @@ jobs:
           echo "Deploying version: $FINAL_VERSION"
           sed -i '/^APP_VERSION=/d' .env
           echo "APP_VERSION=$FINAL_VERSION" >> .env
-          docker compose pull
+          docker pull bin05/fab-fe:$FINAL_VERSION
+          docker pull bin05/fab-be:$FINAL_VERSION
           docker compose down
           docker compose up -d
