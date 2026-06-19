@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const GameFeaturedDrop = ({ game }: { game: Game }) => {
   return (
-    <section className="from-primary/10 border-border mb-16 grid grid-cols-1 items-center gap-15 rounded-[40px] border bg-linear-to-br to-transparent p-10 md:p-15 xl:grid-cols-2">
+    <section className="from-primary/10 border-border mb-16 hidden grid-cols-1 items-center gap-15 rounded-[40px] border bg-linear-to-br to-transparent p-10 md:grid md:p-15 xl:grid-cols-2">
       <div className="hero-copy">
         <span className="text-primary mb-2 block text-[13px] font-bold tracking-[2px] uppercase">
           Featured Drop
@@ -16,7 +16,7 @@ const GameFeaturedDrop = ({ game }: { game: Game }) => {
           GameStore blends dense discovery with a modern interface designed for
           player interaction and creator storytelling.
         </p>
-        <div className="flex gap-4">
+        <div className="flex flex-col gap-4 md:flex-row">
           <Button variant="gradient" asChild className="p-6 text-xl">
             <Link to={`/game-detail/${game.id}`}>Play Now</Link>
           </Button>

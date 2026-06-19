@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { GameCard } from "@/components/games/GameCard";
 import { GamePageSkeleton } from "@/components/skeletons/GamePageSkeleton";
 import NotGame from "@/components/games/NotGame";
@@ -24,11 +24,19 @@ export const Games = () => {
     sort: "popular",
   });
   const [searchParams, setSearchParam] = useSearchParams();
+  const gameContainerRef = useRef<HTMLDivElement>(null);
 
   const currentPage = Number(searchParams.get("p")) || 1;
+  const keyword = searchParams.get("q") || "";
 
   useEffect(() => {
-    fetchGames("", currentPage - 1, 9);
+    if (!loading) fetchGames(keyword, currentPage - 1, 9);
+
+    if (!gameContainerRef?.current) return;
+    window.scroll({
+      top: gameContainerRef.current.offsetTop - 100,
+      behavior: "smooth",
+    });
   }, [currentPage]);
 
   if (loading) {
@@ -46,11 +54,6 @@ export const Games = () => {
 
   const handlePageChange = (page: number) => {
     setSearchParam({ p: page.toString() });
-
-    window.scroll({
-      top: 0,
-      behavior: "smooth",
-    });
   };
 
   return (
@@ -80,7 +83,7 @@ export const Games = () => {
         {games.length === 0 ? (
           <NotGame />
         ) : (
-          <div className="flex-1">
+          <div className="flex-1" ref={gameContainerRef}>
             <div className="mb-8 flex items-end justify-between">
               <h2 className="text-2xl font-bold">
                 {totalElements} games found

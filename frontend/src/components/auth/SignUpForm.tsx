@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import { Button } from '../ui/button'
-import { Link } from 'react-router-dom'
-import { useAuth } from '@/hooks/useAuth'
+import React, { useState } from "react";
+import { Button } from "../ui/button";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const SignUpForm = () => {
-  const { signUp } = useAuth()
+  const { signUp } = useAuth();
   const [formData, setFormData] = useState({
     username: "",
     fullName: "",
@@ -28,177 +28,175 @@ const SignUpForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await signUp(formData)
+    await signUp(formData);
   };
 
   return (
     <div className="border-border grid w-full max-w-7xl grid-cols-1 overflow-hidden rounded-lg border bg-[#141418]/70 shadow-2xl backdrop-blur-md md:rounded-lg lg:grid-cols-2">
-        <div className="order-2 flex w-full items-center justify-center bg-linear-to-b from-white/2 to-white/1 px-4 py-5 sm:px-6 md:px-8 lg:order-1 lg:px-9">
-          <div className="border-border w-full max-w-lg rounded-3xl border bg-[#141414]/80 p-5 shadow-xl sm:p-6 md:p-8">
-            <h2 className="mb-2 text-2xl font-extrabold md:text-3xl">
-              Đăng ký
-            </h2>
+      <div className="order-2 flex w-full items-center justify-center bg-linear-to-b from-white/2 to-white/1 px-4 py-5 sm:px-6 md:px-8 lg:order-1 lg:px-9">
+        <div className="border-border w-full max-w-lg rounded-3xl border bg-[#141414]/80 p-5 shadow-xl sm:p-6 md:p-8">
+          <h2 className="mb-2 text-2xl font-extrabold md:text-3xl">Đăng ký</h2>
 
-            <p className="text-muted mt-2 text-sm leading-6">
-              Bắt đầu xây dựng hồ sơ và khám phá những game mới nhất.
-            </p>
+          <p className="text-muted mt-2 text-sm leading-6">
+            Bắt đầu xây dựng hồ sơ và khám phá những game mới nhất.
+          </p>
 
-            {error && (
-              <div className="mt-3 rounded-2xl border border-primary/20 bg-primary/10 px-4 py-2.5 text-sm text-primary">
-                {error}
-              </div>
-            )}
+          {error && (
+            <div className="border-primary/20 bg-primary/10 text-primary mt-3 rounded-2xl border px-4 py-2.5 text-sm">
+              {error}
+            </div>
+          )}
 
-            {successMessage && (
-              <div className="mt-3 rounded-2xl border border-success/20 bg-success/10 px-4 py-2.5 text-sm text-success">
-                {successMessage}
-              </div>
-            )}
+          {successMessage && (
+            <div className="border-success/20 bg-success/10 text-success mt-3 rounded-2xl border px-4 py-2.5 text-sm">
+              {successMessage}
+            </div>
+          )}
 
-            <form onSubmit={handleSubmit} className="mt-5 space-y-3">
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <div className="flex flex-col gap-2 text-left">
-                  <label className="text-muted block text-sm font-medium">
-                    Tên đăng nhập
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Tên đăng nhập"
-                    value={formData.username}
-                    onChange={handleChange("username")}
-                    disabled={loading}
-                    className="border-border placeholder:text-muted/50 focus:border-primary w-full rounded-2xl border bg-black/20 px-4 py-2.5 text-sm text-white outline-none"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-2 text-left">
-                  <label className="text-muted block text-sm font-medium">
-                    Họ tên
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Tên hiển thị"
-                    value={formData.fullName}
-                    onChange={handleChange("fullName")}
-                    disabled={loading}
-                    className="border-border placeholder:text-muted/50 focus:border-primary w-full rounded-2xl border bg-black/20 px-4 py-2.5 text-sm text-white outline-none"
-                  />
-                </div>
-              </div>
-
+          <form onSubmit={handleSubmit} className="mt-5 space-y-3">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div className="flex flex-col gap-2 text-left">
                 <label className="text-muted block text-sm font-medium">
-                  Email
+                  Tên đăng nhập
                 </label>
                 <input
-                  type="email"
-                  placeholder="Nhập email"
-                  value={formData.email}
-                  onChange={handleChange("email")}
+                  type="text"
+                  placeholder="Tên đăng nhập"
+                  value={formData.username}
+                  onChange={handleChange("username")}
                   disabled={loading}
                   className="border-border placeholder:text-muted/50 focus:border-primary w-full rounded-2xl border bg-black/20 px-4 py-2.5 text-sm text-white outline-none"
                 />
               </div>
 
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <div className="flex flex-col gap-2 text-left">
-                  <label className="text-muted block text-sm font-medium">
-                    Mật khẩu
-                  </label>
-                  <input
-                    type="password"
-                    placeholder="Mật khẩu"
-                    value={formData.password}
-                    onChange={handleChange("password")}
-                    disabled={loading}
-                    className="border-border placeholder:text-muted/50 focus:border-primary w-full rounded-2xl border bg-black/20 px-4 py-2.5 text-sm text-white outline-none"
-                  />
-                </div>
+              <div className="flex flex-col gap-2 text-left">
+                <label className="text-muted block text-sm font-medium">
+                  Họ tên
+                </label>
+                <input
+                  type="text"
+                  placeholder="Tên hiển thị"
+                  value={formData.fullName}
+                  onChange={handleChange("fullName")}
+                  disabled={loading}
+                  className="border-border placeholder:text-muted/50 focus:border-primary w-full rounded-2xl border bg-black/20 px-4 py-2.5 text-sm text-white outline-none"
+                />
+              </div>
+            </div>
 
-                <div className="flex flex-col gap-2 text-left">
-                  <label className="text-muted block text-sm font-medium">
-                    Xác nhận mật khẩu
-                  </label>
-                  <input
-                    type="password"
-                    placeholder="Xác nhận"
-                    value={formData.confirmPassword}
-                    onChange={handleChange("confirmPassword")}
-                    disabled={loading}
-                    className="border-border placeholder:text-muted/50 focus:border-primary w-full rounded-2xl border bg-black/20 px-4 py-2.5 text-sm text-white outline-none"
-                  />
-                </div>
+            <div className="flex flex-col gap-2 text-left">
+              <label className="text-muted block text-sm font-medium">
+                Email
+              </label>
+              <input
+                type="email"
+                placeholder="Nhập email"
+                value={formData.email}
+                onChange={handleChange("email")}
+                disabled={loading}
+                className="border-border placeholder:text-muted/50 focus:border-primary w-full rounded-2xl border bg-black/20 px-4 py-2.5 text-sm text-white outline-none"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <div className="flex flex-col gap-2 text-left">
+                <label className="text-muted block text-sm font-medium">
+                  Mật khẩu
+                </label>
+                <input
+                  type="password"
+                  placeholder="Mật khẩu"
+                  value={formData.password}
+                  onChange={handleChange("password")}
+                  disabled={loading}
+                  className="border-border placeholder:text-muted/50 focus:border-primary w-full rounded-2xl border bg-black/20 px-4 py-2.5 text-sm text-white outline-none"
+                />
               </div>
 
-              <Button
-                variant="gradient"
-                type="submit"
-                disabled={loading}
-                className="shadow-primary/20 w-full rounded-2xl shadow-lg active:scale-95"
-              >
-                {loading ? "Đang tạo tài khoản..." : "Tạo tài khoản"}
-              </Button>
-            </form>
-
-            <div className="text-muted/50 my-5 flex items-center gap-3 text-xs tracking-[0.2em] uppercase">
-              <div className="h-px flex-1 bg-white/10"></div>
-              <span>HOẶC TIẾP TỤC</span>
-              <div className="h-px flex-1 bg-white/10"></div>
+              <div className="flex flex-col gap-2 text-left">
+                <label className="text-muted block text-sm font-medium">
+                  Xác nhận mật khẩu
+                </label>
+                <input
+                  type="password"
+                  placeholder="Xác nhận"
+                  value={formData.confirmPassword}
+                  onChange={handleChange("confirmPassword")}
+                  disabled={loading}
+                  className="border-border placeholder:text-muted/50 focus:border-primary w-full rounded-2xl border bg-black/20 px-4 py-2.5 text-sm text-white outline-none"
+                />
+              </div>
             </div>
 
             <Button
-              variant="outline"
-              type="button"
-              className="w-full rounded-2xl"
+              variant="gradient"
+              type="submit"
+              disabled={loading}
+              className="shadow-primary/20 w-full rounded-2xl shadow-lg active:scale-95"
             >
-              Tiếp tục với Google
+              {loading ? "Đang tạo tài khoản..." : "Tạo tài khoản"}
             </Button>
+          </form>
 
-            <p className="text-muted mt-5 text-center text-sm">
-              Đã có tài khoản?{" "}
-              <Link
-                to="/signin"
-                className="text-primary cursor-pointer font-bold"
-              >
-                Đăng nhập
-              </Link>
-            </p>
+          <div className="text-muted/50 my-5 flex items-center gap-3 text-xs tracking-[0.2em] uppercase">
+            <div className="h-px flex-1 bg-white/10"></div>
+            <span>HOẶC TIẾP TỤC</span>
+            <div className="h-px flex-1 bg-white/10"></div>
           </div>
-        </div>
 
-        {/* Info is order-1 on mobile, order-2 on desktop -> places it on the RIGHT on desktop, and on TOP on mobile */}
-        <div className="border-border order-1 flex w-full flex-col justify-center border-b bg-[radial-gradient(circle_at_top_right,rgba(255,95,65,0.18),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))] px-5 py-8 sm:px-8 md:px-10 lg:order-2 lg:border-b-0 lg:border-l lg:px-12 lg:py-14">
-          <span className="border-primary/20 bg-primary/10 text-primary inline-block w-fit rounded-full border px-4 py-2 text-sm font-semibold">
-            Tham gia cộng đồng FabricIO
-          </span>
+          <Button
+            variant="outline"
+            type="button"
+            className="w-full rounded-2xl"
+          >
+            Tiếp tục với Google
+          </Button>
 
-          <h1 className="mt-5 text-3xl leading-tight font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
-            Tạo tài khoản người chơi và bước vào cộng đồng.
-          </h1>
-
-          <p className="text-muted mt-5 max-w-xl text-sm leading-7 sm:text-base">
-            Khám phá game indie, theo dõi nhà sáng tạo, tương tác với bài viết
-            cộng đồng và đăng nội dung game của riêng bạn.
+          <p className="text-muted mt-5 text-center text-sm">
+            Đã có tài khoản?{" "}
+            <Link
+              to="/signin"
+              className="text-primary cursor-pointer font-bold"
+            >
+              Đăng nhập
+            </Link>
           </p>
-
-          <div className="mt-6 flex flex-wrap gap-2">
-            {[
-              "Khám phá game mới",
-              "Theo dõi nhà sáng tạo",
-              "Tham gia thảo luận cộng đồng",
-              "Đăng bài viết của bạn",
-            ].map((item) => (
-              <span
-                key={item}
-                className="border-border text-muted rounded-full border bg-white/5 px-4 py-2 text-sm"
-              >
-                {item}
-              </span>
-            ))}
-          </div>
         </div>
       </div>
-  )
-}
 
-export default SignUpForm
+      {/* Info is order-1 on mobile, order-2 on desktop -> places it on the RIGHT on desktop, and on TOP on mobile */}
+      <div className="border-border order-1 hidden w-full flex-col justify-center border-b bg-[radial-gradient(circle_at_top_right,rgba(255,95,65,0.18),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))] px-5 py-8 sm:px-8 md:flex md:px-10 lg:order-2 lg:border-b-0 lg:border-l lg:px-12 lg:py-14">
+        <span className="border-primary/20 bg-primary/10 text-primary inline-block w-fit rounded-full border px-4 py-2 text-sm font-semibold">
+          Tham gia cộng đồng FabricIO
+        </span>
+
+        <h1 className="mt-5 text-3xl leading-tight font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
+          Tạo tài khoản người chơi và bước vào cộng đồng.
+        </h1>
+
+        <p className="text-muted mt-5 max-w-xl text-sm leading-7 sm:text-base">
+          Khám phá game indie, theo dõi nhà sáng tạo, tương tác với bài viết
+          cộng đồng và đăng nội dung game của riêng bạn.
+        </p>
+
+        <div className="mt-6 flex flex-wrap gap-2">
+          {[
+            "Khám phá game mới",
+            "Theo dõi nhà sáng tạo",
+            "Tham gia thảo luận cộng đồng",
+            "Đăng bài viết của bạn",
+          ].map((item) => (
+            <span
+              key={item}
+              className="border-border text-muted rounded-full border bg-white/5 px-4 py-2 text-sm"
+            >
+              {item}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SignUpForm;
