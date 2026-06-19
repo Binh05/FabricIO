@@ -97,6 +97,7 @@ jobs:
           context: ./frontend
           push: true
           tags: ${{ steps.meta-fe.outputs.tags }}
+          build-args: REACT_API_URL=${{ secrets.REACT_API_URL }}
           labels: ${{ steps.meta-fe.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
