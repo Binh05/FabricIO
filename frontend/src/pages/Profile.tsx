@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GameCard } from "@/components/games/GameCard";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -7,11 +7,18 @@ import AvatarUpload from "@/components/profile/AvatarUpload";
 import { useGame } from "@/hooks/useGame";
 import { Link, Navigate } from "react-router-dom";
 import { HomeSkeleton } from "@/components/skeletons/HomeSkeleton";
+import { GameCardSkeleton } from "@/components/skeletons/GameCardSkeleton";
 
 export const Profile = () => {
   const { user, loading, signOut } = useAuth();
-  const { games } = useGame();
+  const { games, fetchGames, loading: gameLoading } = useGame();
   const [activeTab, setActiveTab] = useState("games");
+
+  useEffect(() => {
+    if (games.length === 0) {
+      fetchGames();
+    }
+  }, []);
 
   if (loading) {
     return <HomeSkeleton />;
@@ -81,9 +88,11 @@ export const Profile = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2 xl:grid-cols-3">
-        {authoredGames.map((game) => (
-          <GameCard key={game.id} game={game} />
-        ))}
+        {gameLoading
+          ? Array.from({ length: 3 }).map((_, index) => (
+              <GameCardSkeleton key={index} />
+            ))
+          : authoredGames.map((game) => <GameCard key={game.id} game={game} />)}
         {/* {(activeTab === "games" ? authoredGames : favoriteGames).length ===
           0 && (
           <div className="bg-card border-border rounded-lg border p-12 text-center md:col-span-2 xl:col-span-3">

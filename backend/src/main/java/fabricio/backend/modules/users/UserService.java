@@ -86,7 +86,11 @@ public class UserService implements IUserService, IUserInternalService {
 
         String objectname = userId + "/avatar-" + UUID.randomUUID();
         
+        String oldAvatarUrl = userExist.getAvatarUrl();
         String avatarPath = storageService.uploadFile(objectname, file);
+        if (oldAvatarUrl != null && !oldAvatarUrl.isEmpty()) {
+            storageService.deleteFile(oldAvatarUrl);
+        }
 
         userExist.setAvatarUrl(avatarPath);
         userRepository.save(userExist);
