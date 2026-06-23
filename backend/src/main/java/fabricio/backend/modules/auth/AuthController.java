@@ -59,11 +59,11 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ApiResponse<JwtResponse> refreshToken(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
+    public ApiResponse<JwtResponse> refreshToken(@CookieValue(name = "refreshToken", required = false) String refreshToken, HttpServletResponse response) {
         if (refreshToken == null || refreshToken.isEmpty()) {
             throw new AppException(ErrorCode.ACCESS_DENIED);
         }
-        var accessToken = authService.refresh(refreshToken);
+        var accessToken = authService.refresh(refreshToken, response);
 
         return ApiResponse.success(accessToken);
     }

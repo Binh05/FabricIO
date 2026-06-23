@@ -21,6 +21,8 @@ import fabricio.backend.modules.users.internal.IUserInternalService;
 import fabricio.backend.shared.enums.ErrorCode;
 import fabricio.backend.shared.enums.UserRole;
 import fabricio.backend.shared.exceptions.AppException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -102,7 +104,7 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public JwtResponse refresh(String token) {
+    public JwtResponse refresh(String token, HttpServletResponse response) {
         var session = authRepository.findByToken(token);
 
         if (session == null) {
@@ -110,6 +112,10 @@ public class AuthService implements IAuthService {
         }
 
         if (session.getExpiresAt().isBefore(Instant.now())) {
+            Cookie cookie = new Cookie("refreshToken", null);
+            cookie.setMaxAge(0);
+            cookie.setPath("/");
+            response.addCookie(cookie);
             throw new AppException(ErrorCode.ACCESS_DENIED);
         }
 
