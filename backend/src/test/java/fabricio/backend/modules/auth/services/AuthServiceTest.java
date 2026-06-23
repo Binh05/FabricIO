@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -34,6 +35,7 @@ import fabricio.backend.shared.enums.ErrorCode;
 import fabricio.backend.shared.enums.UserRole;
 import fabricio.backend.shared.exceptions.AppException;
 import fabricio.backend.shared.mock.UserMockFactory;
+import jakarta.servlet.http.HttpServletResponse;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -55,6 +57,9 @@ class AuthServiceTest {
 
     @InjectMocks
     private AuthService authService;
+
+    @Mock
+    private HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 
     @Test
     void register_shouldSuccess() {
@@ -196,7 +201,7 @@ class AuthServiceTest {
             .thenReturn("new-access-token");
 
         JwtResponse response =
-            authService.refresh("refresh-token");
+            authService.refresh("refresh-token", httpServletResponse);
 
         assertEquals(
             "new-access-token",
@@ -212,7 +217,7 @@ class AuthServiceTest {
 
         assertThrows(
             AppException.class,
-            () -> authService.refresh("abc")
+            () -> authService.refresh("abc", httpServletResponse)
         );
     }
 }
