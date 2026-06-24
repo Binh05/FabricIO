@@ -1,6 +1,7 @@
 package fabricio.backend.modules.games;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -8,6 +9,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,6 +29,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import fabricio.backend.modules.games.dtos.GameRequest;
 import fabricio.backend.modules.games.dtos.GameResponse;
 import fabricio.backend.modules.games.entities.Game;
+import fabricio.backend.modules.games.mappers.IGameMapper;
 import fabricio.backend.modules.games.repositories.GameMediaRepository;
 import fabricio.backend.modules.games.repositories.GameRepository;
 import fabricio.backend.modules.games.repositories.GameTagMapRepository;
@@ -58,6 +61,8 @@ class GameServiceTest {
     private IStorageService storageService;
     @Mock
     private IGameRatingInternalService gameRatingInternalService;
+    @Mock
+    private IGameMapper gameMapper;
 
     @InjectMocks
     private GameService gameService;
@@ -73,31 +78,38 @@ class GameServiceTest {
                 "thumbnail",
                 "thumb.png",
                 "image/png",
-                "abc".getBytes()
-            );
+                "abc".getBytes());
 
         MockMultipartFile source =
             new MockMultipartFile(
                 "sourceGame",
                 "game.zip",
                 "application/zip",
-                "zip".getBytes()
-            );
+                "zip".getBytes());
 
         GameRequest request = GameRequest.builder()
             .title("Mario")
             .thumbnail(thumbnail)
             .sourceGame(source)
+            .media(Collections.emptyList())
+            .tagIds(Collections.emptyList())
             .build();
 
         when(userRepository.findById(ownerId))
             .thenReturn(Optional.of(owner));
 
-        when(storageService.uploadFile(any(), any()))
+        when(storageService.uploadFile(anyString(), any()))
             .thenReturn("thumb-url");
 
-        when(storageService.extractAndUploadFile(any(), any()))
+        when(storageService.extractAndUploadFile(anyString(), any()))
             .thenReturn("game-url");
+
+        Game game = Game.builder()
+            .title("Mario")
+            .build();
+
+        when(gameMapper.toEntity(any(GameRequest.class)))
+            .thenReturn(game);
 
         Game savedGame = Game.builder()
             .id(UUID.randomUUID())
@@ -110,14 +122,22 @@ class GameServiceTest {
         when(gameRepository.save(any(Game.class)))
             .thenReturn(savedGame);
 
-        when(storageService.getFullUrl(any()))
+        when(storageService.getFullUrl(anyString()))
             .thenReturn("full-thumb");
+
+        // when(gameTagRepository.findAllById(any()))
+        //     .thenReturn(Collections.emptyList());
+
+        // when(gameTagMapRepository.saveAll(any()))
+        //     .thenReturn(Collections.emptyList());
 
         GameResponse response =
             gameService.createGame(request, ownerId);
 
+        assertNotNull(response);
         assertEquals("Mario", response.getTitle());
 
+        verify(gameMapper).toEntity(any(GameRequest.class));
         verify(gameRepository).save(any(Game.class));
     }
 

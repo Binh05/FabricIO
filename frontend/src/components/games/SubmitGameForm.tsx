@@ -102,6 +102,9 @@ const SubmitGameForm = () => {
   const watchedThumbnail = watch("thumbnail") as FileList | undefined;
   const watchedMedia = watch("media") as FileList | undefined;
 
+  console.log(watchedMedia);
+  console.log(watchedMedia?.length);
+
   /* ── Submit ── */
   const onSubmit = async (values: PostGameFormOutput) => {
     const sourceFiles = values.sourceGame as FileList;
