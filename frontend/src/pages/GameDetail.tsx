@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Stars } from "../components/games/Stars";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useGame } from "@/hooks/useGame";
 import GameDetailPanel from "@/components/games/GameDetailPanel";
+import AppCarousel from "@/components/common/AppCarousel";
 
 const tabRow = ["description", "ratings"];
 
@@ -13,7 +13,6 @@ export const GameDetail = () => {
   const { games, loading, fetchGameById } = useGame();
 
   const [activeTab, setActiveTab] = useState("description");
-  // const [carouselIndex, setCarouselIndex] = useState(0);
 
   useEffect(() => {
     if (!id) return;
@@ -33,37 +32,13 @@ export const GameDetail = () => {
 
   if (loading || !game) return null;
 
-  // const images = [game.thumbnailUrl, ...game.media.map((m) => m.mediaUrl)];
-  // const currentImage = images[carouselIndex % game.media.length];
-
-  const nextSlide = () => {};
-  // setCarouselIndex((prev) => (prev + 1) % game.media.length);
-  const prevSlide = () => {};
-  // setCarouselIndex(
-  //   (prev) => (prev - 1 + game.media.length) % game.media.length,
-  // );
+  const images = [game.thumbnailUrl, ...game.media.map((m) => m.mediaUrl)];
 
   return (
     <section className="mb-16">
       <div className="grid grid-cols-1 gap-10 xl:grid-cols-[1fr_340px]">
         <div className="flex flex-col gap-8">
-          <div className="bg-card border-border rounded-lg border p-6">
-            <div className="relative aspect-video overflow-hidden rounded-lg">
-              <img
-                className="h-full w-full object-cover"
-                src={game.thumbnailUrl}
-                alt={game.title}
-              />
-              <div className="absolute right-5 bottom-5 flex gap-2.5">
-                <Button variant="icon" onClick={prevSlide}>
-                  <ChevronLeft size={20} />
-                </Button>
-                <Button variant="icon" onClick={nextSlide}>
-                  <ChevronRight size={20} />
-                </Button>
-              </div>
-            </div>
-          </div>
+          <AppCarousel images={images} alt={game.title} />
           <iframe
             className="border-border aspect-video w-full rounded-lg border bg-black"
             src={"https://www.youtube.com/embed/dQw4w9WgXcQ"}

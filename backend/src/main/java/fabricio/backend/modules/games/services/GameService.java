@@ -23,6 +23,7 @@ import fabricio.backend.modules.games.entities.Game;
 import fabricio.backend.modules.games.entities.GameMedia;
 import fabricio.backend.modules.games.entities.GameTag;
 import fabricio.backend.modules.games.entities.GameTagMap;
+import fabricio.backend.modules.games.mappers.IGameMapper;
 import fabricio.backend.modules.games.repositories.GameMediaRepository;
 import fabricio.backend.modules.games.repositories.GameRepository;
 import fabricio.backend.modules.games.repositories.GameTagMapRepository;
@@ -48,6 +49,7 @@ public class GameService implements IGameService {
     private final GameTagMapRepository gameTagMapRepository;
     private final IStorageService storageService;
     private final IGameRatingInternalService gameRatingInternalService;
+    private final IGameMapper gameMapper;
 
     public GameService(GameRepository gameRepository,
                        GameMediaRepository gameMediaRepository,
@@ -55,7 +57,8 @@ public class GameService implements IGameService {
                        GameTagRepository gameTagRepository,
                        GameTagMapRepository gameTagMapRepository,
                        IStorageService storageService,
-                       IGameRatingInternalService gameRatingInternalService) {
+                       IGameRatingInternalService gameRatingInternalService,
+                       IGameMapper gameMapper) {
         this.gameRepository = gameRepository;
         this.gameMediaRepository = gameMediaRepository;
         this.userRepository = userRepository;
@@ -63,6 +66,7 @@ public class GameService implements IGameService {
         this.gameTagMapRepository = gameTagMapRepository;
         this.storageService = storageService;
         this.gameRatingInternalService = gameRatingInternalService;
+        this.gameMapper = gameMapper;
     }
 
     @Override
@@ -105,15 +109,10 @@ public class GameService implements IGameService {
         String thumbnailUrl = storageService.uploadFile(gameObjectName + "/thumbnail", thumbnail);
         String gameUrl = storageService.extractAndUploadFile(gameObjectName, request.getSourceGame());
 
-        Game game = Game.builder()
-            .ownerId(owner)
-            .title(request.getTitle())
-            .description(request.getDescription())
-            .thumbnailUrl(thumbnailUrl)
-            .gameUrl(gameUrl)
-            .price(request.getPrice())
-            .isDeleted(false)
-            .build();
+        Game game = gameMapper.toEntity(request);
+        game.setThumbnailUrl(thumbnailUrl);
+        game.setGameUrl(gameUrl);
+        game.setOwnerId(owner);
 
         Game savedGame = gameRepository.save(game);
 
@@ -126,9 +125,8 @@ public class GameService implements IGameService {
                 String contentType = file.getContentType();
                 MediaType mediaType = (contentType != null && contentType.startsWith("video/")) ? MediaType.Video : MediaType.Image;
                 
-                String mediaUrl = mediaType == MediaType.Video 
-                    ? "https://placehold.co/files/uploaded_video_" + file.getOriginalFilename() + ".mp4"
-                    : "https://placehold.co/600x400/png?text=Uploaded_Media_" + file.getOriginalFilename();
+                if (mediaType == MediaType.Video) continue;
+                String mediaUrl = storageService.uploadFile(gameObjectName + "/media/" + order, file);
 
                 mediaEntities.add(GameMedia.builder()
                     .gameId(savedGame)
@@ -287,7 +285,7 @@ public class GameService implements IGameService {
         List<GameMediaResponse> mediaResponses = media.stream()
             .map(m -> GameMediaResponse.builder()
                 .id(m.getId())
-                .mediaUrl(m.getMediaUrl())
+                .mediaUrl(storageService.getFullUrl(m.getMediaUrl()))
                 .mediaType(m.getMediaType())
                 .sortOrder(m.getSortOrder())
                 .build())
