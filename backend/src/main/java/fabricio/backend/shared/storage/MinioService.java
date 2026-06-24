@@ -8,7 +8,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
+// import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +20,7 @@ import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
 
 @Service
-@Primary
+// @Primary
 public class MinioService implements IStorageService {
     private final MinioClient minioClient;
 

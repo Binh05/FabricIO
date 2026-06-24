@@ -6,7 +6,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.springframework.beans.factory.annotation.Value;
-// import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +19,7 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Service
-// @Primary
+@Primary
 public class S3Service implements IStorageService {
 
     private final S3Client s3Client;
