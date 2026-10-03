@@ -78,3 +78,12 @@ src/main/java/fabricio/backend/
 ### Integration Test
 
 1. GET /games
+
+###
+Chạy dự án:
+```text
+.\gradlew bootRun
+```
+
+Server chạy tại:
+http://localhost:8080/swagger-ui/index.html

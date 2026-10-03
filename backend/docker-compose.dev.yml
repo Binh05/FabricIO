@@ -1,0 +1,31 @@
+services:
+#  storage:
+#    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+#    container_name: storage-fabjava
+#    ports:
+#      - "9000:9000"
+#      - "9001:9001"
+#    environment:
+#      - MINIO_ROOT_USER=admin
+#      - MINIO_ROOT_PASSWORD=12345678
+#    volumes:
+#      - minio_data:/data
+#    command: server /data --console-address ":9001"
+#    restart: always
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: fabricio_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: fabricio_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+#  minio_data:
+  postgres_data:
