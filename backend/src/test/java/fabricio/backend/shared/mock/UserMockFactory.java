@@ -2,7 +2,7 @@ package fabricio.backend.shared.mock;
 
 import java.util.UUID;
 
-import fabricio.backend.modules.users.entities.User;
+import fabricio.backend.users.entities.User;
 import fabricio.backend.shared.enums.UserRole;
 
 public class UserMockFactory {
