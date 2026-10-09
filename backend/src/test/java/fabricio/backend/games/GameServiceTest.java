@@ -26,19 +26,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 
-import fabricio.backend.games.dtos.GameRequest;
-import fabricio.backend.games.dtos.GameResponse;
-import fabricio.backend.games.entities.Game;
+import fabricio.backend.games.application.dtos.GameRequest;
+import fabricio.backend.games.application.dtos.GameResponse;
+import fabricio.backend.games.domain.Game;
 import fabricio.backend.games.mappers.IGameMapper;
-import fabricio.backend.games.repositories.GameMediaRepository;
-import fabricio.backend.games.repositories.GameRepository;
-import fabricio.backend.games.repositories.GameTagMapRepository;
-import fabricio.backend.games.repositories.GameTagRepository;
-import fabricio.backend.games.services.GameService;
-import fabricio.backend.interactions.internal.GameRatingAVG;
-import fabricio.backend.interactions.internal.IGameRatingInternalService;
-import fabricio.backend.users.UserRepository;
-import fabricio.backend.users.entities.User;
+import fabricio.backend.games.domain.GameMediaRepository;
+import fabricio.backend.games.domain.GameRepository;
+import fabricio.backend.games.domain.GameTagMapRepository;
+import fabricio.backend.games.domain.GameTagRepository;
+import fabricio.backend.games.application.GameService;
+import fabricio.backend.interactions.GameRatingSummary;
+import fabricio.backend.interactions.GameRatingApi;
+import fabricio.backend.users.domain.UserRepository;
+import fabricio.backend.users.domain.User;
 import fabricio.backend.shared.base.PageResponse;
 import fabricio.backend.shared.enums.ErrorCode;
 import fabricio.backend.shared.exceptions.AppException;
@@ -60,7 +60,7 @@ class GameServiceTest {
     @Mock
     private IStorageService storageService;
     @Mock
-    private IGameRatingInternalService gameRatingInternalService;
+    private GameRatingApi gameRatingInternalService;
     @Mock
     private IGameMapper gameMapper;
 
@@ -166,7 +166,7 @@ class GameServiceTest {
             .thenReturn("thumb");
 
         when(gameRatingInternalService.getRatingAvgByGameId(any()))
-            .thenReturn(new GameRatingAVG(5.0));
+            .thenReturn(new GameRatingSummary(5.0));
 
         PageResponse<GameResponse> result =
             gameService.getAllGames(
@@ -211,7 +211,7 @@ class GameServiceTest {
             .thenReturn(page);
 
         when(gameRatingInternalService.getRatingAvgByGameId(any()))
-            .thenReturn(new GameRatingAVG(5));
+            .thenReturn(new GameRatingSummary(5));
 
         when(storageService.getFullUrl(any()))
             .thenReturn("thumb");
@@ -247,7 +247,7 @@ class GameServiceTest {
             .thenReturn("thumb");
 
         when(gameRatingInternalService.getRatingAvgByGameId(id))
-            .thenReturn(new GameRatingAVG(4.5));
+            .thenReturn(new GameRatingSummary(4.5));
 
         GameResponse result =
             gameService.getGameById(id);

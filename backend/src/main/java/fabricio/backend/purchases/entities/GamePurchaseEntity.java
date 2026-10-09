@@ -1,7 +1,7 @@
 package fabricio.backend.purchases.entities;
 
-import fabricio.backend.games.entities.Game;
-import fabricio.backend.users.entities.User;
+import fabricio.backend.games.domain.Game;
+import fabricio.backend.users.domain.User;
 import fabricio.backend.shared.enums.StatusPurchase;
 import jakarta.persistence.*;
 import lombok.*;

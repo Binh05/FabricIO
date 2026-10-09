@@ -20,17 +20,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import fabricio.backend.auth.AuthRepository;
-import fabricio.backend.auth.AuthService;
-import fabricio.backend.auth.dtos.JwtResponse;
-import fabricio.backend.auth.dtos.LoginRequest;
-import fabricio.backend.auth.dtos.LoginResult;
-import fabricio.backend.auth.dtos.RegisterRequest;
-import fabricio.backend.auth.entities.Session;
+import fabricio.backend.auth.domain.AuthRepository;
+import fabricio.backend.auth.application.AuthService;
+import fabricio.backend.auth.application.dtos.JwtResponse;
+import fabricio.backend.auth.application.dtos.LoginRequest;
+import fabricio.backend.auth.application.dtos.LoginResult;
+import fabricio.backend.auth.application.dtos.RegisterRequest;
+import fabricio.backend.auth.domain.Session;
 import fabricio.backend.shared.jwt.JwtTokenProvider;
-import fabricio.backend.users.RolePermissionRepository;
-import fabricio.backend.users.entities.User;
-import fabricio.backend.users.internal.IUserInternalService;
+import fabricio.backend.users.domain.RolePermissionRepository;
+import fabricio.backend.users.domain.User;
+import fabricio.backend.users.UserApi;
 import fabricio.backend.shared.enums.ErrorCode;
 import fabricio.backend.shared.enums.UserRole;
 import fabricio.backend.shared.exceptions.AppException;
@@ -41,7 +41,7 @@ import jakarta.servlet.http.HttpServletResponse;
 class AuthServiceTest {
 
     @Mock
-    private IUserInternalService userInternalService;
+    private UserApi userInternalService;
 
     @Mock
     private PasswordEncoder passwordEncoder;
