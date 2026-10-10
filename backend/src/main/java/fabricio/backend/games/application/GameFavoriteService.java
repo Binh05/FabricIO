@@ -1,12 +1,12 @@
-package fabricio.backend.interactions.application;
+package fabricio.backend.games.application;
 
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import fabricio.backend.interactions.application.dtos.GameFavoriteResponse;
-import fabricio.backend.interactions.domain.GameFavorite;
-import fabricio.backend.interactions.domain.GameFavoriteRepository;
+import fabricio.backend.games.application.dtos.GameFavoriteResponse;
+import fabricio.backend.games.domain.GameFavorite;
+import fabricio.backend.games.domain.GameFavoriteRepository;
 import jakarta.transaction.Transactional;
 
 @Service

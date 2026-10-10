@@ -14,7 +14,7 @@ import fabricio.backend.games.domain.GameTagRepository;
 
 @Service
 @Transactional
-public class GameTagService implements IGameTagService {
+public class GameTagService {
 
     private final GameTagRepository gameTagRepository;
 
@@ -22,7 +22,6 @@ public class GameTagService implements IGameTagService {
         this.gameTagRepository = gameTagRepository;
     }
 
-    @Override
     @Transactional(readOnly = true)
     public List<GameTagResponse> getAllTags() {
         return gameTagRepository.findAll().stream()
@@ -30,7 +29,6 @@ public class GameTagService implements IGameTagService {
                 .collect(Collectors.toList());
     }
 
-    @Override
     @Transactional(readOnly = true)
     public GameTagResponse getTagById(UUID id) {
         GameTag tag = gameTagRepository.findById(id)
@@ -38,7 +36,6 @@ public class GameTagService implements IGameTagService {
         return mapToResponse(tag);
     }
 
-    @Override
     public GameTagResponse createTag(GameTagRequest request) {
         if (gameTagRepository.existsByName(request.getName())) {
             throw new IllegalArgumentException("Tên tag đã tồn tại: " + request.getName());
@@ -51,7 +48,6 @@ public class GameTagService implements IGameTagService {
         return mapToResponse(gameTagRepository.save(tag));
     }
 
-    @Override
     public GameTagResponse updateTag(UUID id, GameTagRequest request) {
         GameTag tag = gameTagRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tag không tìm thấy với id: " + id));
@@ -65,7 +61,6 @@ public class GameTagService implements IGameTagService {
         return mapToResponse(gameTagRepository.save(tag));
     }
 
-    @Override
     public void deleteTag(UUID id) {
         if (!gameTagRepository.existsById(id)) {
             throw new RuntimeException("Tag không tìm thấy với id: " + id);

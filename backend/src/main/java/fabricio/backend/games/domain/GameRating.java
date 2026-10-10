@@ -1,12 +1,13 @@
-package fabricio.backend.interactions.domain;
+package fabricio.backend.games.domain;
 
-import fabricio.backend.games.domain.Game;
 import fabricio.backend.users.domain.User;
 import fabricio.backend.shared.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.*;
+
+import java.util.UUID;
 
 @Entity
 @Table(
@@ -27,9 +28,8 @@ public class GameRating extends BaseEntity {
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UUID userId;
 
     @Min(1)
     @Max(5)

@@ -1,6 +1,8 @@
 package fabricio.backend.games.web;
 
 import java.util.UUID;
+
+import fabricio.backend.games.application.GameService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import fabricio.backend.shared.jwt.UserPrincipal;
+import fabricio.backend.shared.security.UserPrincipal;
 import fabricio.backend.games.application.dtos.GamePlayResponse;
 import fabricio.backend.games.application.dtos.GameRequest;
 import fabricio.backend.games.application.dtos.GameResponse;
@@ -26,9 +28,9 @@ import jakarta.validation.Valid;
 @Tag(name = "Game", description = "Các api quản lý game")
 public class GameController {
 
-    private final IGameService gameService;
+    private final GameService gameService;
 
-    public GameController(IGameService gameService) {
+    public GameController(GameService gameService) {
         this.gameService = gameService;
     }
 

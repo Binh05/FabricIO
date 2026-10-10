@@ -25,9 +25,9 @@ FabricIO là nền tảng game web: nhà phát triển đăng game (gói zip có
 
 | Module | Trách nhiệm | Entity (`domain/`) | API công khai (gốc package) | Được phụ thuộc (`allowedDependencies`) |
 |---|---|---|---|---|
-| `users` | Hồ sơ người dùng, vai trò, quyền | `User`, `Permission`, `RolePermission` | `UserApi`, `UserSummary`, `UserAuthInfo`, `CreateUserCommand` | `shared` |
+| `users` | Hồ sơ người dùng, vai trò, quyền | `User`, `Permission`, `RolePermission` | `UserApi`, `UserAuthInfo`, `UserAuthInfo`, `CreateUserCommand` | `shared` |
 | `auth` | Đăng ký, đăng nhập, đăng xuất, làm mới token, quản lý phiên | `Session` | chưa có | `users`, `shared` |
-| `games` | Danh mục game, media, tag, upload/giải nén gói game, URL mở game, **cộng** đánh giá, yêu thích, lượt chơi (gộp từ `interactions`) | `Game`, `GameMedia`, `GameTag`, `GameTagMap`, `GameRating`, `GameFavorite`, `GamePlay` | `GameApi`, `GameSummary` | `users`, `shared` |
+| `games` | Danh mục game, media, tag, upload/giải nén gói game, URL mở game, **cộng** đánh giá, yêu thích, lượt chơi (gộp từ `interactions`) | `Game`, `GameMedia`, `GameTag`, `GameTagMap`, `GameRating`, `GameFavorite`, `GamePlaySession` | `GameApi`, `GameSummary` | `users`, `shared` |
 | `purchases` | Mua game, vòng đời đơn mua (chưa implement) | `GamePurchase` (chốt tên khi implement) | `PurchaseApi` (chỉ khi có module gọi) | `games`, `users`, `shared` |
 | `shared` | Hạ tầng dùng chung, module `OPEN` | `BaseEntity` | không áp dụng | không phụ thuộc module nào |
 
@@ -154,17 +154,17 @@ public interface GameApi {
 |---|---|---|
 | `GamePlayResponse` (DTO URL mở `index.html`) | `GameLaunchResponse` | Tránh nhầm với bản ghi lượt chơi |
 | `getGamePlayUrl` | `getLaunchUrl` | Đồng nhất |
-| `GamePlay` (bản ghi lượt chơi) | giữ `GamePlay`, hoặc `GamePlaySession` nếu có lưu thời lượng **[CẦN XÁC NHẬN]** | |
+| `GamePlaySession` (bản ghi lượt chơi) | giữ `GamePlaySession`, hoặc `GamePlaySession` nếu có lưu thời lượng **[CẦN XÁC NHẬN]** | |
 | `IGameMapper` | `GameMapper` | Bỏ tiền tố `I` |
 | `AuthRepository` | `SessionRepository` nếu nó quản lý `Session` **[CẦN XÁC NHẬN]** | Tên đúng với nội dung |
-| `exitsByEmail` | `existsByEmail` | Lỗi chính tả trong hợp đồng API |
+| `existsByEmail` | `existsByEmail` | Lỗi chính tả trong hợp đồng API |
 | `IUserInternalService`, `UserAuthDTO` (package `users.internal`) | `UserApi`, `UserAuthInfo` ở gốc `users` | `internal` trong Modulith nghĩa là ẩn với module khác |
 
 ## 8. Việc cần làm (theo thứ tự)
 
 1. Gộp `interactions` vào `games` (move `domain`, `application`, `web`). Xóa `GameRatingApi`, `GameRatingSummary`, `IGameRatingInternalService`.
 2. Chuyển security hạ tầng sang `shared/security`; chuyển `DatabaseSeeder` vào `users/application`.
-3. Tạo `UserApi`, `UserSummary`, `UserAuthInfo`, `CreateUserCommand` ở gốc `users`; xóa package `users.internal`.
+3. Tạo `UserApi`, `UserAuthInfo`, `UserAuthInfo`, `CreateUserCommand` ở gốc `users`; xóa package `users.internal`.
 4. Đổi quan hệ xuyên module sang `UUID`: `Game.ownerId`, `GameRating/GameFavorite/GamePlay.user`, `Session.user`. Quan hệ tới `Game` trong `games` giữ `@ManyToOne`.
 5. Thêm `Game.avgRating`, `Game.ratingCount` kèm migration và câu lệnh tính lại từ bảng rating hiện có. `GameService.mapToGameResponse` đọc từ `Game`.
 6. Chuyển enum: `MediaType` → `games/domain`.
@@ -182,7 +182,7 @@ Xóa dòng khi đã sửa.
 - `shared.configs.SecurityConfig` phụ thuộc `auth.jwt.JwtAuthenticationFilter` → chuyển filter/provider/principal sang `shared/security`.
 - `GamePurchaseEntity` giữ entity `Game` và `User`.
 - `Game.ownerId` có kiểu `User`.
-- `GameFavorite`, `GamePlay`, `GameRating` giữ entity `User`; trước khi gộp còn giữ `Game`.
+- `GameFavorite`, `GamePlaySession`, `GameRating` giữ entity `User`; trước khi gộp còn giữ `Game`.
 - `GameService` dùng `UserRepository` và `IGameRatingInternalService`; `GameRatingService` dùng `GameRepository`, `UserRepository`.
 - Vòng `games ↔ interactions` (hết khi gộp module).
 - Có thể còn vi phạm khác: log lần chạy gần nhất bị cắt.
@@ -191,5 +191,5 @@ Xóa dòng khi đã sửa.
 
 - MapStruct có đang dùng không? Phiên bản Spring Boot / Spring Modulith? **[CẦN XÁC NHẬN]**
 - Công cụ migration (Flyway/Liquibase) hay `ddl-auto`? Loại database? **[CẦN XÁC NHẬN]**
-- Các trường thật của `GamePlay` (có lưu thời lượng không)? **[CẦN XÁC NHẬN]**
-- `GameSummary`, `UserSummary` cần những trường nào? Chốt khi có module gọi thật.
+- Các trường thật của `GamePlaySession` (có lưu thời lượng không)? **[CẦN XÁC NHẬN]**
+- `GameSummary`, `UserAuthInfo` cần những trường nào? Chốt khi có module gọi thật.

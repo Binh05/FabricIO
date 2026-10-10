@@ -35,13 +35,11 @@ public class GamePurchaseEntity {
     @Column(nullable = false, updatable = false)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id", nullable = false)
-    private Game game;
+    private UUID gameId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id", nullable = false)
-    private User buyer;
+    private UUID buyerId;
 
     @Column(name = "amount_paid", nullable = false, precision = 18, scale = 2)
     private BigDecimal amountPaid;

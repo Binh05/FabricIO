@@ -1,7 +1,7 @@
 package fabricio.backend.games.application.dtos;
 
 import java.util.UUID;
-import fabricio.backend.shared.enums.MediaType;
+import fabricio.backend.games.domain.MediaType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

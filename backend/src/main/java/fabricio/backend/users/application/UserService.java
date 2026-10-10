@@ -2,30 +2,38 @@ package fabricio.backend.users.application;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import fabricio.backend.users.domain.UserRepository;
+import fabricio.backend.users.CreateUserCommand;
+import fabricio.backend.users.UserSummary;
+import fabricio.backend.users.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import fabricio.backend.users.application.dtos.UserResponse;
 import fabricio.backend.users.application.dtos.UserUpdateRequest;
-import fabricio.backend.users.domain.User;
 import fabricio.backend.users.UserApi;
-import fabricio.backend.users.UserSummary;
+import fabricio.backend.users.UserAuthInfo;
 import fabricio.backend.shared.enums.ErrorCode;
 import fabricio.backend.shared.exceptions.AppException;
 import fabricio.backend.shared.storage.IStorageService;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserService implements IUserService, UserApi {
+public class UserService implements UserApi {
     private final UserRepository userRepository;
     private final IStorageService storageService;
+    private final RolePermissionRepository rolePermissionRepository;
 
-    public UserService(UserRepository userRepository, IStorageService storageService) {
+    public UserService(
+            UserRepository userRepository,
+            IStorageService storageService,
+            RolePermissionRepository rolePermissionRepository) {
         this.userRepository = userRepository;
         this.storageService = storageService;
+        this.rolePermissionRepository = rolePermissionRepository;
     }
 
     public UserResponse getUserById(UUID id) {
@@ -46,40 +54,10 @@ public class UserService implements IUserService, UserApi {
             .build();
     }
 
-    @Override
     public List<User> getAllUser() {
         return userRepository.findAll();
     }
 
-    @Override
-    public Optional<User> findByUsernameForAuth(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    @Override
-    public UserSummary createUserFromAuth(String username, String email, String fullName, String hashedPassword) {
-        User entity = new User();
-        entity.setUsername(username);
-        entity.setHashedPassword(hashedPassword);
-        entity.setEmail(email);
-        entity.setFullName(fullName);
-
-        var userSaved = userRepository.save(entity);
-
-        return new UserSummary(userSaved.getId(), userSaved.getEmail(), userSaved.getUsername(), userSaved.getFullName(), userSaved.getHashedPassword());
-    }
-
-    @Override
-    public boolean exitsByEmail(String email) {
-        return userRepository.existsByEmail(email);
-    }
-
-    @Override
-    public boolean existsByUsername(String username) {
-        return userRepository.existsByUsername(username);
-    }
-
-    @Override
     @Transactional
     public String uploadAvatar(UUID userId, MultipartFile file) {
         var userExist = userRepository.findById(userId)
@@ -99,7 +77,6 @@ public class UserService implements IUserService, UserApi {
         return storageService.getFullUrl(avatarPath);
     }
 
-    @Override
     @Transactional
     public UserResponse updateProfile(UUID userId, UserUpdateRequest req) {
         var user = userRepository.findById(userId)
@@ -118,5 +95,59 @@ public class UserService implements IUserService, UserApi {
             .createdAt(user.getCreatedAt())
             .updatedAt(user.getUpdatedAt())
             .build();
+    }
+
+    @Override
+    public Optional<User> findByUsernameForAuth(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public UserSummary createUser(CreateUserCommand command) {
+        var entity = userRepository.save(User.create(
+                command.username(),
+                command.email(),
+                command.fullName(),
+                command.passwordHash()
+        ));
+
+        return new UserSummary(
+                entity.getId(),
+                entity.getEmail(),
+                entity.getUsername(),
+                entity.getFullName(),
+                entity.getHashedPassword()
+        );
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<UserAuthInfo> findUserAuthInfoById(UUID id) {
+        return userRepository.findById(id).map(this::toAuthInfo);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<UserAuthInfo> findUserAuthInfoByUsername(String username) {
+        return userRepository.findByUsername(username).map(this::toAuthInfo);
+    }
+
+    private UserAuthInfo toAuthInfo(User u) {
+        Set<String> permissions = rolePermissionRepository.findByRole(u.getRole()).stream()
+                .map(rp -> rp.getPermission().getName())
+                .collect(Collectors.toSet());
+        return new UserAuthInfo(u.getId(), u.getEmail(), u.getUsername(), u.getFullName(),
+                u.getHashedPassword(), u.getRole(), permissions);
     }
 }

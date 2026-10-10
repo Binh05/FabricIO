@@ -14,61 +14,39 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import fabricio.backend.games.application.dtos.GameMediaResponse;
-import fabricio.backend.games.application.dtos.GamePlayResponse;
-import fabricio.backend.games.application.dtos.GameRequest;
-import fabricio.backend.games.application.dtos.GameResponse;
-import fabricio.backend.games.application.dtos.GameTagResponse;
-import fabricio.backend.games.domain.Game;
-import fabricio.backend.games.domain.GameMedia;
-import fabricio.backend.games.domain.GameTag;
-import fabricio.backend.games.domain.GameTagMap;
-import fabricio.backend.games.domain.GameMediaRepository;
-import fabricio.backend.games.domain.GameRepository;
-import fabricio.backend.games.domain.GameTagMapRepository;
-import fabricio.backend.games.domain.GameTagRepository;
-import fabricio.backend.interactions.GameRatingSummary;
-import fabricio.backend.interactions.GameRatingApi;
-import fabricio.backend.users.domain.UserRepository;
-import fabricio.backend.users.domain.User;
+import fabricio.backend.games.application.dtos.*;
+import fabricio.backend.games.domain.*;
 import fabricio.backend.shared.base.PageResponse;
 import fabricio.backend.shared.enums.ErrorCode;
-import fabricio.backend.shared.enums.MediaType;
+import fabricio.backend.games.domain.MediaType;
 import fabricio.backend.shared.exceptions.AppException;
 import fabricio.backend.shared.storage.IStorageService;
 
 @Service
 @Transactional
-public class GameService implements IGameService {
+public class GameService {
 
     private final GameRepository gameRepository;
     private final GameMediaRepository gameMediaRepository;
-    private final UserRepository userRepository;
     private final GameTagRepository gameTagRepository;
     private final GameTagMapRepository gameTagMapRepository;
     private final IStorageService storageService;
-    private final GameRatingApi gameRatingInternalService;
     private final GameMapper gameMapper;
 
     public GameService(GameRepository gameRepository,
                        GameMediaRepository gameMediaRepository,
-                       UserRepository userRepository,
                        GameTagRepository gameTagRepository,
                        GameTagMapRepository gameTagMapRepository,
                        IStorageService storageService,
-                       GameRatingApi gameRatingInternalService,
-                       IGameMapper gameMapper) {
+                       GameMapper gameMapper) {
         this.gameRepository = gameRepository;
         this.gameMediaRepository = gameMediaRepository;
-        this.userRepository = userRepository;
         this.gameTagRepository = gameTagRepository;
         this.gameTagMapRepository = gameTagMapRepository;
         this.storageService = storageService;
-        this.gameRatingInternalService = gameRatingInternalService;
         this.gameMapper = gameMapper;
     }
 
-    @Override
     @Transactional(readOnly = true)
     public PageResponse<GameResponse> getAllGames(int page, int size, String keyword) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
@@ -81,7 +59,6 @@ public class GameService implements IGameService {
         return PageResponse.from(gamePage, gameResponses);
     }
 
-    @Override
     @Transactional(readOnly = true)
     public GameResponse getGameById(UUID id) {
         Game game = gameRepository.findByIdAndIsDeletedFalse(id)
@@ -89,12 +66,9 @@ public class GameService implements IGameService {
         return mapToGameResponse(game);
     }
 
-    @Override
     public GameResponse createGame(GameRequest request, UUID ownerId) {
         MultipartFile thumbnail = request.getThumbnail();
         List<MultipartFile> media = request.getMedia();
-        User owner = userRepository.findById(ownerId)
-            .orElseThrow(() -> new AppException(ErrorCode.ACCESS_DENIED));
 
         validateMediaFile(thumbnail);
         if (media != null) {
@@ -104,14 +78,14 @@ public class GameService implements IGameService {
         }
 
         
-        String gameObjectName = owner.getId() + "/assets-game" + "/source-" + UUID.randomUUID();
+        String gameObjectName = ownerId + "/assets-game" + "/source-" + UUID.randomUUID();
         String thumbnailUrl = storageService.uploadFile(gameObjectName + "/thumbnail", thumbnail);
         String gameUrl = storageService.extractAndUploadFile(gameObjectName, request.getSourceGame());
 
         Game game = gameMapper.toEntity(request);
         game.setThumbnailUrl(thumbnailUrl);
         game.setGameUrl(gameUrl);
-        game.setOwnerId(owner);
+        game.setOwnerId(ownerId);
 
         Game savedGame = gameRepository.save(game);
 
@@ -146,20 +120,14 @@ public class GameService implements IGameService {
         return mapToGameResponse(savedGame, savedMedia, savedTags, 0);
     }
 
-    @Override
     public GameResponse updateGame(UUID id, GameRequest request, UUID ownerId) {
         Game game = gameRepository.findByIdAndIsDeletedFalse(id)
             .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
 
-        if (!game.getOwnerId().getId().equals(ownerId)) {
-            throw new AppException(ErrorCode.ACCESS_DENIED);
-        }
+        game.assertOwnedBy(ownerId);
 
         MultipartFile thumbnail = request.getThumbnail();
         List<MultipartFile> media = request.getMedia();
-
-        User owner = userRepository.findById(ownerId)
-            .orElseThrow(() -> new AppException(ErrorCode.ACCESS_DENIED));
 
         // Validate files
         validateMediaFile(thumbnail);
@@ -174,7 +142,7 @@ public class GameService implements IGameService {
             game.setThumbnailUrl("https://placehold.co/600x400/png?text=Uploaded_" + thumbnail.getOriginalFilename());
         }
 
-        game.setOwnerId(owner);
+        game.setOwnerId(ownerId);
         game.setTitle(request.getTitle());
         game.setDescription(request.getDescription());
         game.setPrice(request.getPrice());
@@ -227,7 +195,6 @@ public class GameService implements IGameService {
         return mapToGameResponse(updatedGame, savedMedia, savedTags, 0);
     }
 
-    @Override
     public void deleteGame(UUID id) {
         Game game = gameRepository.findByIdAndIsDeletedFalse(id)
             .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
@@ -237,7 +204,6 @@ public class GameService implements IGameService {
         gameRepository.save(game);
     }
 
-    @Override
     public GamePlayResponse getGamePlayUrl(UUID gameId) {
         Game game = gameRepository.findById(gameId)
             .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
@@ -276,8 +242,7 @@ public class GameService implements IGameService {
         List<GameTag> tags = gameTagMapRepository.findByGameId(game.getId()).stream()
                 .map(GameTagMap::getTag)
                 .collect(Collectors.toList());
-        GameRatingSummary avgRatings = gameRatingInternalService.getRatingAvgByGameId(game.getId());
-        return mapToGameResponse(game, media, tags, avgRatings.ratingAvg());
+        return mapToGameResponse(game, media, tags, game.getAvgRating());
     }
 
     private GameResponse mapToGameResponse(Game game, List<GameMedia> media, List<GameTag> tags, double avg) {
@@ -301,8 +266,7 @@ public class GameService implements IGameService {
 
         return GameResponse.builder()
             .id(game.getId())
-            .ownerId(game.getOwnerId().getId())
-            .ownerName(game.getOwnerId().getFullName())
+            .ownerId(game.getOwnerId())
             .title(game.getTitle())
             .description(game.getDescription())
             .thumbnailUrl(thumbnail)

@@ -87,3 +87,13 @@ Chạy dự án:
 
 Server chạy tại:
 http://localhost:8080/swagger-ui/index.html
+
+Chạy test kiểm tra modules:
+```text
+./gradlew clean test --tests fabricio.backend.ModularityTests --info      
+```
+
+Xem báo cáo các test đã chạy:
+```text
+*/FabricIO/backend/build/reports/tests/test/index.html
+```

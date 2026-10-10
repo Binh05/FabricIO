@@ -1,4 +1,4 @@
-package fabricio.backend.interactions.domain;
+package fabricio.backend.games.domain;
 
 import java.util.Optional;
 import java.util.UUID;

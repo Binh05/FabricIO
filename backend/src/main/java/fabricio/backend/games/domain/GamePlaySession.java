@@ -1,7 +1,5 @@
-package fabricio.backend.interactions.domain;
+package fabricio.backend.games.domain;
 
-import fabricio.backend.games.domain.Game;
-import fabricio.backend.users.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,16 +24,15 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GamePlay {
+public class GamePlaySession {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(nullable = false, updatable = false)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UUID userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id", nullable = false)

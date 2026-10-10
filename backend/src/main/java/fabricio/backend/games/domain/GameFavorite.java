@@ -1,6 +1,5 @@
-package fabricio.backend.interactions.domain;
+package fabricio.backend.games.domain;
 
-import fabricio.backend.games.domain.Game;
 import fabricio.backend.users.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,10 +32,6 @@ public class GameFavorite {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id", insertable = false, updatable = false)
     private Game game;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private User user;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)

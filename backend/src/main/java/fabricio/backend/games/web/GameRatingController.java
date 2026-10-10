@@ -1,13 +1,14 @@
-package fabricio.backend.interactions.web;
+package fabricio.backend.games.web;
 
 import java.util.UUID;
+
+import fabricio.backend.games.application.GameRatingService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import fabricio.backend.shared.jwt.UserPrincipal;
-import fabricio.backend.interactions.application.dtos.GameRatingRequest;
-import fabricio.backend.interactions.application.dtos.GameRatingResponse;
-import fabricio.backend.interactions.services.IGameRatingService;
+import fabricio.backend.shared.security.UserPrincipal;
+import fabricio.backend.games.application.dtos.GameRatingRequest;
+import fabricio.backend.games.application.dtos.GameRatingResponse;
 import fabricio.backend.shared.base.ApiResponse;
 import fabricio.backend.shared.base.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,9 +20,9 @@ import jakarta.validation.Valid;
 @Tag(name = "Game Rating", description = "Các api quản lý đánh giá game")
 public class GameRatingController {
 
-    private final IGameRatingService gameRatingService;
+    private final GameRatingService gameRatingService;
 
-    public GameRatingController(IGameRatingService gameRatingService) {
+    public GameRatingController(GameRatingService gameRatingService) {
         this.gameRatingService = gameRatingService;
     }
 

@@ -1,6 +1,8 @@
 package fabricio.backend.auth.domain;
 
+import java.time.Duration;
 import java.time.Instant;
+import java.util.UUID;
 
 import fabricio.backend.users.domain.User;
 import fabricio.backend.shared.base.BaseEntity;
@@ -31,13 +33,24 @@ import lombok.Setter;
 @Builder
 public class Session extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UUID userId;
 
     @Column(name = "token", unique = true, nullable = false)
     private String token;
 
     @Column(name = "expires_at")
     private Instant expiresAt;
+
+    public static Session create(UUID user_id, String token, Duration ttl) {
+        Session session = new Session();
+        session.setUserId(user_id);
+        session.setToken(token);
+        session.setExpiresAt(Instant.now().plus(ttl));
+        return session;
+    }
+
+    public boolean isExpired() {
+        return expiresAt.isBefore(Instant.now());
+    }
 }

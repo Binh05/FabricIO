@@ -68,4 +68,18 @@ public class User extends BaseEntity {
             this.fullName = req.getFullName();
         }
     }
+
+    public static User create(
+            String username,
+            String email,
+            String fullName,
+            String hashedPassword
+    ) {
+        User user = new User();
+        user.setUsername(username);
+        user.setHashedPassword(hashedPassword);
+        user.setEmail(email);
+        user.setFullName(fullName);
+        return user;
+    }
 }

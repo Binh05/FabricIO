@@ -1,4 +1,4 @@
-package fabricio.backend.interactions.web;
+package fabricio.backend.games.web;
 
 import java.util.UUID;
 
@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import fabricio.backend.interactions.application.dtos.GameFavoriteResponse;
-import fabricio.backend.interactions.application.GameFavoriteService;
-import fabricio.backend.shared.jwt.UserPrincipal;
+import fabricio.backend.games.application.dtos.GameFavoriteResponse;
+import fabricio.backend.games.application.GameFavoriteService;
+import fabricio.backend.shared.security.UserPrincipal;
 import fabricio.backend.shared.base.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

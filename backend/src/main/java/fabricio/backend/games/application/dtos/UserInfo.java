@@ -1,4 +1,4 @@
-package fabricio.backend.interactions.application.dtos;
+package fabricio.backend.games.application.dtos;
 
 import java.util.UUID;
 

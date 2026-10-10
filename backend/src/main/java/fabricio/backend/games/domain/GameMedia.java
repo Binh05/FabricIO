@@ -1,7 +1,6 @@
 package fabricio.backend.games.domain;
 
 import fabricio.backend.shared.base.BaseEntity;
-import fabricio.backend.shared.enums.MediaType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

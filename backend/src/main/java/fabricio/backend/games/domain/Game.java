@@ -2,7 +2,10 @@ package fabricio.backend.games.domain;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
+import fabricio.backend.shared.enums.ErrorCode;
+import fabricio.backend.shared.exceptions.AppException;
 import fabricio.backend.users.domain.User;
 import fabricio.backend.shared.base.BaseEntity;
 import jakarta.persistence.Column;
@@ -33,9 +36,9 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Game extends BaseEntity {
-    @ManyToOne(fetch = FetchType.LAZY)
+
     @JoinColumn(name = "owner_id", nullable = false)
-    private User ownerId;
+    private UUID ownerId;
     
     @Column(nullable = false, length = 255)
     private String title;
@@ -48,9 +51,25 @@ public class Game extends BaseEntity {
     @Builder.Default
     private BigDecimal price = BigDecimal.ZERO;
 
+    @Column()
+    private int avgRating;
+
+    @Column()
+    private int ratingCount;
+
     @Builder.Default
     @Column(nullable = false)
     private boolean isDeleted = false;
 
     private Instant deletedAt;
+
+    public boolean isOwnedBy(UUID userId) {
+        return ownerId.equals(userId);
+    }
+
+    public void assertOwnedBy(UUID userId) {
+        if (!isOwnedBy(userId)) {
+            throw new AppException(ErrorCode.ACCESS_DENIED);
+        }
+    }
 }

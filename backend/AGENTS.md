@@ -32,7 +32,7 @@ Mục đánh dấu **[CẦN XÁC NHẬN]** là chỗ chưa chắc chắn: kiểm
 
 - **R7.** Module khác chỉ được dùng các class ở **gốc package**. Cấm import `..domain..`, `..application..`, `..web..` của module khác.
 - **R8.** Dữ liệu qua ranh giới module là record bất biến (`*Summary`, `*Command`, `*Info`) hoặc ID. **Không bao giờ truyền entity.**
-- **R9.** Chỉ đưa vào record những trường bên gọi thật sự cần. **Không đưa `passwordHash` vào `UserSummary`.** Dữ liệu nhạy cảm chỉ đi qua record riêng (`UserAuthInfo`) dành cho `auth`.
+- **R9.** Chỉ đưa vào record những trường bên gọi thật sự cần. **Không đưa `passwordHash` vào `UserAuthInfo`.** Dữ liệu nhạy cảm chỉ đi qua record riêng (`UserAuthInfo`) dành cho `auth`.
 - **R10.** Lấy dữ liệu nhiều bản ghi thì dùng API theo lô (`findSummariesByIds(Collection<UUID>)`), không gọi trong vòng lặp (tránh N+1).
 - **R11.** Module "cao" gọi module "thấp", không đảo lại. Khi module thấp cần hiển thị dữ liệu của module cao, hãy lưu sẵn trong entity của mình (ví dụ `Game.avgRating`) hoặc để module cao tổng hợp.
 - **R12.** Event chỉ tạo khi có consumer thật. Class event nằm ở gốc module phát; listener dùng `@ApplicationModuleListener`. Không dùng event để lách vòng phụ thuộc.
@@ -68,10 +68,10 @@ Mục đánh dấu **[CẦN XÁC NHẬN]** là chỗ chưa chắc chắn: kiểm
 ## 6. Đặt tên
 
 - Entity: danh từ số ít (`Game`, `GameRating`).
-- DTO: `XxxRequest`, `XxxResponse`. URL mở game: `GameLaunchResponse` (không dùng chữ "Play" cho URL, vì `GamePlay` là bản ghi lượt chơi).
+- DTO: `XxxRequest`, `XxxResponse`. URL mở game: `GameLaunchResponse` (không dùng chữ "Play" cho URL, vì `GamePlaySession` là bản ghi lượt chơi).
 - Record qua ranh giới module: `XxxSummary`, `XxxCommand`, `XxxInfo`.
 - API công khai: `XxxApi`, đặt ở gốc package module.
-- Method API mô tả việc nó làm, không nhắc tên bên gọi (`createUser`, không `createUserFromAuth`).
+- Method API mô tả việc nó làm, không nhắc tên bên gọi (`createUser`, không `createUser`).
 - Test kiến trúc: class `ModularityTests`, method `verifyModularity`.
 
 ## 7. Test

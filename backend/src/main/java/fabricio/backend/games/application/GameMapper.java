@@ -16,6 +16,8 @@ public interface GameMapper {
     @Mapping(target = "thumbnailUrl", ignore = true)
     @Mapping(target = "ownerId", ignore = true)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "avgRating", ignore = true)
+    @Mapping(target = "ratingCount", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "isDeleted", ignore = true)

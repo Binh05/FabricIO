@@ -1,4 +1,4 @@
-package fabricio.backend.shared.jwt;
+package fabricio.backend.shared.security;
 
 import java.io.IOException;
 import java.util.List;

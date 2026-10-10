@@ -2,11 +2,9 @@ package fabricio.backend.users;
 
 import java.util.UUID;
 
-public record UserSummary(
-        UUID id,
+public record CreateUserCommand(
         String username,
         String email,
         String fullName,
-        String hashedPassword
-) {
-}
+        String passwordHash
+) {}

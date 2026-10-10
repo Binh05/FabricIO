@@ -3,6 +3,7 @@ package fabricio.backend.games.web;
 import java.util.List;
 import java.util.UUID;
 
+import fabricio.backend.games.application.GameTagService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,9 +24,9 @@ import jakarta.validation.Valid;
 @Tag(name = "Game Tag", description = "Các api quản lý tag (category) của game")
 public class GameTagController {
 
-    private final IGameTagService gameTagService;
+    private final GameTagService gameTagService;
 
-    public GameTagController(IGameTagService gameTagService) {
+    public GameTagController(GameTagService gameTagService) {
         this.gameTagService = gameTagService;
     }
 

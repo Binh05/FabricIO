@@ -4,7 +4,7 @@ import fabricio.backend.users.application.UserService;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import fabricio.backend.shared.jwt.UserPrincipal;
+import fabricio.backend.shared.security.UserPrincipal;
 import fabricio.backend.users.application.dtos.UploadAvatarResponse;
 import fabricio.backend.users.application.dtos.UserResponse;
 import fabricio.backend.users.application.dtos.UserUpdateRequest;

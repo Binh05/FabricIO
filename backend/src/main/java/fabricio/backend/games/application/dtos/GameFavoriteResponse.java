@@ -1,4 +1,4 @@
-package fabricio.backend.interactions.application.dtos;
+package fabricio.backend.games.application.dtos;
 
 public record GameFavoriteResponse(boolean isFavorite) {
 }

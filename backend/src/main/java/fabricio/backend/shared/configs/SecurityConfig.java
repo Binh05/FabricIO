@@ -16,7 +16,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
-import fabricio.backend.shared.jwt.JwtAuthenticationFilter;
+import fabricio.backend.shared.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 
 @Configuration

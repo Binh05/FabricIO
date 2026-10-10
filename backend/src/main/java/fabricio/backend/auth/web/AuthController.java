@@ -1,5 +1,6 @@
 package fabricio.backend.auth.web;
 
+import fabricio.backend.auth.application.AuthService;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Tag(name = "Auth")
 public class AuthController {
-    private final IAuthService authService;
+    private final AuthService authService;
 
     @PostMapping("/register")
     public ApiResponse<Void> register(@RequestBody RegisterRequest req) {
@@ -46,7 +47,10 @@ public class AuthController {
     }
 
     @PostMapping("/signout")
-    public ApiResponse<Void> signout(@CookieValue(name = "refreshToken", required = false) String token, HttpServletResponse response) {
+    public ApiResponse<Void> signout(
+            @CookieValue(name = "refreshToken", required = false) String token,
+            HttpServletResponse response
+    ) {
         Cookie cookie = new Cookie("refreshToken", null);
 
         authService.signout(token);
@@ -59,12 +63,22 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ApiResponse<JwtResponse> refreshToken(@CookieValue(name = "refreshToken", required = false) String refreshToken, HttpServletResponse response) {
+    public ApiResponse<JwtResponse> refreshToken(
+            @CookieValue(name = "refreshToken", required = false) String refreshToken,
+            HttpServletResponse response
+    ) {
         if (refreshToken == null || refreshToken.isEmpty()) {
             throw new AppException(ErrorCode.ACCESS_DENIED);
         }
-        var accessToken = authService.refresh(refreshToken, response);
-
-        return ApiResponse.success(accessToken);
+        try {
+            return ApiResponse.success(authService.refresh(refreshToken));
+        }
+        catch (AppException e) {
+            Cookie cookie = new Cookie("refreshToken", null);
+            cookie.setMaxAge(0);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+            throw e;
+        }
     }
 }

@@ -1,4 +1,4 @@
-package fabricio.backend.shared.enums;
+package fabricio.backend.games.domain;
 
 public enum MediaType {
     Image,

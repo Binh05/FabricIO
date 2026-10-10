@@ -1,4 +1,4 @@
-package fabricio.backend.shared.jwt;
+package fabricio.backend.shared.security;
 
 import java.util.Collection;
 import java.util.UUID;
