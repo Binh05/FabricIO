@@ -17,8 +17,8 @@ public class JwtTokenProvider {
     private final long expirationMs;
 
     public JwtTokenProvider(
-            @Value("${APP.JWT.SECRET}") String secret,
-            @Value("${APP.JWT.EXPIRATION_MS:600000}") long expirationMs
+            @Value("${app.jwt.secret}") String secret,
+            @Value("${app.jwt.expiration-ms:600000}") long expirationMs
     ) {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
         this.parser = Jwts.parser().verifyWith(key).build();
