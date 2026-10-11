@@ -25,15 +25,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService implements UserApi {
     private final UserRepository userRepository;
     private final IStorageService storageService;
-    private final RolePermissionRepository rolePermissionRepository;
 
     public UserService(
             UserRepository userRepository,
-            IStorageService storageService,
-            RolePermissionRepository rolePermissionRepository) {
+            IStorageService storageService
+    ) {
         this.userRepository = userRepository;
         this.storageService = storageService;
-        this.rolePermissionRepository = rolePermissionRepository;
     }
 
     public UserResponse getUserById(UUID id) {
@@ -144,10 +142,7 @@ public class UserService implements UserApi {
     }
 
     private UserAuthInfo toAuthInfo(User u) {
-        Set<String> permissions = rolePermissionRepository.findByRole(u.getRole()).stream()
-                .map(rp -> rp.getPermission().getName())
-                .collect(Collectors.toSet());
         return new UserAuthInfo(u.getId(), u.getEmail(), u.getUsername(), u.getFullName(),
-                u.getHashedPassword(), u.getRole(), permissions);
+                u.getHashedPassword(), u.getRole(), u.getRole().getPermissions());
     }
 }

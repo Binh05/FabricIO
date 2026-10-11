@@ -1,6 +1,7 @@
 package fabricio.backend.users;
 
-import fabricio.backend.shared.enums.UserRole;
+import fabricio.backend.shared.security.Permission;
+import fabricio.backend.shared.security.Role;
 
 import java.util.Set;
 import java.util.UUID;
@@ -11,6 +12,6 @@ public record UserAuthInfo(
         String username,
         String fullName,
         String hashedPassword,
-        UserRole role,
-        Set<String> permission) { }
+        Role role,
+        Set<Permission> permission) { }
 

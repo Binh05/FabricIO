@@ -135,7 +135,7 @@ public interface GameApi {
 **D5. Enum thuộc module sở hữu, đặt trong `domain/` của module đó.**
 - `MediaType` → `games/domain`.
 - `StatusPurchase` → `purchases/domain` (khi implement).
-- **Ngoại lệ:** `UserRole` và `ErrorCode` giữ ở `shared/enums`. `UserRole` bị `shared/security` (`UserPrincipal`, `JwtAuthenticationFilter`, `JwtTokenProvider`) dùng, nên nếu chuyển vào `users` thì `shared` phải phụ thuộc `users`, tạo vòng. `ErrorCode` dùng bởi mọi module qua `AppException`.
+- **Ngoại lệ:** `Role` và `ErrorCode` giữ ở `shared/enums`. `Role` bị `shared/security` (`UserPrincipal`, `JwtAuthenticationFilter`, `JwtTokenProvider`) dùng, nên nếu chuyển vào `users` thì `shared` phải phụ thuộc `users`, tạo vòng. `ErrorCode` dùng bởi mọi module qua `AppException`.
 - Enum nào xuất hiện trong record API công khai thì phải đặt ở **gốc** module, không để trong `domain/`.
 
 **D6. DTO request/response ở `application/dto/`.** Service nhận và trả DTO trực tiếp, nên DTO không thể nằm ở `web/` mà không làm `application` import ngược `web`. Đổi sang model riêng (Command/View) chỉ khi module chuyển lên hexagonal.

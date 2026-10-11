@@ -4,7 +4,7 @@ import java.time.Instant;
 
 import fabricio.backend.users.application.dtos.UserUpdateRequest;
 import fabricio.backend.shared.base.BaseEntity;
-import fabricio.backend.shared.enums.UserRole;
+import fabricio.backend.shared.security.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -48,7 +48,7 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     @Builder.Default
-    private UserRole role = UserRole.User;
+    private Role role = Role.User;
     
     @Column(name = "is_active", nullable = false)
     @Builder.Default

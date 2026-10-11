@@ -25,7 +25,7 @@ Mục đánh dấu **[CẦN XÁC NHẬN]** là chỗ chưa chắc chắn: kiểm
   - `application/`: service, mapper, `dto/` (request/response).
   - `domain/`: entity, repository, enum nghiệp vụ.
   - `domain/` để phẳng. Không tạo `entities/`, `repositories/`. Chỉ chia theo aggregate khi vượt khoảng 15 file.
-- **R5.** `shared` là module `OPEN`, **không được import module nào khác**. Chỉ chứa hạ tầng thật sự dùng chung (base, config, exception, security, storage, `ErrorCode`, `UserRole`). Không đặt logic nghiệp vụ vào `shared`.
+- **R5.** `shared` là module `OPEN`, **không được import module nào khác**. Chỉ chứa hạ tầng thật sự dùng chung (base, config, exception, security, storage, `ErrorCode`, `Role`). Không đặt logic nghiệp vụ vào `shared`.
 - **R6.** Mỗi module có `package-info.java` với `@ApplicationModule(allowedDependencies = {...})` theo bảng ở `ARCHITECTURE.md` mục 3. Chỉ thêm phụ thuộc khi có chỗ gọi thật. Tuyệt đối không tạo vòng.
 
 ## 2. Giao tiếp giữa module
@@ -45,7 +45,7 @@ Mục đánh dấu **[CẦN XÁC NHẬN]** là chỗ chưa chắc chắn: kiểm
 - **R16.** Entity chứa luật nghiệp vụ của chính nó (`assertOwnedBy`, `changePrice`, `markPaid`...), không rải trong service. Không thêm setter cho trường có luật (`ownerId`, `price`, `status`, số liệu rating).
 - **R17.** Cấm JPQL/native query join sang bảng của module khác.
 - **R18.** Mọi thay đổi schema (thêm cột, đổi quan hệ) phải có **migration** và **backfill dữ liệu cũ** (ví dụ tính lại `avgRating` từ bảng rating). Không dựa vào `ddl-auto` để đổi schema. Công cụ migration: **[CẦN XÁC NHẬN]**.
-- **R19.** Enum thuộc module sở hữu, đặt ở `domain/` của module đó: `MediaType` → `games`, `StatusPurchase` → `purchases`. **Ngoại lệ ở `shared/enums`:** `ErrorCode`, `UserRole` (vì `shared/security` dùng, chuyển đi sẽ làm `shared` phụ thuộc module).
+- **R19.** Enum thuộc module sở hữu, đặt ở `domain/` của module đó: `MediaType` → `games`, `StatusPurchase` → `purchases`. **Ngoại lệ ở `shared/enums`:** `ErrorCode`, `Role` (vì `shared/security` dùng, chuyển đi sẽ làm `shared` phụ thuộc module).
 
 ## 4. Web và DTO
 

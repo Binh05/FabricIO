@@ -1,8 +1,6 @@
 package fabricio.backend.auth.application;
 
-import java.util.ArrayList;
 import java.util.HexFormat;
-import java.util.List;
 import java.security.SecureRandom;
 import java.time.Duration;
 
@@ -64,6 +62,7 @@ public class AuthService {
         return new LoginResult(refreshToken, tokenProvider.generateToken(toPrincipal(user)));
     }
 
+    @Transactional
     public void signout(String token) {
         authRepository.deleteByToken(token);
     }
@@ -80,16 +79,12 @@ public class AuthService {
     }
 
     private UserPrincipal toPrincipal(UserAuthInfo user) {
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE" + user.role().name()));
-        user.permission().forEach(p -> authorities.add(new SimpleGrantedAuthority(p)));
         return new UserPrincipal(
                 user.id(),
                 user.username(),
                 user.email(),
                 user.hashedPassword(),
-                user.role(),
-                authorities
+                user.role()
         );
     }
 

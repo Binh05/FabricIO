@@ -32,7 +32,7 @@
 //import fabricio.backend.users.domain.User;
 //import fabricio.backend.users.UserApi;
 //import fabricio.backend.shared.enums.ErrorCode;
-//import fabricio.backend.shared.enums.UserRole;
+//import fabricio.backend.shared.security.UserRole;
 //import fabricio.backend.shared.exceptions.AppException;
 //import fabricio.backend.shared.mock.UserMockFactory;
 //import jakarta.servlet.http.HttpServletResponse;
