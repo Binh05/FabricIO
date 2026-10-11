@@ -3,6 +3,7 @@ package fabricio.backend.shared.security;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -13,22 +14,19 @@ import java.util.Optional;
 public class JwtTokenProvider {
     private final SecretKey key;
     private final JwtParser parser;
-    private final String JWT_SECRET = "Mzk4YWYwY2EtNTM0Yi00ZDU0LThmMGYtNzMxOTZkNzVlY2I1Cg==";
-    private final long JWT_EXPIRATION = (long) (10 * 60 * 1000);
+    private final long expirationMs;
 
-    public JwtTokenProvider() {
-        key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(JWT_SECRET));
-        parser = Jwts.parser().verifyWith(key).build();
-    }
-
-    private SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(JWT_SECRET);
-        return Keys.hmacShaKeyFor(keyBytes);
+    public JwtTokenProvider(
+            @Value("${APP.JWT.SECRET}") String secret,
+            @Value("${APP.JWT.EXPIRATION_MS:600000}") long expirationMs
+    ) {
+        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+        this.parser = Jwts.parser().verifyWith(key).build();
+        this.expirationMs = expirationMs;
     }
 
     public String generateToken(UserPrincipal principal) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
 
         return Jwts.builder()
                 .subject(principal.getUsername())
@@ -36,8 +34,8 @@ public class JwtTokenProvider {
                 .claim("email", principal.getEmail())
                 .claim("role", principal.getRole().name())
                 .issuedAt(now)
-                .expiration(expiryDate)
-                .signWith(getSigningKey())
+                .expiration(new Date(now.getTime() + expirationMs))
+                .signWith(key)
                 .compact();
     }
 
