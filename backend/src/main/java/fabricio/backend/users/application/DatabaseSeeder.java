@@ -23,19 +23,19 @@
 //    public void run(String... args) throws Exception {
 //        // Seed Permissions
 //        Permission readGame = getOrCreatePermission("READ_GAME", "Xem thông tin game");
-//        Permission createGame = getOrCreatePermission("CREATE_GAME", "Đăng game mới");
+//        Permission uploadGame = getOrCreatePermission("CREATE_GAME", "Đăng game mới");
 //        Permission updateGame = getOrCreatePermission("UPDATE_GAME", "Sửa đổi thông tin game");
 //        Permission deleteGame = getOrCreatePermission("DELETE_GAME", "Xóa game");
 //
 //        // Seed RolePermissions for Admin
 //        seedRolePermission(Role.Admin, readGame);
-//        seedRolePermission(Role.Admin, createGame);
+//        seedRolePermission(Role.Admin, uploadGame);
 //        seedRolePermission(Role.Admin, updateGame);
 //        seedRolePermission(Role.Admin, deleteGame);
 //
 //        // Seed RolePermissions for User
 //        seedRolePermission(Role.User, readGame);
-//        seedRolePermission(Role.User, createGame);
+//        seedRolePermission(Role.User, uploadGame);
 //        seedRolePermission(Role.User, updateGame);
 //    }
 //

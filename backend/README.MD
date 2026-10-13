@@ -4,41 +4,6 @@ Dưới đây là cấu trúc thư mục tiêu chuẩn cho dự án FabricIO Bac
 
 ```text
 src/main/java/fabricio/backend/
-├── modules/                  # Chứa các module nghiệp vụ (Business Logic)
-│   ├── users/                # Quản lý người dùng (Cấu trúc phẳng)
-│   │   ├── UserController.java
-│   │   ├── IUserService.java
-│   │   ├── UserService.java
-│   │   ├── UserRepository.java
-│   │   ├── entities/
-│   │   ├── dtos/
-│   │   └── internal/
-│   │
-│   ├── auth/                 # Quản lý xác thực
-│   │   ├── AuthController.java
-│   │   ├── IAuthService.java
-│   │   ├── AuthService.java
-│   │   ├── entities/
-│   │   ├── dtos/
-│   │   └── jwt/              # Xử lý JWT Token (JwtTokenProvider, UserPrincipal)
-│   │
-│   ├── games/                # Quản lý Game (Cấu trúc phân lớp sub-folder)
-│   │   ├── controllers/      # GameController, GameTagController
-│   │   ├── services/         # GameService, GameTagService
-│   │   ├── repositories/     # GameRepository, GameTagRepository, ...
-│   │   ├── entities/         # Game, GameMedia, GameTag, ...
-│   │   └── dtos/             # GameRequest, GameResponse, ...
-│   │
-│   ├── interactions/         # Quản lý tương tác (Rating, Favorite, Play)
-│   │   ├── controllers/      # GameRatingController, ...
-│   │   ├── services/         # GameRatingService, ...
-│   │   ├── repositories/     # GameRatingRepository, ...
-│   │   ├── entities/         # GameRating, GameFavorite, GamePlay
-│   │   └── dtos/             # GameRatingRequest, GameRatingResponse, ...
-│   │
-│   └── purchases/            # Quản lý mua sắm
-│       └── entities/         # Purchase, PurchaseDetail
-│
 ├── shared/                   # Các thành phần dùng chung toàn dự án
 │   ├── base/                 # Các class cơ sở
 │   │   ├── BaseEntity.java   (id, createdAt, updatedAt)

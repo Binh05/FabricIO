@@ -3,6 +3,7 @@ package fabricio.backend.games.web;
 import java.util.UUID;
 
 import fabricio.backend.games.application.GameService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,13 +48,14 @@ public class GameController {
         return ApiResponse.success(gameService.getGameById(id));
     }
 
+    @PreAuthorize("hasAuthority('GAME_CREATE')")
     @PostMapping(consumes = {"multipart/form-data"})
-    public ApiResponse<GameResponse> createGame(
+    public ApiResponse<GameResponse> uploadGame(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @Valid @ModelAttribute GameRequest request) 
     {
         UUID ownerId = userPrincipal.getId();
-        return ApiResponse.success(gameService.createGame(request, ownerId));
+        return ApiResponse.success(gameService.uploadGame(request, ownerId));
     }
 
     @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})

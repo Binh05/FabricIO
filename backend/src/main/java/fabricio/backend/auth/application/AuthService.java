@@ -32,7 +32,7 @@ public class AuthService {
     private final SecureRandom secureRandom = new SecureRandom();
 
     @Transactional
-    public String register(RegisterRequest req) {
+    public void register(RegisterRequest req) {
         if (UserApi.existsByEmail(req.email())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
@@ -44,8 +44,6 @@ public class AuthService {
         String hashPassword = passwordEncoder.encode(req.password());
 
         UserApi.createUser(new CreateUserCommand(req.username(), req.email(), req.fullName(), hashPassword));
-
-        return "Đăng ký thành công";
     }
 
     public LoginResult login(LoginRequest req) {

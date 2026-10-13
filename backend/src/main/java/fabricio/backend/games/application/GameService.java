@@ -66,7 +66,7 @@ public class GameService {
         return mapToGameResponse(game);
     }
 
-    public GameResponse createGame(GameRequest request, UUID ownerId) {
+    public GameResponse uploadGame(GameRequest request, UUID ownerId) {
         MultipartFile thumbnail = request.getThumbnail();
         List<MultipartFile> media = request.getMedia();
 

@@ -1,3 +1,5 @@
-@org.springframework.modulith.ApplicationModule()
+@org.springframework.modulith.ApplicationModule(
+        allowedDependencies = { "users", "shared" }
+)
 
 package fabricio.backend.games;

@@ -132,7 +132,7 @@
 //        //     .thenReturn(Collections.emptyList());
 //
 //        GameResponse response =
-//            gameService.createGame(request, ownerId);
+//            gameService.uploadGame(request, ownerId);
 //
 //        assertNotNull(response);
 //        assertEquals("Mario", response.getTitle());
