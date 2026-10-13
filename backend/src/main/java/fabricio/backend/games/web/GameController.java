@@ -80,10 +80,7 @@ public class GameController {
     }
 
     @GetMapping("/{gameId}/play")
-    public ApiResponse<GamePlayResponse> getGamePlayUrl(
-            @PathVariable UUID gameId,
-            @AuthenticationPrincipal UserPrincipal userPrincipal
-    ) {
-        return ApiResponse.success(gameService.getGamePlayUrl(gameId, userPrincipal.getId()));
+    public ApiResponse<GamePlayResponse> getGamePlayUrl(@PathVariable UUID gameId) {
+        return ApiResponse.success(gameService.getGamePlayUrl(gameId));
     }
 }
