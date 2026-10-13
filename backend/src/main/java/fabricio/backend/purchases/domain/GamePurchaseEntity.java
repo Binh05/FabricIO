@@ -1,8 +1,5 @@
-package fabricio.backend.purchases.entities;
+package fabricio.backend.purchases.domain;
 
-import fabricio.backend.games.domain.Game;
-import fabricio.backend.users.domain.User;
-import fabricio.backend.shared.enums.StatusPurchase;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;

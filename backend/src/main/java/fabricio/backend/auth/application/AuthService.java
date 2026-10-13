@@ -15,12 +15,10 @@ import fabricio.backend.auth.domain.Session;
 import fabricio.backend.shared.security.JwtTokenProvider;
 import fabricio.backend.shared.security.UserPrincipal;
 import fabricio.backend.users.UserApi;
-import fabricio.backend.shared.enums.ErrorCode;
+import fabricio.backend.shared.exceptions.ErrorCode;
 import fabricio.backend.shared.exceptions.AppException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Service
 @RequiredArgsConstructor

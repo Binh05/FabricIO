@@ -2,9 +2,7 @@ package fabricio.backend.users.application;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import fabricio.backend.users.CreateUserCommand;
 import fabricio.backend.users.UserSummary;
@@ -16,7 +14,7 @@ import fabricio.backend.users.application.dtos.UserResponse;
 import fabricio.backend.users.application.dtos.UserUpdateRequest;
 import fabricio.backend.users.UserApi;
 import fabricio.backend.users.UserAuthInfo;
-import fabricio.backend.shared.enums.ErrorCode;
+import fabricio.backend.shared.exceptions.ErrorCode;
 import fabricio.backend.shared.exceptions.AppException;
 import fabricio.backend.shared.storage.IStorageService;
 import org.springframework.transaction.annotation.Transactional;

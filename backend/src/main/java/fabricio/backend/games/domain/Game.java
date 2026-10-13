@@ -4,15 +4,12 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
-import fabricio.backend.shared.enums.ErrorCode;
+import fabricio.backend.shared.exceptions.ErrorCode;
 import fabricio.backend.shared.exceptions.AppException;
-import fabricio.backend.users.domain.User;
 import fabricio.backend.shared.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Index;
 import lombok.AllArgsConstructor;

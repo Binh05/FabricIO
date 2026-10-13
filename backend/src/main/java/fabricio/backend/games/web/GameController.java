@@ -68,14 +68,22 @@ public class GameController {
         return ApiResponse.success(gameService.updateGame(id, request, ownerId));
     }
 
+    @PreAuthorize("hasAuthority('GAME_DELETE_OWN')")
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> deleteGame(@PathVariable UUID id) {
-        gameService.deleteGame(id);
+    public ApiResponse<Void> deleteGame(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        UUID userId = userPrincipal.getId();
+        gameService.deleteGame(id, userId);
         return ApiResponse.noContent();
     }
 
     @GetMapping("/{gameId}/play")
-    public ApiResponse<GamePlayResponse> getGamePlayUrl(@PathVariable UUID gameId) {
-        return ApiResponse.success(gameService.getGamePlayUrl(gameId));
+    public ApiResponse<GamePlayResponse> getGamePlayUrl(
+            @PathVariable UUID gameId,
+            @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        return ApiResponse.success(gameService.getGamePlayUrl(gameId, userPrincipal.getId()));
     }
 }

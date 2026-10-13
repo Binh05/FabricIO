@@ -11,7 +11,7 @@ import fabricio.backend.auth.application.dtos.JwtResponse;
 import fabricio.backend.auth.application.dtos.LoginRequest;
 import fabricio.backend.auth.application.dtos.RegisterRequest;
 import fabricio.backend.shared.base.ApiResponse;
-import fabricio.backend.shared.enums.ErrorCode;
+import fabricio.backend.shared.exceptions.ErrorCode;
 import fabricio.backend.shared.exceptions.AppException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;

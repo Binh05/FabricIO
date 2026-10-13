@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import fabricio.backend.games.application.dtos.*;
 import fabricio.backend.games.domain.*;
 import fabricio.backend.shared.base.PageResponse;
-import fabricio.backend.shared.enums.ErrorCode;
+import fabricio.backend.shared.exceptions.ErrorCode;
 import fabricio.backend.games.domain.MediaType;
 import fabricio.backend.shared.exceptions.AppException;
 import fabricio.backend.shared.storage.IStorageService;
@@ -83,7 +83,7 @@ public class GameService {
         String gameUrl = storageService.extractAndUploadFile(gameObjectName, request.getSourceGame());
 
         Game game = gameMapper.toEntity(request);
-        game.setThumbnailUrl(thumbnailUrl);
+        if (thumbnailUrl != null) game.setThumbnailUrl(thumbnailUrl);
         game.setGameUrl(gameUrl);
         game.setOwnerId(ownerId);
 
@@ -192,12 +192,14 @@ public class GameService {
                     .collect(Collectors.toList());
         }
 
-        return mapToGameResponse(updatedGame, savedMedia, savedTags, 0);
+        return mapToGameResponse(updatedGame, savedMedia, savedTags, game.getAvgRating());
     }
 
-    public void deleteGame(UUID id) {
+    public void deleteGame(UUID id, UUID ownerId) {
         Game game = gameRepository.findByIdAndIsDeletedFalse(id)
             .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
+
+        game.assertOwnedBy(ownerId);
 
         game.setDeleted(true);
         game.setDeletedAt(Instant.now());
@@ -205,7 +207,7 @@ public class GameService {
     }
 
     public GamePlayResponse getGamePlayUrl(UUID gameId) {
-        Game game = gameRepository.findById(gameId)
+        Game game = gameRepository.findByIdAndIsDeletedFalse(gameId)
             .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
 
         String gamePlayUrl = storageService.getFullUrl(game.getGameUrl()) + "/index.html";
@@ -223,16 +225,16 @@ public class GameService {
         // Image Validation: tối đa 5MB
         if (contentType != null && contentType.startsWith("image/")) {
             if (fileSize > 5 * 1024 * 1024) {
-                throw new IllegalArgumentException("Dung lượng ảnh giới hạn tối đa 5MB: " + file.getOriginalFilename());
+                throw new AppException(ErrorCode.MAX_FILE_UPLOAD_EXCEEDED);
             }
         }
         // Video Validation: tối đa 20MB
         else if (contentType != null && contentType.startsWith("video/")) {
             if (fileSize > 20 * 1024 * 1024) {
-                throw new IllegalArgumentException("Dung lượng video giới hạn tối đa 20MB: " + file.getOriginalFilename());
+                throw new AppException(ErrorCode.MAX_FILE_UPLOAD_EXCEEDED);
             }
             if (file.getOriginalFilename() != null && file.getOriginalFilename().contains("over10s")) {
-                throw new IllegalArgumentException("Thời lượng video giới hạn dưới 10 giây: " + file.getOriginalFilename());
+                throw new AppException(ErrorCode.MAX_FILE_UPLOAD_EXCEEDED);
             }
         }
     }
@@ -293,7 +295,7 @@ public class GameService {
 
         List<GameTag> tags = gameTagRepository.findAllById(tagIds);
         if (tags.size() != tagIds.size()) {
-            throw new IllegalArgumentException("Một số tag id không hợp lệ");
+            throw new AppException(ErrorCode.GAME_TAG_INVALID);
         }
 
         List<GameTagMap> mappings = tags.stream()

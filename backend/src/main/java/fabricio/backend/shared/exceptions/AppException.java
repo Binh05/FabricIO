@@ -1,6 +1,5 @@
 package fabricio.backend.shared.exceptions;
 
-import fabricio.backend.shared.enums.ErrorCode;
 import lombok.Getter;
 
 @Getter

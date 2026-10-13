@@ -40,7 +40,7 @@
 //import fabricio.backend.users.domain.UserRepository;
 //import fabricio.backend.users.domain.User;
 //import fabricio.backend.shared.base.PageResponse;
-//import fabricio.backend.shared.enums.ErrorCode;
+//import fabricio.backend.shared.exceptions.ErrorCode;
 //import fabricio.backend.shared.exceptions.AppException;
 //import fabricio.backend.shared.mock.UserMockFactory;
 //import fabricio.backend.shared.storage.IStorageService;

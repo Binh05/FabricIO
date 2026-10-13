@@ -1,4 +1,4 @@
-package fabricio.backend.shared.enums;
+package fabricio.backend.purchases.domain;
 
 public enum StatusPurchase {
     Pending,

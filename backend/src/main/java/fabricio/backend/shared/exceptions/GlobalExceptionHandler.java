@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import fabricio.backend.shared.base.ApiResponse;
-import fabricio.backend.shared.enums.ErrorCode;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

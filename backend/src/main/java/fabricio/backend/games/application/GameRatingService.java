@@ -15,7 +15,7 @@ import fabricio.backend.games.domain.*;
 import fabricio.backend.games.application.dtos.GameRatingRequest;
 import fabricio.backend.games.application.dtos.GameRatingResponse;
 import fabricio.backend.shared.base.PageResponse;
-import fabricio.backend.shared.enums.ErrorCode;
+import fabricio.backend.shared.exceptions.ErrorCode;
 import fabricio.backend.shared.exceptions.AppException;
 
 @Service
