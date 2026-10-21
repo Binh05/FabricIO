@@ -41,8 +41,8 @@ export const Play = () => {
   const handleAction = (action: "reload" | "fullscreen") => {
     const frame = document.getElementById("webgl-iframe") as HTMLIFrameElement;
     if (!frame) return;
-    if (action === "reload") {
-      frame.src = frame.src;
+    if (action === "reload" && gamePlayUrl) {
+      frame.src = gamePlayUrl;
     }
     if (action === "fullscreen") {
       frame.requestFullscreen?.();

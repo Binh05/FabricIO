@@ -4,7 +4,7 @@ import {
   PaginationItem,
   PaginationLink,
   PaginationPrevious,
-  PaginationNext,
+  PaginationNext, PaginationEllipsis,
 } from "@/components/ui/pagination";
 
 interface AppPaginationProps {
@@ -20,7 +20,9 @@ export default function AppPagination({
 }: AppPaginationProps) {
   if (totalPages <= 1) return null;
 
-  const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
+  const pageShow = 7
+  const hightlightPosition = Math.floor(pageShow / 2);
+  const pages = Array.from({ length: totalPages <= pageShow ? totalPages : pageShow }, (_, index) => currentPage <= hightlightPosition || currentPage > totalPages - hightlightPosition ? index + 1 : currentPage + index - hightlightPosition);
 
   return (
     <Pagination>
@@ -40,6 +42,8 @@ export default function AppPagination({
           />
         </PaginationItem>
 
+        {pages[0] > 1 && <PaginationEllipsis/> }
+
         {pages.map((page) => (
           <PaginationItem key={page}>
             <PaginationLink
@@ -51,6 +55,9 @@ export default function AppPagination({
             </PaginationLink>
           </PaginationItem>
         ))}
+
+        {currentPage + 3 < totalPages &&
+          <PaginationEllipsis />}
 
         <PaginationItem>
           <PaginationNext
