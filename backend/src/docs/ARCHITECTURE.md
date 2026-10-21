@@ -1,7 +1,7 @@
 # FabricIO Backend — Kiến trúc
 
 Tài liệu này mô tả **kiến trúc đích**, trạng thái hiện tại và các quyết định đã chốt.
-Quy tắc bắt buộc cho agent nằm ở `AGENTS.md`.
+Quy tắc bắt buộc cho agent nằm ở `../../AGENTS.md`.
 Mục đánh dấu **[CẦN XÁC NHẬN]** là chỗ chưa chắc chắn, hãy kiểm tra trong code trước khi dựa vào.
 
 ## 1. Tổng quan
