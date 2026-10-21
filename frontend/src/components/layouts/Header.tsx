@@ -24,6 +24,32 @@ const nav = [
   { href: "/submit-game", label: "Submit Game", key: "/submit-game" },
 ];
 
+const NavLinks = ({
+  className,
+  path,
+  onClick,
+}: {
+  className?: string;
+  path: string;
+  onClick?: () => void;
+}) => (
+  <nav className={className}>
+    {nav.map((item) => (
+      <Link
+        key={item.key}
+        className={cn(
+          "text-muted rounded-full px-4 py-2 font-medium transition-all duration-200 hover:bg-white/10 hover:text-white",
+          path === item.href ? "bg-white/10 text-white" : "",
+        )}
+        to={item.href}
+        onClick={onClick}
+      >
+        {item.label}
+      </Link>
+    ))}
+  </nav>
+);
+
 export default function Header({ user }: { user: User | null }) {
   const { token } = useAuth();
   const { fetchGames, loading } = useGame();
@@ -46,30 +72,6 @@ export default function Header({ user }: { user: User | null }) {
     navigate(`/games?q=${keyword}`);
   };
 
-  const NavLinks = ({
-    className,
-    onClick,
-  }: {
-    className?: string;
-    onClick?: () => void;
-  }) => (
-    <nav className={className}>
-      {nav.map((item) => (
-        <Link
-          key={item.key}
-          className={cn(
-            "text-muted rounded-full px-4 py-2 font-medium transition-all duration-200 hover:bg-white/10 hover:text-white",
-            path === item.href ? "bg-white/10 text-white" : "",
-          )}
-          to={item.href}
-          onClick={onClick}
-        >
-          {item.label}
-        </Link>
-      ))}
-    </nav>
-  );
-
   return (
     <header className="border-border sticky top-0 z-10 flex h-20 items-center justify-between gap-4 border-b bg-[#0f0f0f]/85 px-4 backdrop-blur-lg md:px-10">
       <Logo />
@@ -91,7 +93,7 @@ export default function Header({ user }: { user: User | null }) {
 
       <div className="flex items-center gap-2 md:gap-4">
         {/* Desktop Nav */}
-        <NavLinks className="hidden gap-1 md:flex" />
+        <NavLinks className="hidden gap-1 md:flex" path={path} />
 
         {/* User / Login - Always visible or slightly adjusted */}
         <div className="flex items-center gap-2">
