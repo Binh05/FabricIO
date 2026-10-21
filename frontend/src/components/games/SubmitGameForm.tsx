@@ -85,7 +85,7 @@ const SubmitGameForm = () => {
     watch,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<PostGameFormInput, any, PostGameFormOutput>({
+  } = useForm<PostGameFormInput, unknown, PostGameFormOutput>({
     resolver: zodResolver(postGameSchema),
     defaultValues: {
       title: "",

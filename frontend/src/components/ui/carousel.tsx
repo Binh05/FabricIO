@@ -93,7 +93,7 @@ function Carousel({
 
   React.useEffect(() => {
     if (!api) return
-    onSelect(api)
+    queueMicrotask(() => onSelect(api));
     api.on("reInit", onSelect)
     api.on("select", onSelect)
 
@@ -236,5 +236,6 @@ export {
   CarouselItem,
   CarouselPrevious,
   CarouselNext,
+  // eslint-disable-next-line react-refresh/only-export-components
   useCarousel,
 }
