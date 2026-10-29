@@ -2,10 +2,8 @@ package fabricio.backend.users.web;
 
 import fabricio.backend.users.application.UserService;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import fabricio.backend.shared.security.UserPrincipal;
-import fabricio.backend.users.application.dtos.UploadAvatarResponse;
 import fabricio.backend.users.application.dtos.UserResponse;
 import fabricio.backend.users.application.dtos.UserUpdateRequest;
 import fabricio.backend.users.domain.User;
@@ -17,10 +15,8 @@ import java.util.UUID;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -48,12 +44,6 @@ public class UserController {
     @GetMapping("/user")
     public ApiResponse<List<User>> getAllUser() {
         return ApiResponse.success(userService.getAllUser());
-    }
-
-    @PostMapping(value = "/user/avatar", consumes = {"multipart/form-data"})
-    public ApiResponse<UploadAvatarResponse> uploadAvatar(@ModelAttribute MultipartFile imageFile, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        String url = userService.uploadAvatar(userPrincipal.getId(), imageFile);
-        return ApiResponse.success(new UploadAvatarResponse(url));
     }
 
     @PatchMapping("/user")

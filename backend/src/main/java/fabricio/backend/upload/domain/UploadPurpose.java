@@ -52,7 +52,7 @@ public enum UploadPurpose {
         return ownerType == OwnerType.USER;
     }
 
-    public boolean allow (String contentType) {
+    public boolean allow(String contentType) {
         return contentTypes.contains(contentType);
     }
 }

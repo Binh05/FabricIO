@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import fabricio.backend.shared.storage.ObjectStorage;
+import fabricio.backend.upload.UpdateAvatarCommand;
 import fabricio.backend.users.CreateUserCommand;
 import fabricio.backend.users.UserSummary;
 import fabricio.backend.users.domain.*;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import fabricio.backend.users.application.dtos.UserResponse;
 import fabricio.backend.users.application.dtos.UserUpdateRequest;
@@ -16,27 +18,26 @@ import fabricio.backend.users.UserApi;
 import fabricio.backend.users.UserAuthInfo;
 import fabricio.backend.shared.exceptions.ErrorCode;
 import fabricio.backend.shared.exceptions.AppException;
-import fabricio.backend.shared.storage.IStorageService;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService implements UserApi {
     private final UserRepository userRepository;
-    private final IStorageService storageService;
+    private final ObjectStorage storage;
 
     public UserService(
             UserRepository userRepository,
-            IStorageService storageService
+            ObjectStorage storage
     ) {
         this.userRepository = userRepository;
-        this.storageService = storageService;
+        this.storage = storage;
     }
 
     public UserResponse getUserById(UUID id) {
         var entity = userRepository.findById(id)
             .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));;
 
-        String fullAvatarUrl = storageService.getFullUrl(entity.getAvatarUrl());
+        String avatarUrl = storage.publicUrl(entity.getAvatarUrl());
 
         return UserResponse.builder()
             .id(entity.getId())
@@ -44,7 +45,7 @@ public class UserService implements UserApi {
             .fullName(entity.getFullName())
             .email(entity.getEmail())
             .bio(entity.getBio())
-            .avatarUrl(fullAvatarUrl)
+            .avatarUrl(avatarUrl)
             .createdAt(entity.getCreatedAt())
             .updatedAt(entity.getUpdatedAt())
             .build();
@@ -52,25 +53,6 @@ public class UserService implements UserApi {
 
     public List<User> getAllUser() {
         return userRepository.findAll();
-    }
-
-    @Transactional
-    public String uploadAvatar(UUID userId, MultipartFile file) {
-        var userExist = userRepository.findById(userId)
-            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-
-        String objectname = userId + "/avatar-" + UUID.randomUUID();
-        
-        String oldAvatarUrl = userExist.getAvatarUrl();
-        String avatarPath = storageService.uploadFile(objectname, file);
-        if (oldAvatarUrl != null && !oldAvatarUrl.isEmpty()) {
-            storageService.deleteFile(oldAvatarUrl);
-        }
-
-        userExist.setAvatarUrl(avatarPath);
-        userRepository.save(userExist);
-
-        return storageService.getFullUrl(avatarPath);
     }
 
     @Transactional
@@ -94,11 +76,6 @@ public class UserService implements UserApi {
     }
 
     @Override
-    public Optional<User> findByUsernameForAuth(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    @Override
     public UserSummary createUser(CreateUserCommand command) {
         var entity = userRepository.save(User.create(
                 command.username(),
@@ -107,13 +84,7 @@ public class UserService implements UserApi {
                 command.passwordHash()
         ));
 
-        return new UserSummary(
-                entity.getId(),
-                entity.getEmail(),
-                entity.getUsername(),
-                entity.getFullName(),
-                entity.getHashedPassword()
-        );
+        return UserSummary.from(entity);
     }
 
     @Override
@@ -137,6 +108,26 @@ public class UserService implements UserApi {
     @Transactional(readOnly = true)
     public Optional<UserAuthInfo> findUserAuthInfoByUsername(String username) {
         return userRepository.findByUsername(username).map(this::toAuthInfo);
+    }
+
+    @Override
+    public Optional<UserSummary> findUserSummaryById(UUID userId) {
+        return userRepository.findById(userId).map(UserSummary::from);
+    }
+
+    @Override
+    @Nullable
+    @Transactional
+    public String updateAvatar(UpdateAvatarCommand cmd) {
+        User user = userRepository.findById(cmd.userId())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        String key = cmd.key();
+        String oldKey = user.getAvatarUrl();
+
+        if (key.equals(oldKey)) return oldKey;
+
+        user.setAvatarUrl(key);
+        return oldKey;
     }
 
     private UserAuthInfo toAuthInfo(User u) {

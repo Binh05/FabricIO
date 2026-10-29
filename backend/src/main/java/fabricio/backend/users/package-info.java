@@ -1,5 +1,5 @@
 @org.springframework.modulith.ApplicationModule(
-        allowedDependencies = { "shared" }
+        allowedDependencies = { "shared", "upload" }
 )
 
 package fabricio.backend.users;

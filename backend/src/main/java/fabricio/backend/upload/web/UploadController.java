@@ -3,8 +3,10 @@ package fabricio.backend.upload.web;
 import fabricio.backend.shared.base.ApiResponse;
 import fabricio.backend.shared.security.UserPrincipal;
 import fabricio.backend.upload.application.UploadService;
-import fabricio.backend.upload.domain.PresignCommand;
-import fabricio.backend.upload.domain.PresignResult;
+import fabricio.backend.upload.application.dtos.CompleteCommand;
+import fabricio.backend.upload.application.dtos.CompleteResult;
+import fabricio.backend.upload.application.dtos.PresignCommand;
+import fabricio.backend.upload.application.dtos.PresignResult;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,5 +31,13 @@ public class UploadController {
             @Valid @RequestBody PresignCommand cmd)
     {
         return ApiResponse.success(uploads.presign(principal.getId(), cmd));
+    }
+
+    @PostMapping("/complete")
+    public ApiResponse<CompleteResult> complete(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestBody CompleteCommand cmd
+    ) {
+        return ApiResponse.success(uploads.complete(principal.getId(), cmd));
     }
 }
