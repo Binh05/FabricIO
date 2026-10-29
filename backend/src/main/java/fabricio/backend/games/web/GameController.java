@@ -3,17 +3,10 @@ package fabricio.backend.games.web;
 import java.util.UUID;
 
 import fabricio.backend.games.application.GameService;
+import fabricio.backend.games.domain.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import fabricio.backend.shared.security.UserPrincipal;
 import fabricio.backend.games.application.dtos.GamePlayResponse;
@@ -49,13 +42,12 @@ public class GameController {
     }
 
     @PreAuthorize("hasAuthority('GAME_CREATE')")
-    @PostMapping(consumes = {"multipart/form-data"})
+    @PostMapping("/draft")
     public ApiResponse<GameResponse> uploadGame(
-            @AuthenticationPrincipal UserPrincipal userPrincipal,
-            @Valid @ModelAttribute GameRequest request) 
+            @AuthenticationPrincipal UserPrincipal principal,
+            @Valid @RequestBody GameRequest request)
     {
-        UUID ownerId = userPrincipal.getId();
-        return ApiResponse.success(gameService.uploadGame(request, ownerId));
+        return ApiResponse.success(gameService.uploadDraft(principal.getId(), request));
     }
 
     @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})

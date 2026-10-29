@@ -2,16 +2,14 @@ package fabricio.backend.games.domain;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import fabricio.backend.shared.exceptions.ErrorCode;
 import fabricio.backend.shared.exceptions.AppException;
 import fabricio.backend.shared.base.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Table;
-import jakarta.persistence.Index;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,6 +58,14 @@ public class Game extends BaseEntity {
 
     private Instant deletedAt;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name= "game_tag_map",
+            joinColumns = @JoinColumn(name="game_id"),
+            inverseJoinColumns = @JoinColumn(name="tag_id")
+    )
+    private Set<GameTag> tags = new HashSet<>();
+
     public boolean isOwnedBy(UUID userId) {
         return ownerId.equals(userId);
     }
@@ -68,5 +74,23 @@ public class Game extends BaseEntity {
         if (!isOwnedBy(userId)) {
             throw new AppException(ErrorCode.ACCESS_DENIED);
         }
+    }
+
+    public static Game createDraft(
+            UUID ownerId,
+            String title,
+            String description,
+            BigDecimal price,
+            Set<GameTag> tags
+    ) {
+        Game game = new Game();
+        game.setOwnerId(ownerId);
+        game.setTitle(title);
+        game.setDescription(description);
+        game.setPrice(price);
+        if (tags != null && !tags.isEmpty()) {
+            game.tags.addAll(tags);
+        }
+        return game;
     }
 }
