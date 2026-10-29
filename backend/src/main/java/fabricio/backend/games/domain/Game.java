@@ -43,6 +43,11 @@ public class Game extends BaseEntity {
     private String thumbnailUrl;
     private String gameUrl;
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private GameStatus status = GameStatus.Draft;
+
     @Builder.Default
     private BigDecimal price = BigDecimal.ZERO;
 
@@ -88,6 +93,7 @@ public class Game extends BaseEntity {
         game.setTitle(title);
         game.setDescription(description);
         game.setPrice(price);
+        game.setStatus(GameStatus.Draft);
         if (tags != null && !tags.isEmpty()) {
             game.tags.addAll(tags);
         }

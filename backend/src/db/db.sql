@@ -43,6 +43,7 @@ CREATE TABLE games (
                        description TEXT,
                        thumbnail_url VARCHAR(500),
                        game_url VARCHAR(500),
+                       status VARCHAR(20) NOT NULL DEFAULT 'Draft',
                        price NUMERIC(19, 2) NOT NULL DEFAULT 0.00,
                        avg_rating INT NOT NULL DEFAULT 0,
                        rating_count INT NOT NULL DEFAULT 0,
