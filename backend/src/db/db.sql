@@ -87,24 +87,7 @@ CREATE TABLE game_ratings (
 );
 
 -- =============================================================================
--- 6. BẢNG GAME_MEDIA
--- =============================================================================
-CREATE TABLE game_media (
-                            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                            game_id UUID NOT NULL,
-                            media_url VARCHAR(500) NOT NULL,
-                            media_type VARCHAR(20) NOT NULL DEFAULT 'Image',
-                            sort_order INT NOT NULL DEFAULT 0,
-                            created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                            updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-                            CONSTRAINT fk_game_media_game FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE
-);
-
-CREATE INDEX idx_game_media_game_id ON game_media(game_id);
-
--- =============================================================================
--- 7. BẢNG GAME_PLAYS (Lịch sử session chơi game)
+-- 6. BẢNG GAME_PLAYS (Lịch sử session chơi game)
 -- =============================================================================
 CREATE TABLE game_plays (
                             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -121,7 +104,7 @@ CREATE INDEX idx_game_plays_user_game ON game_plays(user_id, game_id);
 CREATE INDEX idx_game_plays_game_time ON game_plays(game_id, played_at);
 
 -- =============================================================================
--- 8. BẢNG GAME_FAVORITES (Danh sách yêu thích)
+-- 7. BẢNG GAME_FAVORITES (Danh sách yêu thích)
 -- =============================================================================
 CREATE TABLE game_favorites (
                                 game_id UUID NOT NULL,
@@ -134,7 +117,7 @@ CREATE TABLE game_favorites (
 );
 
 -- =============================================================================
--- 9. BẢNG SESSIONS
+-- 8. BẢNG SESSIONS
 -- =============================================================================
 CREATE TABLE sessions (
                           id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

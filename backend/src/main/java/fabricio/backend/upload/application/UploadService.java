@@ -10,6 +10,7 @@ import fabricio.backend.upload.application.dtos.CompleteCommand;
 import fabricio.backend.upload.application.dtos.CompleteResult;
 import fabricio.backend.upload.application.dtos.PresignCommand;
 import fabricio.backend.upload.application.dtos.PresignResult;
+import fabricio.backend.upload.application.handler.UploadPurposeHandler;
 import fabricio.backend.upload.domain.UploadPurpose;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,8 @@ public class UploadService {
         UploadPurpose purpose = cmd.purpose();
         UUID objectId = resolveObjectId(userId, cmd.objectId(), purpose);
 
+        handler(purpose).authorize(userId, objectId);
+
         if (!purpose.allow(cmd.contentType())) throw new AppException(ErrorCode.CONTENT_TYPE_NOT_SUPPORTED);
         if (cmd.size() > purpose.maxByte()) throw new AppException(ErrorCode.MAX_FILE_UPLOAD_EXCEEDED);
 
@@ -55,6 +58,8 @@ public class UploadService {
         UploadPurpose purpose = cmd.purpose();
         UUID objectId = resolveObjectId(userId, cmd.objectId(), purpose);
 
+        handler(purpose).authorize(userId, objectId);
+
         if (!keys.belongsTo(key, objectId, purpose)) throw new AppException(ErrorCode.BAD_REQUEST);
         ObjectMeta meta = storage.head(key).orElseThrow(() -> new AppException(ErrorCode.BAD_REQUEST));
 
@@ -63,7 +68,7 @@ public class UploadService {
             throw new AppException(ErrorCode.BAD_REQUEST);
         }
 
-        String objectUrl = handler(purpose).onComplete(objectId, cmd.key());
+        String objectUrl = handler(purpose).onComplete(purpose, userId, objectId, cmd.key());
         return new CompleteResult(objectUrl);
     }
 

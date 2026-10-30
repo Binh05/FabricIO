@@ -1,19 +1,16 @@
-package fabricio.backend.upload.application;
+package fabricio.backend.upload.application.handler;
 
 import fabricio.backend.shared.exceptions.AppException;
 import fabricio.backend.shared.exceptions.ErrorCode;
 import fabricio.backend.shared.storage.ObjectStorage;
 import fabricio.backend.upload.UpdateAvatarCommand;
-import fabricio.backend.upload.application.dtos.CompleteResult;
 import fabricio.backend.upload.domain.UploadPurpose;
 import fabricio.backend.users.UserApi;
-import fabricio.backend.users.UserSummary;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -33,8 +30,15 @@ public class UserImageUploadHandler implements UploadPurposeHandler {
     }
 
     @Override
+    public void authorize(UUID userId, UUID objectId) {
+        if (!userId.equals(objectId)) {
+            throw new AppException(ErrorCode.ACCESS_DENIED);
+        }
+    }
+
+    @Override
     @Transactional
-    public String onComplete(UUID userId, String key) {
+    public String onComplete(UploadPurpose purpose, UUID userId, UUID objectId, String key) {
         String oldKey = userApi.updateAvatar(new UpdateAvatarCommand(userId, key));
         if (key.equals(oldKey)) return storage.publicUrl(oldKey);
 

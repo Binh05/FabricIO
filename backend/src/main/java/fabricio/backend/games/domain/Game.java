@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import fabricio.backend.games.GameAsset;
 import fabricio.backend.shared.exceptions.ErrorCode;
 import fabricio.backend.shared.exceptions.AppException;
 import fabricio.backend.shared.base.BaseEntity;
@@ -42,6 +43,7 @@ public class Game extends BaseEntity {
     private String description;
     private String thumbnailUrl;
     private String gameUrl;
+    private String videoKey;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -69,6 +71,7 @@ public class Game extends BaseEntity {
             joinColumns = @JoinColumn(name="game_id"),
             inverseJoinColumns = @JoinColumn(name="tag_id")
     )
+    @Builder.Default
     private Set<GameTag> tags = new HashSet<>();
 
     public boolean isOwnedBy(UUID userId) {
@@ -98,5 +101,34 @@ public class Game extends BaseEntity {
             game.tags.addAll(tags);
         }
         return game;
+    }
+
+    public void markAsReady() {
+        if (!hasRequiredAssets()) {
+            throw new AppException(ErrorCode.BAD_REQUEST);
+        }
+
+        this.status = GameStatus.Ready;
+        this.setUpdatedAt(Instant.now());
+    }
+
+    private  boolean hasRequiredAssets() {
+        return (thumbnailUrl != null && !thumbnailUrl.isBlank())
+                && (gameUrl != null && !gameUrl.isBlank());
+    }
+
+    public String updateMedia(GameAsset asset, String key) {
+        return switch(asset) {
+            case THUMBNAIL -> {
+                String oldKey = thumbnailUrl;
+                thumbnailUrl = key;
+                yield oldKey;
+            }
+            case VIDEO -> {
+                String oldKey = videoKey;
+                videoKey = key;
+                yield oldKey;
+            }
+        };
     }
 }

@@ -3,7 +3,7 @@ package fabricio.backend.games.web;
 import java.util.UUID;
 
 import fabricio.backend.games.application.GameService;
-import fabricio.backend.games.domain.MediaType;
+import fabricio.backend.games.application.dtos.GameResult;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import fabricio.backend.shared.security.UserPrincipal;
 import fabricio.backend.games.application.dtos.GamePlayResponse;
 import fabricio.backend.games.application.dtos.GameRequest;
-import fabricio.backend.games.application.dtos.GameResponse;
+import fabricio.backend.games.web.dto.GameResponse;
 import fabricio.backend.shared.base.ApiResponse;
 import fabricio.backend.shared.base.PageResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,12 +33,14 @@ public class GameController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "") String keyword) {
-        return ApiResponse.success(gameService.getAllGames(page, size, keyword));
+        PageResponse<GameResponse> res = gameService.getAllGames(page, size, keyword)
+                .map(GameResponse::from);
+        return ApiResponse.success(res);
     }
 
     @GetMapping("/{id}")
     public ApiResponse<GameResponse> getGameById(@PathVariable UUID id) {
-        return ApiResponse.success(gameService.getGameById(id));
+        return ApiResponse.success(GameResponse.from(gameService.getGameById(id)));
     }
 
     @PreAuthorize("hasAuthority('GAME_CREATE')")
@@ -47,7 +49,13 @@ public class GameController {
             @AuthenticationPrincipal UserPrincipal principal,
             @Valid @RequestBody GameRequest request)
     {
-        return ApiResponse.success(gameService.uploadDraft(principal.getId(), request));
+        return ApiResponse.success(GameResponse.from(gameService.uploadDraft(principal.getId(), request)));
+    }
+
+    @PreAuthorize("hasAuthority('GAME_CREATE')")
+    @PostMapping("/{gameId}/publish")
+    public ApiResponse<GameResponse> publishGame(@PathVariable UUID gameId) {
+        return ApiResponse.success(GameResponse.from(gameService.publishGame(gameId)));
     }
 
     @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})

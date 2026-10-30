@@ -4,64 +4,61 @@ import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fabricio.backend.games.GameApi;
+import fabricio.backend.games.GameAsset;
+import fabricio.backend.games.web.dto.GameResponse;
 import fabricio.backend.shared.storage.ObjectStorage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import fabricio.backend.games.application.dtos.*;
 import fabricio.backend.games.domain.*;
 import fabricio.backend.shared.base.PageResponse;
 import fabricio.backend.shared.exceptions.ErrorCode;
-import fabricio.backend.games.domain.MediaType;
 import fabricio.backend.shared.exceptions.AppException;
 
 @Service
 @Transactional
-public class GameService {
+public class GameService implements GameApi {
 
     private final GameRepository gameRepository;
-    private final GameMediaRepository gameMediaRepository;
     private final GameTagRepository gameTagRepository;
     private final ObjectStorage storage;
-    private final GameMapper gameMapper;
 
     public GameService(GameRepository gameRepository,
-                       GameMediaRepository gameMediaRepository,
                        GameTagRepository gameTagRepository,
-                       ObjectStorage storage,
-                       GameMapper gameMapper) {
+                       ObjectStorage storage
+    ) {
         this.gameRepository = gameRepository;
-        this.gameMediaRepository = gameMediaRepository;
         this.gameTagRepository = gameTagRepository;
         this.storage = storage;
-        this.gameMapper = gameMapper;
     }
 
     @Transactional(readOnly = true)
-    public PageResponse<GameResponse> getAllGames(int page, int size, String keyword) {
+    public PageResponse<GameResult> getAllGames(int page, int size, String keyword) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Game> gamePage = gameRepository.findByIsDeletedFalseAndTitleContainingIgnoreCase(keyword, pageable);
         
-        List<GameResponse> gameResponses = gamePage.getContent().stream()
-            .map(GameResponse::from)
+        List<GameResult> gameResponses = gamePage.getContent().stream()
+            .map(GameResult::from)
             .collect(Collectors.toList());
 
         return PageResponse.from(gamePage, gameResponses);
     }
 
     @Transactional(readOnly = true)
-    public GameResponse getGameById(UUID id) {
+    public GameResult getGameById(UUID id) {
         Game game = gameRepository.findByIdAndIsDeletedFalse(id)
             .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
-        return GameResponse.from(game);
+        return GameResult.from(game);
     }
 
-    public GameResponse uploadDraft(UUID userId, GameRequest req) {
+    public GameResult uploadDraft(UUID userId, GameRequest req) {
         List<UUID> tagIds = req.tagIds();
         List<GameTag> tags = Collections.emptyList();
 
@@ -81,7 +78,7 @@ public class GameService {
         );
 
         gameRepository.save(game);
-        return GameResponse.from(game);
+        return GameResult.from(game);
     }
 
     public GameResponse updateGame(UUID id, GameRequest request, UUID ownerId) {
@@ -171,6 +168,15 @@ public class GameService {
         gameRepository.save(game);
     }
 
+    public GameResult publishGame(UUID gameId) {
+        Game game = gameRepository.findByIdAndIsDeletedFalse(gameId)
+                .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
+
+        game.markAsReady();
+
+        return GameResult.from(game);
+    }
+
     public GamePlayResponse getGamePlayUrl(UUID gameId) {
         Game game = gameRepository.findByIdAndIsDeletedFalse(gameId)
             .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
@@ -178,30 +184,6 @@ public class GameService {
         String gamePlayUrl = storage.publicUrl(game.getGameUrl()) + "/index.html";
 
         return new GamePlayResponse(gamePlayUrl);
-    } 
-
-    private void validateMediaFile(MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            return;
-        }
-        String contentType = file.getContentType();
-        long fileSize = file.getSize();
-
-        // Image Validation: tối đa 5MB
-        if (contentType != null && contentType.startsWith("image/")) {
-            if (fileSize > 5 * 1024 * 1024) {
-                throw new AppException(ErrorCode.MAX_FILE_UPLOAD_EXCEEDED);
-            }
-        }
-        // Video Validation: tối đa 20MB
-        else if (contentType != null && contentType.startsWith("video/")) {
-            if (fileSize > 20 * 1024 * 1024) {
-                throw new AppException(ErrorCode.MAX_FILE_UPLOAD_EXCEEDED);
-            }
-            if (file.getOriginalFilename() != null && file.getOriginalFilename().contains("over10s")) {
-                throw new AppException(ErrorCode.MAX_FILE_UPLOAD_EXCEEDED);
-            }
-        }
     }
 
 //    /**
@@ -230,4 +212,30 @@ public class GameService {
 //        gameTagMapRepository.saveAll(mappings);
 //        return tags;
 //    }
+
+    @Override
+    public void requireOwner(UUID userId, UUID gameId) {
+        boolean owner = gameRepository.existsGameByIdAndOwnerIdAndIsDeletedFalse(gameId, userId);
+        if (!owner) throw new AppException(ErrorCode.ACCESS_DENIED);
+    }
+
+    @Nullable
+    @Override
+    public String switchPlayPrefix(UUID gameId, String prefix) {
+        Game game = gameRepository.findByIdAndIsDeletedFalse(gameId)
+                .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
+        String oldKey = game.getGameUrl();
+        game.setGameUrl(prefix);
+        return oldKey;
+    }
+
+    @Nullable
+    @Override
+    @Transactional
+    public String updateMedia(UUID gameId, GameAsset asset, String key) {
+        Game game = gameRepository.findByIdAndIsDeletedFalse(gameId)
+                .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
+
+        return game.updateMedia(asset, key);
+    }
 }

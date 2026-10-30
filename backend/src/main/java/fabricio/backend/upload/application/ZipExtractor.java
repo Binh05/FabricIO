@@ -27,7 +27,7 @@ public class ZipExtractor {
 
     private static final int MAX_ENTRIES = 2_000;
     private static final long MAX_ENTRY_BYTES = 100L * 1024 * 1024;
-    private static final long MAX_TOTAL_BYTES = 1024L * 1024 * 1024;
+    private static final long MAX_TOTAL_BYTES = 2 * 1024L * 1024 * 1024;
 
     public record Result(int files, long totalBytes) {}
 

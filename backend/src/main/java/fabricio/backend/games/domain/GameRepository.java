@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
 public interface GameRepository extends JpaRepository<Game, UUID> {
     Page<Game> findByIsDeletedFalseAndTitleContainingIgnoreCase(String keyword, Pageable pageable);
     Optional<Game> findByIdAndIsDeletedFalse(UUID id);
+    boolean existsGameByIdAndOwnerIdAndIsDeletedFalse(UUID id, UUID ownerId);
 }

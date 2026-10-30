@@ -5,35 +5,34 @@ import fabricio.backend.games.domain.GameTag;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public record GameResponse(
-    UUID id,
-    UUID ownerId,
-    String title,
-    String description,
-    String thumbnailUrl,
-    BigDecimal price,
-    Instant createdAt,
-    Instant updatedAt,
-    List<GameTag> tags,
-    double ratingAvg
+public record GameResult(
+        UUID id,
+        UUID ownerId,
+        String title,
+        String description,
+        String thumbnailUrl,
+        BigDecimal price,
+        List<GameTag> tags,
+        double avgRating,
+        Instant createdAt,
+        Instant updatedAt
 ) {
-    public static GameResponse from(Game game) {
+    public static GameResult from(Game game) {
         if (game == null) return null;
-        return new GameResponse(
+        return new GameResult(
                 game.getId(),
                 game.getOwnerId(),
                 game.getTitle(),
                 game.getDescription(),
                 game.getThumbnailUrl(),
                 game.getPrice(),
-                game.getCreatedAt(),
-                game.getUpdatedAt(),
                 List.copyOf(game.getTags()),
-                game.getAvgRating()
+                game.getAvgRating(),
+                game.getCreatedAt(),
+                game.getUpdatedAt()
         );
     }
 }
