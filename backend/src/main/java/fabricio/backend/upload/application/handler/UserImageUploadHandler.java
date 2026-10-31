@@ -1,7 +1,5 @@
 package fabricio.backend.upload.application.handler;
 
-import fabricio.backend.shared.exceptions.AppException;
-import fabricio.backend.shared.exceptions.ErrorCode;
 import fabricio.backend.shared.storage.ObjectStorage;
 import fabricio.backend.upload.UpdateAvatarCommand;
 import fabricio.backend.upload.domain.UploadPurpose;
@@ -31,9 +29,7 @@ public class UserImageUploadHandler implements UploadPurposeHandler {
 
     @Override
     public void authorize(UUID userId, UUID objectId) {
-        if (!userId.equals(objectId)) {
-            throw new AppException(ErrorCode.ACCESS_DENIED);
-        }
+
     }
 
     @Override

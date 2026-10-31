@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 import fabricio.backend.auth.application.dtos.JwtResponse;
 import fabricio.backend.auth.application.dtos.LoginRequest;
 import fabricio.backend.auth.application.dtos.RegisterRequest;
+import fabricio.backend.auth.domain.exception.AuthErrorCode;
+import fabricio.backend.auth.domain.exception.AuthException;
 import fabricio.backend.shared.base.ApiResponse;
-import fabricio.backend.shared.exceptions.ErrorCode;
 import fabricio.backend.shared.exceptions.AppException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
@@ -68,7 +69,7 @@ public class AuthController {
             HttpServletResponse response
     ) {
         if (refreshToken == null || refreshToken.isEmpty()) {
-            throw new AppException(ErrorCode.ACCESS_DENIED);
+            throw new AuthException(AuthErrorCode.ACCESS_DENIED);
         }
         try {
             return ApiResponse.success(authService.refresh(refreshToken));

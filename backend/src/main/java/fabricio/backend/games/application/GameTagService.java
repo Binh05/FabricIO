@@ -11,6 +11,8 @@ import fabricio.backend.games.application.dtos.GameTagRequest;
 import fabricio.backend.games.application.dtos.GameTagResponse;
 import fabricio.backend.games.domain.GameTag;
 import fabricio.backend.games.domain.GameTagRepository;
+import fabricio.backend.games.domain.exception.GameErrorCode;
+import fabricio.backend.games.domain.exception.GameException;
 
 @Service
 @Transactional
@@ -32,13 +34,13 @@ public class GameTagService {
     @Transactional(readOnly = true)
     public GameTagResponse getTagById(UUID id) {
         GameTag tag = gameTagRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tag không tìm thấy với id: " + id));
+                .orElseThrow(() -> new GameException(GameErrorCode.TAG_NOT_FOUND));
         return mapToResponse(tag);
     }
 
     public GameTagResponse createTag(GameTagRequest request) {
         if (gameTagRepository.existsByName(request.getName())) {
-            throw new IllegalArgumentException("Tên tag đã tồn tại: " + request.getName());
+            throw new GameException(GameErrorCode.TAG_NAME_EXISTED);
         }
 
         GameTag tag = GameTag.builder()
@@ -50,10 +52,10 @@ public class GameTagService {
 
     public GameTagResponse updateTag(UUID id, GameTagRequest request) {
         GameTag tag = gameTagRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tag không tìm thấy với id: " + id));
+                .orElseThrow(() -> new GameException(GameErrorCode.TAG_NOT_FOUND));
 
         if (gameTagRepository.existsByNameAndIdNot(request.getName(), id)) {
-            throw new IllegalArgumentException("Tên tag đã tồn tại: " + request.getName());
+            throw new GameException(GameErrorCode.TAG_NAME_EXISTED);
         }
 
         tag.setName(request.getName());
@@ -63,7 +65,7 @@ public class GameTagService {
 
     public void deleteTag(UUID id) {
         if (!gameTagRepository.existsById(id)) {
-            throw new RuntimeException("Tag không tìm thấy với id: " + id);
+            throw new GameException(GameErrorCode.TAG_NOT_FOUND);
         }
         gameTagRepository.deleteById(id);
     }

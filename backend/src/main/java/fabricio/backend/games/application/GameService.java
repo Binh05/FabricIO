@@ -18,9 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fabricio.backend.games.application.dtos.*;
 import fabricio.backend.games.domain.*;
+import fabricio.backend.games.domain.exception.GameErrorCode;
+import fabricio.backend.games.domain.exception.GameException;
 import fabricio.backend.shared.base.PageResponse;
-import fabricio.backend.shared.exceptions.ErrorCode;
-import fabricio.backend.shared.exceptions.AppException;
 
 @Service
 @Transactional
@@ -54,7 +54,7 @@ public class GameService implements GameApi {
     @Transactional(readOnly = true)
     public GameResult getGameById(UUID id) {
         Game game = gameRepository.findByIdAndIsDeletedFalse(id)
-            .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
+            .orElseThrow(() -> new GameException(GameErrorCode.GAME_NOT_FOUND));
         return GameResult.from(game);
     }
 
@@ -65,7 +65,7 @@ public class GameService implements GameApi {
         if (tagIds != null && !tagIds.isEmpty()) {
             tags = gameTagRepository.findAllById(tagIds);
             if (tags.size() != new HashSet<>(tags).size()) {
-                throw new AppException(ErrorCode.BAD_REQUEST);
+                throw new GameException(GameErrorCode.GAME_TAG_INVALID);
             }
         }
 
@@ -159,7 +159,7 @@ public class GameService implements GameApi {
 
     public void deleteGame(UUID id, UUID ownerId) {
         Game game = gameRepository.findByIdAndIsDeletedFalse(id)
-            .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
+            .orElseThrow(() -> new GameException(GameErrorCode.GAME_NOT_FOUND));
 
         game.assertOwnedBy(ownerId);
 
@@ -170,7 +170,7 @@ public class GameService implements GameApi {
 
     public GameResult publishGame(UUID gameId) {
         Game game = gameRepository.findByIdAndIsDeletedFalse(gameId)
-                .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
+                .orElseThrow(() -> new GameException(GameErrorCode.GAME_NOT_FOUND));
 
         game.markAsReady();
 
@@ -179,7 +179,7 @@ public class GameService implements GameApi {
 
     public GamePlayResponse getGamePlayUrl(UUID gameId) {
         Game game = gameRepository.findByIdAndIsDeletedFalse(gameId)
-            .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
+            .orElseThrow(() -> new GameException(GameErrorCode.GAME_NOT_FOUND));
 
         String gamePlayUrl = storage.publicUrl(game.getGameUrl()) + "/index.html";
 
@@ -216,14 +216,14 @@ public class GameService implements GameApi {
     @Override
     public void requireOwner(UUID userId, UUID gameId) {
         boolean owner = gameRepository.existsGameByIdAndOwnerIdAndIsDeletedFalse(gameId, userId);
-        if (!owner) throw new AppException(ErrorCode.ACCESS_DENIED);
+        if (!owner) throw new GameException(GameErrorCode.GAME_ACCESS_DENIED);
     }
 
     @Nullable
     @Override
     public String switchPlayPrefix(UUID gameId, String prefix) {
         Game game = gameRepository.findByIdAndIsDeletedFalse(gameId)
-                .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
+                .orElseThrow(() -> new GameException(GameErrorCode.GAME_NOT_FOUND));
         String oldKey = game.getGameUrl();
         game.setGameUrl(prefix);
         return oldKey;
@@ -234,7 +234,7 @@ public class GameService implements GameApi {
     @Transactional
     public String updateMedia(UUID gameId, GameAsset asset, String key) {
         Game game = gameRepository.findByIdAndIsDeletedFalse(gameId)
-                .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
+                .orElseThrow(() -> new GameException(GameErrorCode.GAME_NOT_FOUND));
 
         return game.updateMedia(asset, key);
     }

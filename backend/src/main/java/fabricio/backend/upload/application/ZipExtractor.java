@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import fabricio.backend.shared.exceptions.AppException;
-import fabricio.backend.shared.exceptions.ErrorCode;
+import fabricio.backend.upload.domain.exception.UploadErrorCode;
+import fabricio.backend.upload.domain.exception.UploadException;
 import org.springframework.stereotype.Component;
 
 import fabricio.backend.shared.storage.ObjectStorage;
@@ -45,7 +45,7 @@ public class ZipExtractor {
             ZipEntry entry;
             while ((entry = zip.getNextEntry()) != null) {
                 if (entry.isDirectory()) continue;
-                if (++count > MAX_ENTRIES) throw new AppException(ErrorCode.BAD_REQUEST);
+                if (++count > MAX_ENTRIES) throw new UploadException(UploadErrorCode.ZIP_EXTRACTED_TOO_MUCH);
 
                 String relative = safeName(entry.getName());
 
@@ -54,7 +54,7 @@ public class ZipExtractor {
                 try {
                     long size = copyBounded(zip, tmp, MAX_ENTRY_BYTES);
                     total += size;
-                    if (total > MAX_TOTAL_BYTES) throw new AppException(ErrorCode.BAD_REQUEST); // ("Zip too large when extracted");
+                    if (total > MAX_TOTAL_BYTES) throw new UploadException(UploadErrorCode.ZIP_EXTRACTED_TOO_LARGE);
 
                     String key = destPrefix + relative;
                     try (InputStream in = Files.newInputStream(tmp)) {
@@ -94,7 +94,7 @@ public class ZipExtractor {
             int r;
             while ((r = in.read(buf)) != -1) {
                 n += r;
-                if (n > max) throw new AppException(ErrorCode.BAD_REQUEST); //("Zip entry too large");
+                if (n > max) throw new UploadException(UploadErrorCode.ZIP_ENTRY_TOO_LARGE);
                 out.write(buf, 0, r);
             }
         }

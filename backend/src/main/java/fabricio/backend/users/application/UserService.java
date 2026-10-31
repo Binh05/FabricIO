@@ -16,8 +16,8 @@ import fabricio.backend.users.application.dtos.UserResponse;
 import fabricio.backend.users.application.dtos.UserUpdateRequest;
 import fabricio.backend.users.UserApi;
 import fabricio.backend.users.UserAuthInfo;
-import fabricio.backend.shared.exceptions.ErrorCode;
-import fabricio.backend.shared.exceptions.AppException;
+import fabricio.backend.users.domain.exception.UserErrorCode;
+import fabricio.backend.users.domain.exception.UserException;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -35,7 +35,7 @@ public class UserService implements UserApi {
 
     public UserResponse getUserById(UUID id) {
         var entity = userRepository.findById(id)
-            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));;
+            .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
         String avatarUrl = storage.publicUrl(entity.getAvatarUrl());
 
@@ -58,7 +58,7 @@ public class UserService implements UserApi {
     @Transactional
     public UserResponse updateProfile(UUID userId, UserUpdateRequest req) {
         var user = userRepository.findById(userId)
-            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+            .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
         user.updateFromDTO(req);
 
@@ -120,7 +120,7 @@ public class UserService implements UserApi {
     @Transactional
     public String updateAvatar(UpdateAvatarCommand cmd) {
         User user = userRepository.findById(cmd.userId())
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
         String key = cmd.key();
         String oldKey = user.getAvatarUrl();
 

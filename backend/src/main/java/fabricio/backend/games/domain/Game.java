@@ -7,8 +7,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import fabricio.backend.games.GameAsset;
-import fabricio.backend.shared.exceptions.ErrorCode;
-import fabricio.backend.shared.exceptions.AppException;
+import fabricio.backend.games.domain.exception.GameErrorCode;
+import fabricio.backend.games.domain.exception.GameException;
 import fabricio.backend.shared.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -80,7 +80,7 @@ public class Game extends BaseEntity {
 
     public void assertOwnedBy(UUID userId) {
         if (!isOwnedBy(userId)) {
-            throw new AppException(ErrorCode.ACCESS_DENIED);
+            throw new GameException(GameErrorCode.GAME_ACCESS_DENIED);
         }
     }
 
@@ -105,7 +105,7 @@ public class Game extends BaseEntity {
 
     public void markAsReady() {
         if (!hasRequiredAssets()) {
-            throw new AppException(ErrorCode.BAD_REQUEST);
+            throw new GameException(GameErrorCode.GAME_REQUIRE_NULL);
         }
 
         this.status = GameStatus.Ready;
@@ -118,6 +118,9 @@ public class Game extends BaseEntity {
     }
 
     public String updateMedia(GameAsset asset, String key) {
+        if (asset == null) {
+            throw new GameException(GameErrorCode.ASSET_TYPE_INVALID);
+        }
         return switch(asset) {
             case THUMBNAIL -> {
                 String oldKey = thumbnailUrl;

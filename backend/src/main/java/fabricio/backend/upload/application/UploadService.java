@@ -1,7 +1,5 @@
 package fabricio.backend.upload.application;
 
-import fabricio.backend.shared.exceptions.AppException;
-import fabricio.backend.shared.exceptions.ErrorCode;
 import fabricio.backend.shared.storage.ObjectMeta;
 import fabricio.backend.shared.storage.ObjectStorage;
 import fabricio.backend.shared.storage.PresignedUpload;
@@ -12,6 +10,8 @@ import fabricio.backend.upload.application.dtos.PresignCommand;
 import fabricio.backend.upload.application.dtos.PresignResult;
 import fabricio.backend.upload.application.handler.UploadPurposeHandler;
 import fabricio.backend.upload.domain.UploadPurpose;
+import fabricio.backend.upload.domain.exception.UploadErrorCode;
+import fabricio.backend.upload.domain.exception.UploadException;
 import org.springframework.stereotype.Service;
 
 import java.util.EnumMap;
@@ -44,8 +44,8 @@ public class UploadService {
 
         handler(purpose).authorize(userId, objectId);
 
-        if (!purpose.allow(cmd.contentType())) throw new AppException(ErrorCode.CONTENT_TYPE_NOT_SUPPORTED);
-        if (cmd.size() > purpose.maxByte()) throw new AppException(ErrorCode.MAX_FILE_UPLOAD_EXCEEDED);
+        if (!purpose.allow(cmd.contentType())) throw new UploadException(UploadErrorCode.CONTENT_TYPE_NOT_SUPPORTED);
+        if (cmd.size() > purpose.maxByte()) throw new UploadException(UploadErrorCode.MAX_FILE_UPLOAD_EXCEEDED);
 
         String key = keys.newKey(objectId, cmd.purpose(), cmd.contentType());
 
@@ -60,12 +60,13 @@ public class UploadService {
 
         handler(purpose).authorize(userId, objectId);
 
-        if (!keys.belongsTo(key, objectId, purpose)) throw new AppException(ErrorCode.BAD_REQUEST);
-        ObjectMeta meta = storage.head(key).orElseThrow(() -> new AppException(ErrorCode.BAD_REQUEST));
+        if (!keys.belongsTo(key, objectId, purpose)) throw new UploadException(UploadErrorCode.KEY_INVALID);
+        ObjectMeta meta = storage.head(key).
+                orElseThrow(() -> new UploadException(UploadErrorCode.FILE_NOT_UPLOADED));
 
         if (meta.size() > purpose.maxByte() || !purpose.allow(meta.contentType())) {
             storage.delete(key);
-            throw new AppException(ErrorCode.BAD_REQUEST);
+            throw new UploadException(UploadErrorCode.FILE_UPLOADED_INVALID);
         }
 
         String objectUrl = handler(purpose).onComplete(purpose, userId, objectId, cmd.key());
@@ -74,13 +75,13 @@ public class UploadService {
 
     private UUID resolveObjectId(UUID userId, UUID objectId, UploadPurpose purpose) {
         if (purpose.isUserScoped()) return userId;
-        if (objectId == null) throw new AppException(ErrorCode.BAD_REQUEST);
+        if (objectId == null) throw new UploadException(UploadErrorCode.OBJECT_ID_NULL);
         return objectId;
     }
 
     private UploadPurposeHandler handler(UploadPurpose purpose) {
         UploadPurposeHandler h = handlers.get(purpose);
-        if (h == null) throw new AppException(ErrorCode.BAD_REQUEST);
+        if (h == null) throw new UploadException(UploadErrorCode.PURPOSE_UPLOAD_INVALID);
         return h;
     }
 }

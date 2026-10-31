@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 
 import fabricio.backend.auth.application.dtos.*;
 import fabricio.backend.auth.domain.Session;
+import fabricio.backend.auth.domain.exception.AuthErrorCode;
+import fabricio.backend.auth.domain.exception.AuthException;
 import fabricio.backend.shared.security.JwtTokenProvider;
 import fabricio.backend.shared.security.UserPrincipal;
 import fabricio.backend.users.UserApi;
-import fabricio.backend.shared.exceptions.ErrorCode;
-import fabricio.backend.shared.exceptions.AppException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -32,11 +32,11 @@ public class AuthService {
     @Transactional
     public void register(RegisterRequest req) {
         if (UserApi.existsByEmail(req.email())) {
-            throw new AppException(ErrorCode.EMAIL_EXISTED);
+            throw new AuthException(AuthErrorCode.EMAIL_EXISTED);
         }
 
         if (UserApi.existsByUsername(req.username())) {
-            throw new AppException(ErrorCode.USERNAME_EXISTED);
+            throw new AuthException(AuthErrorCode.USERNAME_EXISTED);
         }
 
         String hashPassword = passwordEncoder.encode(req.password());
@@ -46,10 +46,10 @@ public class AuthService {
 
     public LoginResult login(LoginRequest req) {
         var user = UserApi.findUserAuthInfoByUsername(req.username())
-        .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_ERROR));
+        .orElseThrow(() -> new AuthException(AuthErrorCode.ACCOUNT_ERROR));
 
         if (!passwordEncoder.matches(req.password(), user.hashedPassword())) {
-            throw new AppException(ErrorCode.ACCOUNT_ERROR);
+            throw new AuthException(AuthErrorCode.ACCOUNT_ERROR);
         }
         
         var refreshToken = newRefreshToken();
@@ -66,10 +66,10 @@ public class AuthService {
     public JwtResponse refresh(String token) {
         var session = authRepository.findByToken(token)
                 .filter(s -> !s.isExpired())
-                .orElseThrow(() -> new AppException(ErrorCode.ACCESS_DENIED));
+                .orElseThrow(() -> new AuthException(AuthErrorCode.ACCESS_DENIED));
 
         var user = UserApi.findUserAuthInfoById(session.getUserId())
-                .orElseThrow(() -> new AppException(ErrorCode.ACCESS_DENIED));
+                .orElseThrow(() -> new AuthException(AuthErrorCode.ACCESS_DENIED));
 
         return new JwtResponse(tokenProvider.generateToken(toPrincipal(user)));
     }

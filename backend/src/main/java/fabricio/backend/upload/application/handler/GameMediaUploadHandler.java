@@ -2,11 +2,10 @@ package fabricio.backend.upload.application.handler;
 
 import fabricio.backend.games.GameApi;
 import fabricio.backend.games.GameAsset;
-import fabricio.backend.shared.exceptions.AppException;
-import fabricio.backend.shared.exceptions.ErrorCode;
 import fabricio.backend.shared.storage.ObjectStorage;
 import fabricio.backend.upload.domain.UploadPurpose;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -56,11 +55,12 @@ public class GameMediaUploadHandler implements UploadPurposeHandler {
         return storage.publicUrl(key);
     }
 
+    @Nullable
     private GameAsset resolveGameAsset(UploadPurpose purpose) {
         return switch(purpose) {
             case GAME_THUMBNAIL -> GameAsset.THUMBNAIL;
             case GAME_VIDEO -> GameAsset.VIDEO;
-            default -> throw new AppException(ErrorCode.BAD_REQUEST);
+            default -> null;
         };
     }
 }
