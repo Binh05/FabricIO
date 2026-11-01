@@ -3,22 +3,15 @@ package fabricio.backend.games.web;
 import java.util.UUID;
 
 import fabricio.backend.games.application.GameService;
+import fabricio.backend.games.application.dtos.GameResult;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import fabricio.backend.shared.security.UserPrincipal;
 import fabricio.backend.games.application.dtos.GamePlayResponse;
-import fabricio.backend.games.application.dtos.GameRequest;
-import fabricio.backend.games.application.dtos.GameResponse;
+import fabricio.backend.games.web.dto.GameRequest;
+import fabricio.backend.games.web.dto.GameResponse;
 import fabricio.backend.shared.base.ApiResponse;
 import fabricio.backend.shared.base.PageResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,32 +33,40 @@ public class GameController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "") String keyword) {
-        return ApiResponse.success(gameService.getAllGames(page, size, keyword));
+        PageResponse<GameResponse> res = gameService.getAllGames(page, size, keyword)
+                .map(GameResponse::from);
+        return ApiResponse.success(res);
     }
 
     @GetMapping("/{id}")
     public ApiResponse<GameResponse> getGameById(@PathVariable UUID id) {
-        return ApiResponse.success(gameService.getGameById(id));
+        return ApiResponse.success(GameResponse.from(gameService.getGameById(id)));
     }
 
     @PreAuthorize("hasAuthority('GAME_CREATE')")
-    @PostMapping(consumes = {"multipart/form-data"})
+    @PostMapping("/draft")
     public ApiResponse<GameResponse> uploadGame(
-            @AuthenticationPrincipal UserPrincipal userPrincipal,
-            @Valid @ModelAttribute GameRequest request) 
+            @AuthenticationPrincipal UserPrincipal principal,
+            @Valid @RequestBody GameRequest request)
     {
-        UUID ownerId = userPrincipal.getId();
-        return ApiResponse.success(gameService.uploadGame(request, ownerId));
+        return ApiResponse.success(GameResponse.from(gameService.uploadDraft(principal.getId(), request)));
     }
 
-    @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
-    public ApiResponse<GameResponse> updateGame(
-            @PathVariable UUID id,
+    @PreAuthorize("hasAuthority('GAME_CREATE')")
+    @PostMapping("/{gameId}/publish")
+    public ApiResponse<GameResponse> publishGame(@PathVariable UUID gameId) {
+        return ApiResponse.success(GameResponse.from(gameService.publishGame(gameId)));
+    }
+
+    @PutMapping(value = "/{gameId}")
+    public ApiResponse<GameResponse> updateGameInfo(
+            @PathVariable UUID gameId,
             @AuthenticationPrincipal UserPrincipal userPrincipal,
-            @Valid @ModelAttribute GameRequest request) 
+            @Valid @RequestBody GameRequest request)
     {
         UUID ownerId = userPrincipal.getId();
-        return ApiResponse.success(gameService.updateGame(id, request, ownerId));
+        GameResult result = gameService.updateGame(gameId, request, ownerId);
+        return ApiResponse.success(GameResponse.from(result));
     }
 
     @PreAuthorize("hasAuthority('GAME_DELETE_OWN')")

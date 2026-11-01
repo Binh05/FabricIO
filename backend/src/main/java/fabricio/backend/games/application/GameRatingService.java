@@ -11,12 +11,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import fabricio.backend.games.domain.*;
 import fabricio.backend.games.application.dtos.GameRatingRequest;
 import fabricio.backend.games.application.dtos.GameRatingResponse;
+import fabricio.backend.games.domain.*;
+import fabricio.backend.games.domain.exception.GameErrorCode;
+import fabricio.backend.games.domain.exception.GameException;
 import fabricio.backend.shared.base.PageResponse;
-import fabricio.backend.shared.exceptions.ErrorCode;
-import fabricio.backend.shared.exceptions.AppException;
 
 @Service
 @Transactional
@@ -33,7 +33,7 @@ public class GameRatingService {
 
     public GameRatingResponse upsertRating(UUID gameId, UUID userId, GameRatingRequest request) {
         Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
+                .orElseThrow(() -> new GameException(GameErrorCode.GAME_NOT_FOUND));
 
         GameRating rating = gameRatingRepository.findByGameIdAndUserId(gameId, userId)
                 .orElse(null);
@@ -55,7 +55,7 @@ public class GameRatingService {
 
     public void deleteRating(UUID gameId, UUID userId) {
         GameRating rating = gameRatingRepository.findByGameIdAndUserId(gameId, userId)
-                .orElseThrow(() -> new AppException(ErrorCode.RATING_NOT_FOUND));
+                .orElseThrow(() -> new GameException(GameErrorCode.RATING_NOT_FOUND));
 
         gameRatingRepository.delete(rating);
     }
@@ -63,7 +63,7 @@ public class GameRatingService {
     @Transactional(readOnly = true)
     public PageResponse<GameRatingResponse> getGameRatingsByGame(UUID gameId, int page, int size) {
         if (!gameRepository.existsById(gameId)) {
-            throw new AppException(ErrorCode.GAME_NOT_FOUND);
+            throw new GameException(GameErrorCode.GAME_NOT_FOUND);
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());

@@ -1,6 +1,6 @@
 # AGENTS.md — Quy tắc cho agent làm việc trên FabricIO backend
 
-Đọc `src/docs/ARCHITECTURE.md` trước khi sửa code. Dự án là **modular monolith** dùng **Spring Modulith**; ranh giới module được kiểm tra tự động bằng `ModularityTests`.
+Đọc `../src/docs/ARCHITECTURE.md` trước khi sửa code. Dự án là **modular monolith** dùng **Spring Modulith**; ranh giới module được kiểm tra tự động bằng `ModularityTests`.
 Mục đánh dấu **[CẦN XÁC NHẬN]** là chỗ chưa chắc chắn: kiểm tra trong code hoặc hỏi John, đừng đoán.
 
 ## 0. Cách làm việc
@@ -8,7 +8,7 @@ Mục đánh dấu **[CẦN XÁC NHẬN]** là chỗ chưa chắc chắn: kiểm
 - Giao tiếp với John bằng **tiếng Việt**. Tên class, method, biến, package bằng **tiếng Anh**.
 - Sau mỗi thay đổi động tới package, import hoặc entity, chạy:
   `./gradlew test --tests "*ModularityTests"` (Windows: `gradlew.bat`).
-  Không báo "xong" nếu `verifyModularity` đỏ vì lỗi **do bạn gây ra**. Lỗi tồn tại từ trước thì ghi trong `src/docs/ARCHITECTURE.md` mục 9, đừng giấu.
+  Không báo "xong" nếu `verifyModularity` đỏ vì lỗi **do bạn gây ra**. Lỗi tồn tại từ trước thì ghi trong `../src/docs/ARCHITECTURE.md` mục 9, đừng giấu.
 - Làm từng bước nhỏ, mỗi bước build được. Không refactor ngoài phạm vi được yêu cầu.
 - Không thêm thư viện, không đổi version, không đổi schema DB khi chưa hỏi.
 - Không tạo API, interface, DTO, event "phòng hờ". Chỉ tạo khi đã có chỗ gọi cụ thể.
@@ -26,7 +26,7 @@ Mục đánh dấu **[CẦN XÁC NHẬN]** là chỗ chưa chắc chắn: kiểm
   - `domain/`: entity, repository, enum nghiệp vụ.
   - `domain/` để phẳng. Không tạo `entities/`, `repositories/`. Chỉ chia theo aggregate khi vượt khoảng 15 file.
 - **R5.** `shared` là module `OPEN`, **không được import module nào khác**. Chỉ chứa hạ tầng thật sự dùng chung (base, config, exception, security, storage, `ErrorCode`, `Role`). Không đặt logic nghiệp vụ vào `shared`.
-- **R6.** Mỗi module có `package-info.java` với `@ApplicationModule(allowedDependencies = {...})` theo bảng ở `src/docs/ARCHITECTURE.md` mục 3. Chỉ thêm phụ thuộc khi có chỗ gọi thật. Tuyệt đối không tạo vòng.
+- **R6.** Mỗi module có `package-info.java` với `@ApplicationModule(allowedDependencies = {...})` theo bảng ở `../src/docs/ARCHITECTURE.md` mục 3. Chỉ thêm phụ thuộc khi có chỗ gọi thật. Tuyệt đối không tạo vòng.
 
 ## 2. Giao tiếp giữa module
 
@@ -98,5 +98,5 @@ Mục đánh dấu **[CẦN XÁC NHẬN]** là chỗ chưa chắc chắn: kiểm
 - [ ] Không còn quan hệ JPA xuyên module mới.
 - [ ] Thay đổi schema (nếu có) đã kèm migration và backfill.
 - [ ] Không thêm interface một-implementation, không thêm API chưa có người gọi.
-- [ ] Đã cập nhật `src/docs/ARCHITECTURE.md` (mục 4 nếu đổi cấu trúc, mục 8 và 9 nếu hoàn thành hoặc phát hiện việc mới).
+- [ ] Đã cập nhật `../src/docs/ARCHITECTURE.md` (mục 4 nếu đổi cấu trúc, mục 8 và 9 nếu hoàn thành hoặc phát hiện việc mới).
 - [ ] Đã nêu rõ mọi giả định.

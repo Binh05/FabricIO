@@ -2,6 +2,7 @@ package fabricio.backend.users.domain;
 
 import java.time.Instant;
 
+import fabricio.backend.users.UserSummary;
 import fabricio.backend.users.application.dtos.UserUpdateRequest;
 import fabricio.backend.shared.base.BaseEntity;
 import fabricio.backend.shared.security.Role;

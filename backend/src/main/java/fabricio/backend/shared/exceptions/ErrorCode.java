@@ -15,7 +15,9 @@ public enum ErrorCode {
     FAILED_UPLOAD_FILE(500, "Lỗi khi upload file"),
     FAILED_GET_FILE(500, "Lỗi khi get file"),
     FAILED_DELETE_FILE(500, "Lỗi khi delete file"),
-    MAX_FILE_UPLOAD_EXCEEDED(400, "Lỗi file đăng tải vượt quá giới hạn cho phép");
+
+
+    BAD_REQUEST(400, "Request không hợp lệ");
 
     private final int status;
     private final String message;

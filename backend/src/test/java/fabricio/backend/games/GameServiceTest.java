@@ -26,11 +26,10 @@
 //import org.springframework.data.domain.Pageable;
 //import org.springframework.mock.web.MockMultipartFile;
 //
-//import fabricio.backend.games.application.dtos.GameRequest;
-//import fabricio.backend.games.application.dtos.GameResponse;
+//import fabricio.backend.games.web.dto.GameRequest;
+//import fabricio.backend.games.web.dto.GameResponse;
 //import fabricio.backend.games.domain.Game;
 //import fabricio.backend.games.mappers.IGameMapper;
-//import fabricio.backend.games.domain.GameMediaRepository;
 //import fabricio.backend.games.domain.GameRepository;
 //import fabricio.backend.games.domain.GameTagMapRepository;
 //import fabricio.backend.games.domain.GameTagRepository;
@@ -156,7 +155,7 @@
 //            new PageImpl<>(List.of(game));
 //
 //        when(gameRepository
-//            .findByIsDeletedFalseAndTitleContainingIgnoreCase(
+//            .findByIsDeletedFalseAndTitleContainingIgnoreCaseAndStatusIsReady(
 //                eq("Mario"),
 //                any(Pageable.class)
 //            ))
@@ -204,7 +203,7 @@
 //            );
 //
 //        when(gameRepository
-//            .findByIsDeletedFalseAndTitleContainingIgnoreCase(
+//            .findByIsDeletedFalseAndTitleContainingIgnoreCaseAndStatusIsReady(
 //                anyString(),
 //                any(Pageable.class)
 //            ))

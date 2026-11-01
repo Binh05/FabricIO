@@ -1,203 +1,96 @@
 package fabricio.backend.games.application;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import fabricio.backend.games.GameApi;
+import fabricio.backend.games.GameAsset;
+import fabricio.backend.games.web.dto.GameRequest;
+import fabricio.backend.games.web.dto.GameResponse;
+import fabricio.backend.shared.storage.ObjectStorage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import fabricio.backend.games.application.dtos.*;
 import fabricio.backend.games.domain.*;
+import fabricio.backend.games.domain.exception.GameErrorCode;
+import fabricio.backend.games.domain.exception.GameException;
 import fabricio.backend.shared.base.PageResponse;
-import fabricio.backend.shared.exceptions.ErrorCode;
-import fabricio.backend.games.domain.MediaType;
-import fabricio.backend.shared.exceptions.AppException;
-import fabricio.backend.shared.storage.IStorageService;
 
 @Service
 @Transactional
-public class GameService {
+public class GameService implements GameApi {
 
     private final GameRepository gameRepository;
-    private final GameMediaRepository gameMediaRepository;
     private final GameTagRepository gameTagRepository;
-    private final GameTagMapRepository gameTagMapRepository;
-    private final IStorageService storageService;
-    private final GameMapper gameMapper;
+    private final ObjectStorage storage;
 
     public GameService(GameRepository gameRepository,
-                       GameMediaRepository gameMediaRepository,
                        GameTagRepository gameTagRepository,
-                       GameTagMapRepository gameTagMapRepository,
-                       IStorageService storageService,
-                       GameMapper gameMapper) {
+                       ObjectStorage storage
+    ) {
         this.gameRepository = gameRepository;
-        this.gameMediaRepository = gameMediaRepository;
         this.gameTagRepository = gameTagRepository;
-        this.gameTagMapRepository = gameTagMapRepository;
-        this.storageService = storageService;
-        this.gameMapper = gameMapper;
+        this.storage = storage;
     }
 
     @Transactional(readOnly = true)
-    public PageResponse<GameResponse> getAllGames(int page, int size, String keyword) {
+    public PageResponse<GameResult> getAllGames(int page, int size, String keyword) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<Game> gamePage = gameRepository.findByIsDeletedFalseAndTitleContainingIgnoreCase(keyword, pageable);
+        Page<Game> gamePage = gameRepository.findByIsDeletedFalseAndTitleContainingIgnoreCaseAndStatus(keyword, GameStatus.Ready, pageable);
         
-        List<GameResponse> gameResponses = gamePage.getContent().stream()
-            .map(this::mapToGameResponse)
+        List<GameResult> gameResponses = gamePage.getContent().stream()
+            .map(GameResult::from)
             .collect(Collectors.toList());
 
         return PageResponse.from(gamePage, gameResponses);
     }
 
     @Transactional(readOnly = true)
-    public GameResponse getGameById(UUID id) {
-        Game game = gameRepository.findByIdAndIsDeletedFalse(id)
-            .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
-        return mapToGameResponse(game);
+    public GameResult getGameById(UUID id) {
+        Game game = gameRepository.findByIdOrThrow(id);
+        return GameResult.from(game);
     }
 
-    public GameResponse uploadGame(GameRequest request, UUID ownerId) {
-        MultipartFile thumbnail = request.getThumbnail();
-        List<MultipartFile> media = request.getMedia();
+    public GameResult uploadDraft(UUID userId, GameRequest req) {
+        List<UUID> tagIds = req.tagIds();
+        List<GameTag> tags = resolveTagIds(tagIds);
 
-        validateMediaFile(thumbnail);
-        if (media != null) {
-            for (MultipartFile file : media) {
-                validateMediaFile(file);
-            }
-        }
+        Game game = Game.createDraft(
+            userId,
+            req.title(),
+            req.description(),
+            req.price(),
+            new HashSet<>(tags)
+        );
 
-        
-        String gameObjectName = ownerId + "/assets-game" + "/source-" + UUID.randomUUID();
-        String thumbnailUrl = storageService.uploadFile(gameObjectName + "/thumbnail", thumbnail);
-        String gameUrl = storageService.extractAndUploadFile(gameObjectName, request.getSourceGame());
-
-        Game game = gameMapper.toEntity(request);
-        if (thumbnailUrl != null) game.setThumbnailUrl(thumbnailUrl);
-        game.setGameUrl(gameUrl);
-        game.setOwnerId(ownerId);
-
-        Game savedGame = gameRepository.save(game);
-
-        List<GameMedia> mediaEntities = new ArrayList<>();
-        if (media != null && !media.isEmpty()) {
-            int order = 0;
-            for (MultipartFile file : media) {
-                if (file.isEmpty()) continue;
-                
-                String contentType = file.getContentType();
-                MediaType mediaType = (contentType != null && contentType.startsWith("video/")) ? MediaType.Video : MediaType.Image;
-                
-                if (mediaType == MediaType.Video) continue;
-                String mediaUrl = storageService.uploadFile(gameObjectName + "/media/" + order, file);
-
-                mediaEntities.add(GameMedia.builder()
-                    .gameId(savedGame)
-                    .mediaUrl(mediaUrl)
-                    .mediaType(mediaType)
-                    .sortOrder(order++)
-                    .build());
-            }
-        }
-
-        List<GameMedia> savedMedia = new ArrayList<>();
-        if (!mediaEntities.isEmpty()) {
-            savedMedia = gameMediaRepository.saveAll(mediaEntities);
-        }
-
-        List<GameTag> savedTags = saveTagMappings(savedGame.getId(), request.getTagIds());
-
-        return mapToGameResponse(savedGame, savedMedia, savedTags, 0);
+        gameRepository.save(game);
+        return GameResult.from(game);
     }
 
-    public GameResponse updateGame(UUID id, GameRequest request, UUID ownerId) {
-        Game game = gameRepository.findByIdAndIsDeletedFalse(id)
-            .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
-
+    @Transactional
+    public GameResult updateGame(UUID gameId, GameRequest request, UUID ownerId) {
+        Game game = gameRepository.findByIdOrThrow(gameId);
         game.assertOwnedBy(ownerId);
 
-        MultipartFile thumbnail = request.getThumbnail();
-        List<MultipartFile> media = request.getMedia();
-
-        // Validate files
-        validateMediaFile(thumbnail);
-        if (media != null) {
-            for (MultipartFile file : media) {
-                validateMediaFile(file);
-            }
-        }
-
-        // Determine thumbnail URL
-        if (thumbnail != null && !thumbnail.isEmpty()) {
-            game.setThumbnailUrl("https://placehold.co/600x400/png?text=Uploaded_" + thumbnail.getOriginalFilename());
-        }
-
-        game.setOwnerId(ownerId);
-        game.setTitle(request.getTitle());
-        game.setDescription(request.getDescription());
-        game.setPrice(request.getPrice());
-
-        Game updatedGame = gameRepository.save(game);
-
-        List<GameMedia> savedMedia = new ArrayList<>();
-        // If media files are uploaded, delete old media and replace with new ones
-        if (media != null && !media.isEmpty()) {
-            gameMediaRepository.deleteByGameIdId(id);
-
-            List<GameMedia> mediaEntities = new ArrayList<>();
-            int order = 0;
-            for (MultipartFile file : media) {
-                if (file.isEmpty()) continue;
-                
-                String contentType = file.getContentType();
-                MediaType mediaType = (contentType != null && contentType.startsWith("video/")) ? MediaType.Video : MediaType.Image;
-                
-                String mediaUrl = mediaType == MediaType.Video 
-                    ? "https://placehold.co/files/uploaded_video_" + file.getOriginalFilename() + ".mp4"
-                    : "https://placehold.co/600x400/png?text=Uploaded_Media_" + file.getOriginalFilename();
-
-                mediaEntities.add(GameMedia.builder()
-                    .gameId(updatedGame)
-                    .mediaUrl(mediaUrl)
-                    .mediaType(mediaType)
-                    .sortOrder(order++)
-                    .build());
-            }
-            if (!mediaEntities.isEmpty()) {
-                savedMedia = gameMediaRepository.saveAll(mediaEntities);
-            }
-        } else {
-            // Keep old media if no new media files are uploaded during update
-            savedMedia = gameMediaRepository.findByGameIdId(id);
-        }
-
-        // Cập nhật tags nếu có truyền vào
-        List<GameTag> savedTags;
-        if (request.getTagIds() != null) {
-            savedTags = saveTagMappings(updatedGame.getId(), request.getTagIds());
-        } else {
-            // Giữ nguyên tags cũ
-            savedTags = gameTagMapRepository.findByGameId(id).stream()
-                    .map(GameTagMap::getTag)
-                    .collect(Collectors.toList());
-        }
-
-        return mapToGameResponse(updatedGame, savedMedia, savedTags, game.getAvgRating());
+        List<GameTag> tags = resolveTagIds(request.tagIds());
+        game.updateInfo(
+                request.title(),
+                request.description(),
+                request.price(),
+                new HashSet<>(tags)
+        );
+        return GameResult.from(game);
     }
 
     public void deleteGame(UUID id, UUID ownerId) {
-        Game game = gameRepository.findByIdAndIsDeletedFalse(id)
-            .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
+        Game game = gameRepository.findByIdOrThrow(id);
 
         game.assertOwnedBy(ownerId);
 
@@ -206,106 +99,56 @@ public class GameService {
         gameRepository.save(game);
     }
 
-    public GamePlayResponse getGamePlayUrl(UUID gameId) {
-        Game game = gameRepository.findByIdAndIsDeletedFalse(gameId)
-            .orElseThrow(() -> new AppException(ErrorCode.GAME_NOT_FOUND));
+    public GameResult publishGame(UUID gameId) {
+        Game game = gameRepository.findByIdOrThrow(gameId);
 
-        String gamePlayUrl = storageService.getFullUrl(game.getGameUrl()) + "/index.html";
+        game.markAsReady();
+
+        return GameResult.from(game);
+    }
+
+    public GamePlayResponse getGamePlayUrl(UUID gameId) {
+        Game game = gameRepository.findByIdOrThrow(gameId);
+
+        String gamePlayUrl = storage.publicUrl(game.getGameUrl()) + "/index.html";
 
         return new GamePlayResponse(gamePlayUrl);
-    } 
-
-    private void validateMediaFile(MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            return;
-        }
-        String contentType = file.getContentType();
-        long fileSize = file.getSize();
-
-        // Image Validation: tối đa 5MB
-        if (contentType != null && contentType.startsWith("image/")) {
-            if (fileSize > 5 * 1024 * 1024) {
-                throw new AppException(ErrorCode.MAX_FILE_UPLOAD_EXCEEDED);
-            }
-        }
-        // Video Validation: tối đa 20MB
-        else if (contentType != null && contentType.startsWith("video/")) {
-            if (fileSize > 20 * 1024 * 1024) {
-                throw new AppException(ErrorCode.MAX_FILE_UPLOAD_EXCEEDED);
-            }
-            if (file.getOriginalFilename() != null && file.getOriginalFilename().contains("over10s")) {
-                throw new AppException(ErrorCode.MAX_FILE_UPLOAD_EXCEEDED);
-            }
-        }
     }
 
-    private GameResponse mapToGameResponse(Game game) {
-        List<GameMedia> media = gameMediaRepository.findByGameIdId(game.getId());
-        List<GameTag> tags = gameTagMapRepository.findByGameId(game.getId()).stream()
-                .map(GameTagMap::getTag)
-                .collect(Collectors.toList());
-        return mapToGameResponse(game, media, tags, game.getAvgRating());
-    }
+    private List<GameTag> resolveTagIds(List<UUID> tagIds) {
+        List<GameTag> tags = Collections.emptyList();
 
-    private GameResponse mapToGameResponse(Game game, List<GameMedia> media, List<GameTag> tags, double avg) {
-        List<GameMediaResponse> mediaResponses = media.stream()
-            .map(m -> GameMediaResponse.builder()
-                .id(m.getId())
-                .mediaUrl(storageService.getFullUrl(m.getMediaUrl()))
-                .mediaType(m.getMediaType())
-                .sortOrder(m.getSortOrder())
-                .build())
-            .collect(Collectors.toList());
-
-        List<GameTagResponse> tagResponses = tags.stream()
-                .map(t -> GameTagResponse.builder()
-                        .id(t.getId())
-                        .name(t.getName())
-                        .build())
-                .collect(Collectors.toList());
-
-        String thumbnail = storageService.getFullUrl(game.getThumbnailUrl());
-
-        return GameResponse.builder()
-            .id(game.getId())
-            .ownerId(game.getOwnerId())
-            .title(game.getTitle())
-            .description(game.getDescription())
-            .thumbnailUrl(thumbnail)
-            .gameUrl(game.getGameUrl())
-            .price(game.getPrice())
-            .createdAt(game.getCreatedAt())
-            .updatedAt(game.getUpdatedAt())
-            .media(mediaResponses)
-            .tags(tagResponses)
-            .ratingAvg(avg)
-            .build();
-    }
-
-    /**
-     * Xóa tất cả tag mapping cũ và tạo lại theo danh sách tagIds mới.
-     * Nếu tagIds null hoặc rỗng thì xóa hết mapping.
-     */
-    private List<GameTag> saveTagMappings(UUID gameId, List<UUID> tagIds) {
-        gameTagMapRepository.deleteByGameId(gameId);
-
-        if (tagIds == null || tagIds.isEmpty()) {
-            return new ArrayList<>();
+        if (tagIds != null && !tagIds.isEmpty()) {
+            tags = gameTagRepository.findAllById(tagIds);
+            if (tags.size() != new HashSet<>(tags).size()) {
+                throw new GameException(GameErrorCode.GAME_TAG_INVALID);
+            }
         }
 
-        List<GameTag> tags = gameTagRepository.findAllById(tagIds);
-        if (tags.size() != tagIds.size()) {
-            throw new AppException(ErrorCode.GAME_TAG_INVALID);
-        }
-
-        List<GameTagMap> mappings = tags.stream()
-                .map(tag -> GameTagMap.builder()
-                        .gameId(gameId)
-                        .tagId(tag.getId())
-                        .build())
-                .collect(Collectors.toList());
-
-        gameTagMapRepository.saveAll(mappings);
         return tags;
+    }
+
+    @Override
+    public void requireOwner(UUID userId, UUID gameId) {
+        boolean owner = gameRepository.existsGameByIdAndOwnerIdAndIsDeletedFalse(gameId, userId);
+        if (!owner) throw new GameException(GameErrorCode.GAME_ACCESS_DENIED);
+    }
+
+    @Nullable
+    @Override
+    public String switchPlayPrefix(UUID gameId, String prefix) {
+        Game game = gameRepository.findByIdOrThrow(gameId);
+        String oldKey = game.getGameUrl();
+        game.setGameUrl(prefix);
+        return oldKey;
+    }
+
+    @Nullable
+    @Override
+    @Transactional
+    public String updateMedia(UUID gameId, GameAsset asset, String key) {
+        Game game = gameRepository.findByIdOrThrow(gameId);
+
+        return game.updateMedia(asset, key);
     }
 }
