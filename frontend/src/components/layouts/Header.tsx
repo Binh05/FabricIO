@@ -20,7 +20,6 @@ import {
 
 const nav = [
   { href: "/", label: "Home", key: "/" },
-  { href: "/games", label: "Games", key: "/games" },
   { href: "/submit-game", label: "Submit Game", key: "/submit-game" },
 ];
 

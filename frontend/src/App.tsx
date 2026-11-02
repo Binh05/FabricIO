@@ -1,7 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Home } from "./pages/Home";
 import { Games } from "./pages/Games";
-import { GameDetail } from "./pages/GameDetail";
 import { Play } from "./pages/Play";
 import { SubmitGame } from "./pages/SubmitGame";
 import { Profile } from "./pages/Profile";
@@ -34,10 +32,8 @@ const AppRouter = () => {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         {/* layout */}
-        <Route element={<MainLayoutRoute />}>
-          <Route index element={<Home />} />
-          <Route path="/games" element={<Games />} />
-          <Route path="/game-detail/:id" element={<GameDetail />} />
+        <Route element={<MainLayoutRoute />}>\
+          <Route index element={<Games />} />
           <Route path="/play/:id" element={<Play />} />
 
           <Route element={<ProtectedRoute />}>
