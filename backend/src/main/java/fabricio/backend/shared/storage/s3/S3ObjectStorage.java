@@ -88,6 +88,8 @@ public class S3ObjectStorage implements ObjectStorage {
 
     @Override
     public String publicUrl(String key) {
+        if (key == null || key.isBlank()) return key;
+        if (key.startsWith("http")) return key;
         String base = props.publicEndpoint();
         return props.pathStyle()
                 ? base + "/" + props.bucket() + "/" + key
