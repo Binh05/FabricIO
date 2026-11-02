@@ -1,0 +1,522 @@
+[
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2a111",
+        "ownerId": "a1111111-bb22-cc33-dd44-ee5555555555",
+        "title": "Cyberpunk Chronicles",
+        "description": "An open-world RPG set in a futuristic neon metropolis.",
+        "gameUrl": "CYBER-CHRON-2026",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 59.99,
+        "tags": [
+            {
+                "id": "101",
+                "name": "Action"
+            },
+            {
+                "id": "102",
+                "name": "RPG"
+            },
+            {
+                "id": "103",
+                "name": "Cyberpunk"
+            }
+        ],
+        "avgRating": 4.5,
+        "createdAt": "2026-01-15T10:00:00Z",
+        "updatedAt": "2026-02-01T14:30:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2a222",
+        "ownerId": "a1111111-bb22-cc33-dd44-ee5555555555",
+        "title": "Galactic Odyssey",
+        "description": "Explore space, discover new planets, and build interstellar bases.",
+        "gameUrl": "GAL-ODYSSEY-SF",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 49.99,
+        "tags": [
+            {
+                "id": "104",
+                "name": "Sci-Fi"
+            },
+            {
+                "id": "105",
+                "name": "Space"
+            },
+            {
+                "id": "106",
+                "name": "Open World"
+            }
+        ],
+        "avgRating": 4.8,
+        "createdAt": "2026-01-20T08:15:00Z",
+        "updatedAt": "2026-02-10T09:12:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2a333",
+        "ownerId": "b2222222-cc33-dd44-ee55-ff6666666666",
+        "title": "Dungeon Crawler X",
+        "description": "Classic roguelike dungeon crawler with endless procedural levels.",
+        "gameUrl": "DC-X-ROGUE",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 19.99,
+        "tags": [
+            {
+                "id": "107",
+                "name": "Roguelike"
+            },
+            {
+                "id": "108",
+                "name": "Indie"
+            },
+            {
+                "id": "109",
+                "name": "Dungeon"
+            }
+        ],
+        "avgRating": 4.2,
+        "createdAt": "2026-02-01T12:00:00Z",
+        "updatedAt": "2026-02-15T16:20:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2a444",
+        "ownerId": "b2222222-cc33-dd44-ee55-ff6666666666",
+        "title": "Pixel Farm Simulator",
+        "description": "Relax and build your dream farm in a cozy 2D pixelated world.",
+        "gameUrl": "PIXEL-FARM-SIM",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 14.99,
+        "tags": [
+            {
+                "id": "110",
+                "name": "Cozy"
+            },
+            {
+                "id": "111",
+                "name": "Simulation"
+            },
+            {
+                "id": "112",
+                "name": "Pixel Art"
+            }
+        ],
+        "avgRating": 4.9,
+        "createdAt": "2026-02-05T09:00:00Z",
+        "updatedAt": "2026-02-20T11:00:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2a555",
+        "ownerId": "c3333333-dd44-ee55-ff66-aa7777777777",
+        "title": "Shadow Realm Tactics",
+        "description": "Turn-based tactical strategy game in a dark fantasy setting.",
+        "gameUrl": "SHADOW-TACTICS-TRPG",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 29.99,
+        "tags": [
+            {
+                "id": "113",
+                "name": "Strategy"
+            },
+            {
+                "id": "114",
+                "name": "Turn-Based"
+            },
+            {
+                "id": "115",
+                "name": "Dark Fantasy"
+            }
+        ],
+        "avgRating": 4.1,
+        "createdAt": "2026-02-10T14:00:00Z",
+        "updatedAt": "2026-02-22T10:45:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2a666",
+        "ownerId": "c3333333-dd44-ee55-ff66-aa7777777777",
+        "title": "Speed Demons 2026",
+        "description": "High-octane arcade racing with customizable vehicles.",
+        "gameUrl": "SPEED-DEMONS-RACE",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 39.99,
+        "tags": [
+            {
+                "id": "116",
+                "name": "Racing"
+            },
+            {
+                "id": "117",
+                "name": "Arcade"
+            },
+            {
+                "id": "118",
+                "name": "Multiplayer"
+            }
+        ],
+        "avgRating": 4.3,
+        "createdAt": "2026-02-12T11:20:00Z",
+        "updatedAt": "2026-03-01T08:00:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2a777",
+        "ownerId": "d4444444-ee55-ff66-aa77-bb8888888888",
+        "title": "Silent Echoes",
+        "description": "A psychological horror game set in an abandoned research facility.",
+        "gameUrl": "SILENT-ECHOES-HORROR",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 24.99,
+        "tags": [
+            {
+                "id": "119",
+                "name": "Horror"
+            },
+            {
+                "id": "120",
+                "name": "Survival"
+            },
+            {
+                "id": "121",
+                "name": "Singleplayer"
+            }
+        ],
+        "avgRating": 4.6,
+        "createdAt": "2026-02-18T18:00:00Z",
+        "updatedAt": "2026-03-05T19:30:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2a888",
+        "ownerId": "d4444444-ee55-ff66-aa77-bb8888888888",
+        "title": "Kingdom Defender",
+        "description": "Tower defense meets action RPG in a siege to protect the realm.",
+        "gameUrl": "KINGDOM-DEFENDER-TD",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 0.00,
+        "tags": [
+            {
+                "id": "122",
+                "name": "Tower Defense"
+            },
+            {
+                "id": "113",
+                "name": "Strategy"
+            },
+            {
+                "id": "123",
+                "name": "Free to Play"
+            }
+        ],
+        "avgRating": 3.9,
+        "createdAt": "2026-02-25T13:10:00Z",
+        "updatedAt": "2026-03-10T12:00:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2a999",
+        "ownerId": "e5555555-ff66-aa77-bb88-cc9999999999",
+        "title": "Mystic Academy",
+        "description": "Learn spells, make friends, and solve mysteries in a magical school.",
+        "gameUrl": "MYSTIC-ACADEMY-MAGIC",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 34.99,
+        "tags": [
+            {
+                "id": "102",
+                "name": "RPG"
+            },
+            {
+                "id": "124",
+                "name": "Fantasy"
+            },
+            {
+                "id": "125",
+                "name": "Adventure"
+            }
+        ],
+        "avgRating": 4.7,
+        "createdAt": "2026-03-01T10:00:00Z",
+        "updatedAt": "2026-03-15T09:40:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2b000",
+        "ownerId": "e5555555-ff66-aa77-bb88-cc9999999999",
+        "title": "Neon Arena Showdown",
+        "description": "Fast-paced arena shooter with competitive ranking system.",
+        "gameUrl": "NEON-ARENA-FPS",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 0.00,
+        "tags": [
+            {
+                "id": "126",
+                "name": "FPS"
+            },
+            {
+                "id": "118",
+                "name": "Multiplayer"
+            },
+            {
+                "id": "127",
+                "name": "Competitive"
+            }
+        ],
+        "avgRating": 4.0,
+        "createdAt": "2026-03-05T15:30:00Z",
+        "updatedAt": "2026-03-20T17:10:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2b111",
+        "ownerId": "f6666666-aa77-bb88-cc99-dd0000000000",
+        "title": "Cardmaster Chronicles",
+        "description": "Deckbuilding roguelike with deep card interactions and combos.",
+        "gameUrl": "CARDMASTER-CHRON",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 17.99,
+        "tags": [
+            {
+                "id": "128",
+                "name": "Card Game"
+            },
+            {
+                "id": "107",
+                "name": "Roguelike"
+            },
+            {
+                "id": "113",
+                "name": "Strategy"
+            }
+        ],
+        "avgRating": 4.8,
+        "createdAt": "2026-03-12T08:45:00Z",
+        "updatedAt": "2026-04-01T11:00:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2b222",
+        "ownerId": "f6666666-aa77-bb88-cc99-dd0000000000",
+        "title": "Ocean Explorer VR",
+        "description": "Dive into deep waters and study aquatic life in virtual reality.",
+        "gameUrl": "OCEAN-EXPLORER-VR",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 29.99,
+        "tags": [
+            {
+                "id": "129",
+                "name": "VR"
+            },
+            {
+                "id": "111",
+                "name": "Simulation"
+            },
+            {
+                "id": "130",
+                "name": "Relaxing"
+            }
+        ],
+        "avgRating": 4.4,
+        "createdAt": "2026-03-18T14:20:00Z",
+        "updatedAt": "2026-04-05T10:15:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2b333",
+        "ownerId": "a1111111-bb22-cc33-dd44-ee5555555555",
+        "title": "Mecha Strike Force",
+        "description": "Pilot massive robots and wage war in destructible cities.",
+        "gameUrl": "MECHA-STRIKE-FORCE",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 44.99,
+        "tags": [
+            {
+                "id": "101",
+                "name": "Action"
+            },
+            {
+                "id": "104",
+                "name": "Sci-Fi"
+            },
+            {
+                "id": "131",
+                "name": "Mecha"
+            }
+        ],
+        "avgRating": 4.2,
+        "createdAt": "2026-04-02T09:10:00Z",
+        "updatedAt": "2026-04-18T15:00:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2b444",
+        "ownerId": "b2222222-cc33-dd44-ee55-ff6666666666",
+        "title": "Puzzle Dimensions",
+        "description": "Mind-bending 3D perspective puzzle game.",
+        "gameUrl": "PUZZLE-DIMENSIONS-3D",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 9.99,
+        "tags": [
+            {
+                "id": "132",
+                "name": "Puzzle"
+            },
+            {
+                "id": "108",
+                "name": "Indie"
+            },
+            {
+                "id": "121",
+                "name": "Singleplayer"
+            }
+        ],
+        "avgRating": 4.6,
+        "createdAt": "2026-04-10T16:00:00Z",
+        "updatedAt": "2026-04-25T13:30:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2b555",
+        "ownerId": "c3333333-dd44-ee55-ff66-aa7777777777",
+        "title": "Medieval Empire",
+        "description": "Build your kingdom, manage resources, and lead armies into battle.",
+        "gameUrl": "MEDIEVAL-EMPIRE-RTS",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 39.99,
+        "tags": [
+            {
+                "id": "113",
+                "name": "Strategy"
+            },
+            {
+                "id": "133",
+                "name": "RTS"
+            },
+            {
+                "id": "134",
+                "name": "Historical"
+            }
+        ],
+        "avgRating": 4.5,
+        "createdAt": "2026-04-20T11:00:00Z",
+        "updatedAt": "2026-05-02T14:00:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2b666",
+        "ownerId": "d4444444-ee55-ff66-aa77-bb8888888888",
+        "title": "Zombie Survival Protocol",
+        "description": "Co-op survival horror game against endless horde waves.",
+        "gameUrl": "ZOMBIE-SURVIVAL-PROTO",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 24.99,
+        "tags": [
+            {
+                "id": "119",
+                "name": "Horror"
+            },
+            {
+                "id": "120",
+                "name": "Survival"
+            },
+            {
+                "id": "135",
+                "name": "Co-op"
+            }
+        ],
+        "avgRating": 4.3,
+        "createdAt": "2026-05-01T10:30:00Z",
+        "updatedAt": "2026-05-15T18:45:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2b777",
+        "ownerId": "e5555555-ff66-aa77-bb88-cc9999999999",
+        "title": "Cybernet Racer",
+        "description": "Anti-gravity combat racing at breakneck speeds.",
+        "gameUrl": "CYBERNET-RACER-AG",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 19.99,
+        "tags": [
+            {
+                "id": "116",
+                "name": "Racing"
+            },
+            {
+                "id": "103",
+                "name": "Cyberpunk"
+            },
+            {
+                "id": "101",
+                "name": "Action"
+            }
+        ],
+        "avgRating": 3.8,
+        "createdAt": "2026-05-10T12:00:00Z",
+        "updatedAt": "2026-05-25T09:15:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2b888",
+        "ownerId": "f6666666-aa77-bb88-cc99-dd0000000000",
+        "title": "Astral Tale",
+        "description": "An anime-styled JRPG with emotional storytelling and fluid combat.",
+        "gameUrl": "ASTRAL-TALE-JRPG",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 54.99,
+        "tags": [
+            {
+                "id": "102",
+                "name": "RPG"
+            },
+            {
+                "id": "136",
+                "name": "Anime"
+            },
+            {
+                "id": "125",
+                "name": "Adventure"
+            }
+        ],
+        "avgRating": 4.9,
+        "createdAt": "2026-05-20T07:30:00Z",
+        "updatedAt": "2026-06-01T16:00:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2b999",
+        "ownerId": "a1111111-bb22-cc33-dd44-ee5555555555",
+        "title": "Tiny Tycoon",
+        "description": "Manage your small theme park and grow it into a global empire.",
+        "gameUrl": "TINY-TYCOON-PARK",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 12.99,
+        "tags": [
+            {
+                "id": "137",
+                "name": "Management"
+            },
+            {
+                "id": "111",
+                "name": "Simulation"
+            },
+            {
+                "id": "110",
+                "name": "Cozy"
+            }
+        ],
+        "avgRating": 4.4,
+        "createdAt": "2026-06-05T14:15:00Z",
+        "updatedAt": "2026-06-20T11:20:00Z"
+    },
+    {
+        "id": "e3b0c442-98fc-424b-a256-11f8b4a2c000",
+        "ownerId": "b2222222-cc33-dd44-ee55-ff6666666666",
+        "title": "Chrono Leap",
+        "description": "Platformer game where time manipulation is your primary mechanics.",
+        "gameUrl": "CHRONO-LEAP-TIME",
+        "thumbnailUrl": "https://picsum.photos/800/600",
+        "price": 14.99,
+        "tags": [
+            {
+                "id": "138",
+                "name": "Platformer"
+            },
+            {
+                "id": "108",
+                "name": "Indie"
+            },
+            {
+                "id": "132",
+                "name": "Puzzle"
+            }
+        ],
+        "avgRating": 4.7,
+        "createdAt": "2026-06-15T09:00:00Z",
+        "updatedAt": "2026-07-01T10:00:00Z"
+    }
+]

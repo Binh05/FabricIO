@@ -1,24 +1,16 @@
 export interface Game {
   id: string;
   ownerId: string;
-  ownerName: string;
   title: string;
   description: string;
   thumbnailUrl: string;
+  videoUrl: string;
   gameUrl: string;
   price: number;
-  createdAt: Date;
-  updatedAt: Date;
-  media: GameMedia[];
   tags: GameTag[];
-  ratingAvg: number;
-}
-
-export interface GameMedia {
-  id: string;
-  mediaUrl: string;
-  mediaType: string;
-  sortOrder: number;
+  avgRating: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface GameTag {
