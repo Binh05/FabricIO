@@ -22,9 +22,6 @@ export interface PostGameRequest {
   title: string;
   description: string | null;
   price: number;
-  sourceGame: File;
-  thumbnail: File;
-  media: File[] | null;
   tagIds: string[] | null;
 }
 

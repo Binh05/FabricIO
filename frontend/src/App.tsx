@@ -1,7 +1,7 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Games } from "./pages/Games";
 import { Play } from "./pages/Play";
-import { SubmitGame } from "./pages/SubmitGame";
+import { UploadGame } from "./pages/UploadGame";
 import { Profile } from "./pages/Profile";
 import { SignIn } from "./pages/SignIn";
 import { SignUp } from "./pages/SignUp";
@@ -32,12 +32,14 @@ const AppRouter = () => {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         {/* layout */}
-        <Route element={<MainLayoutRoute />}>\
+        <Route element={<MainLayoutRoute />}>
           <Route index element={<Games />} />
+          <Route path="/games" element={<Games />} />
           <Route path="/play/:id" element={<Play />} />
 
           <Route element={<ProtectedRoute />}>
-            <Route path="/submit-game" element={<SubmitGame />} />
+            <Route path="/upload-game" element={<UploadGame />} />
+            <Route path="/submit-game" element={<Navigate to="/upload-game" replace />} />
             <Route path="/profile" element={<Profile />} />
           </Route>
         </Route>

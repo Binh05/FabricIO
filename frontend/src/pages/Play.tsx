@@ -116,7 +116,7 @@ export const Play = () => {
             </h2>
             <div className="flex justify-center gap-4">
               <Button variant="gradient" asChild>
-                <Link to={`/submit-game?edit=${game.id}`}>Thêm link WebGL</Link>
+                <Link to={`/upload-game?edit=${game.id}`}>Thêm link WebGL</Link>
               </Button>
               <Button variant="outline" asChild>
                 <Link to={`/game-detail/${game.id}`}>Về trang game</Link>
