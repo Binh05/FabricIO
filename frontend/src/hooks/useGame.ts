@@ -6,7 +6,12 @@ import { useContext } from "react";
 import { toast } from "sonner";
 
 interface UseGame {
-  uploadGame: (formData: PostGameRequest) => Promise<void>;
+  uploadGame: (formData: PostGameRequest) => Promise<Game | undefined>;
+  fetchDraftGame: () => Promise<Game | null>;
+  createDraft: (data: PostGameRequest) => Promise<Game>;
+  updateGameInfo: (gameId: string, data: PostGameRequest) => Promise<Game>;
+  deleteGameDraft: (gameId: string) => Promise<void>;
+  publishGame: (gameId: string) => Promise<Game>;
   fetchGames: (keyword?: string, page?: number, size?: number) => Promise<void>;
   fetchGameById: (id: string) => Promise<void>;
   fetchGamePlayUrl: (gameId: string) => Promise<string>;
@@ -42,11 +47,80 @@ export const useGame = (): UseGame => {
     setTotalElements,
   } = context;
 
+  const fetchDraftGame = async (): Promise<Game | null> => {
+    try {
+      const res = await gameService.getDraftGame();
+      return res.data ?? null;
+    } catch (error) {
+      console.error("Lỗi khi lấy bản nháp game", error);
+      return null;
+    }
+  };
+
+  const createDraft = async (data: PostGameRequest): Promise<Game> => {
+    try {
+      const res = await gameService.createDraft(data);
+      return res.data;
+    } catch (error) {
+      console.error("Lỗi khi tạo draft", error);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      toast.error(message ?? "Đã xảy ra lỗi khi tạo bản nháp!");
+      throw error;
+    }
+  };
+
+  const updateGameInfo = async (
+    gameId: string,
+    data: PostGameRequest,
+  ): Promise<Game> => {
+    try {
+      const res = await gameService.updateGameInfo(gameId, data);
+      return res.data;
+    } catch (error) {
+      console.error("Lỗi khi cập nhật thông tin game", error);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      toast.error(message ?? "Đã xảy ra lỗi khi cập nhật bản nháp!");
+      throw error;
+    }
+  };
+
+  const deleteGameDraft = async (gameId: string): Promise<void> => {
+    try {
+      await gameService.deleteGameDraft(gameId);
+    } catch (error) {
+      console.error("Lỗi khi xóa bản nháp game", error);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      toast.error(message ?? "Đã xảy ra lỗi khi xóa bản nháp!");
+      throw error;
+    }
+  };
+
+  const publishGame = async (gameId: string): Promise<Game> => {
+    try {
+      const res = await gameService.publishGame(gameId);
+      setGames((prev) => [...prev, res.data]);
+      return res.data;
+    } catch (error) {
+      console.error("Lỗi khi xuất bản game", error);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      toast.error(message ?? "Đã xảy ra lỗi khi xuất bản game!");
+      throw error;
+    }
+  };
+
   const uploadGame = async (formData: PostGameRequest) => {
     try {
-      const { data } = await gameService.uploadGame(formData);
-
-      setGames((prev) => [...prev, data]);
+      const res = await gameService.uploadGame(formData);
+      setGames((prev) => [...prev, res.data]);
+      return res.data;
     } catch (error) {
       console.error("Lỗi khi upload games", error);
       const message = axios.isAxiosError(error)
@@ -127,6 +201,11 @@ export const useGame = (): UseGame => {
 
   return {
     uploadGame,
+    fetchDraftGame,
+    createDraft,
+    updateGameInfo,
+    deleteGameDraft,
+    publishGame,
     fetchGames,
     fetchGameById,
     fetchGamePlayUrl,

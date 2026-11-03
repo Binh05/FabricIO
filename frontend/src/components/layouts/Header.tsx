@@ -20,7 +20,7 @@ import {
 
 const nav = [
   { href: "/", label: "Home", key: "/" },
-  { href: "/submit-game", label: "Submit Game", key: "/submit-game" },
+  { href: "/upload-game", label: "Upload Game", key: "/upload-game" },
 ];
 
 const NavLinks = ({

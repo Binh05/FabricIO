@@ -61,7 +61,7 @@ export const Profile = () => {
         </div>
         <div className="my-auto flex flex-col gap-3">
           <Button variant="gradient" asChild>
-            <Link to="/submit-game">Đăng game</Link>
+            <Link to="/upload-game">Đăng game</Link>
           </Button>
 
           <Button
