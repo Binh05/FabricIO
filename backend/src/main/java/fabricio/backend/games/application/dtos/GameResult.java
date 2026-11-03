@@ -1,0 +1,41 @@
+package fabricio.backend.games.application.dtos;
+
+import fabricio.backend.games.domain.Game;
+import fabricio.backend.games.domain.GameTag;
+import fabricio.backend.shared.storage.ObjectStorage;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+
+public record GameResult(
+        UUID id,
+        UUID ownerId,
+        String title,
+        String description,
+        String videoUrl,
+        String thumbnailUrl,
+        BigDecimal price,
+        List<GameTag> tags,
+        double avgRating,
+        Instant createdAt,
+        Instant updatedAt
+) {
+    public static GameResult from(Game game, String videoUrl, String thumbnailUrl) {
+        if (game == null) return null;
+        return new GameResult(
+                game.getId(),
+                game.getOwnerId(),
+                game.getTitle(),
+                game.getDescription(),
+                videoUrl,
+                thumbnailUrl,
+                game.getPrice(),
+                game.getTags() != null ? List.copyOf(game.getTags()) : List.of(),
+                game.getAvgRating(),
+                game.getCreatedAt(),
+                game.getUpdatedAt()
+        );
+    }
+}

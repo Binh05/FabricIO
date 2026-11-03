@@ -16,6 +16,7 @@ interface GameContext {
   setTotalElements: React.Dispatch<React.SetStateAction<number>>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const GameContext = createContext<GameContext | null>(null);
 
 export const GameProvider = ({ children }: { children: React.ReactNode }) => {

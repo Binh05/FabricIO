@@ -13,10 +13,11 @@ export interface AuthContextType {
   clearAuthState: () => void;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
@@ -42,7 +43,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
           setUser(res.data);
         }
-      } catch (error) {
+      } catch {
         sessionStorage.clear();
       } finally {
         setLoading(false);

@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { useGame } from "@/hooks/useGame";
 import { Play as PlayGame } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { PlayPageSkeleton } from "@/components/skeletons/PlayPageSkeleton";
+import { GameCard } from "@/components/games/GameCard";
 
 export const Play = () => {
   const { id } = useParams<{ id: string }>();
-  const { games, fetchGamePlayUrl, fetchGameById } = useGame();
+  const { games, fetchGamePlayUrl, fetchGameById, fetchGames } = useGame();
   const { loading } = useAuth();
   const [gamePlayUrl, setGamePlayUrl] = useState<string>("");
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -20,6 +22,7 @@ export const Play = () => {
         if (!games.some((game) => game.id === id)) {
           setIsFetching(true);
           await fetchGameById(id);
+          await fetchGames("", 0, 66);
         }
 
         const url = await fetchGamePlayUrl(id);
@@ -30,18 +33,18 @@ export const Play = () => {
     };
 
     init();
-  }, [fetchGamePlayUrl]);
+  }, []);
 
-  if (isFetching) return;
+  if (isFetching) return <PlayPageSkeleton />;
   const game = games.find((game) => game.id === id);
 
-  if (!game || loading) return;
+  if (!game || loading) return <PlayPageSkeleton />;
 
   const handleAction = (action: "reload" | "fullscreen") => {
     const frame = document.getElementById("webgl-iframe") as HTMLIFrameElement;
     if (!frame) return;
-    if (action === "reload") {
-      frame.src = frame.src;
+    if (action === "reload" && gamePlayUrl) {
+      frame.src = gamePlayUrl;
     }
     if (action === "fullscreen") {
       frame.requestFullscreen?.();
@@ -53,12 +56,9 @@ export const Play = () => {
   };
 
   return (
-    <section className="mb-16">
+    <section className="mb-16"> 
       <div className="mb-8 flex items-end justify-between">
-        <div>
-          <span className="text-primary mb-2 block text-[13px] font-bold tracking-[2px] uppercase">
-            Play
-          </span>
+        <div className="flex flex-col gap-2">
           <h1 className="text-4xl font-extrabold tracking-tight">
             {game.title}
           </h1>
@@ -66,12 +66,10 @@ export const Play = () => {
             Trải nghiệm bản WebGL trực tiếp trong trình duyệt.
           </p>
         </div>
-        <Button variant="outline" asChild>
-          <Link to={`/game-detail/${game.id}`}>Game details</Link>
-        </Button>
       </div>
 
-      <div className="flex-1">
+      <div className="grid grid-cols-12 gap-4 items-start">
+      <div className="flex-1 col-span-9">
         {gamePlayUrl ? (
           <>
             <div className="border-border bg-background relative aspect-video overflow-hidden rounded-lg border">
@@ -90,7 +88,7 @@ export const Play = () => {
                   variant="ghost"
                   className="bg-muted/20 absolute top-6/12 left-6/12 z-50 size-20 -translate-6/12 rounded-full brightness-110"
                 >
-                  <PlayGame className="text-muted z-50 size-8 stroke-1" />
+                  <PlayGame className="text-muted size-8 stroke-1" />
                 </Button>
               )}
             </div>
@@ -118,7 +116,7 @@ export const Play = () => {
             </h2>
             <div className="flex justify-center gap-4">
               <Button variant="gradient" asChild>
-                <Link to={`/submit-game?edit=${game.id}`}>Thêm link WebGL</Link>
+                <Link to={`/upload-game?edit=${game.id}`}>Thêm link WebGL</Link>
               </Button>
               <Button variant="outline" asChild>
                 <Link to={`/game-detail/${game.id}`}>Về trang game</Link>
@@ -131,6 +129,18 @@ export const Play = () => {
             Mô tả
           </div>
           <div className="text-muted text-sm leading-7">{game.description}</div>
+        </div>
+      </div>
+      
+        <div className="col-span-3">
+          <h2 className="mb-2 font-bold text-xl">Chơi tiếp</h2>
+          <div className="md:grid gap-3 md:grid-cols-1 lg:grid-cols-2 hidden">
+            {games.length > 0 && (
+              games.map(g => (
+                <GameCard key={g.id} game={g} className="flex-1"/>
+              ))
+            )}
+          </div>
         </div>
       </div>
     </section>

@@ -1,0 +1,61 @@
+services:
+  storage:
+    image: alpine/minio:RELEASE.2025-10-15T17-29-55Z
+    container_name: fabricio_storage
+    user: root
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=12345678
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    restart: always
+
+  # Tự động set public read cho bucket fabricio-storage
+  create_public_bucket:
+    image: ghcr.io/netvark/mc:latest
+    container_name: fabricio_mc
+    depends_on:
+      - storage
+    entrypoint: [ "/bin/sh", "-c" ]
+    command:
+      - |
+        set -eu
+
+        echo "Waiting for MinIO..."
+        until mc alias set fabricminio http://storage:9000 "$$MINIO_ROOT_USER" "$$MINIO_ROOT_PASSWORD"; do
+          sleep 2
+        done
+
+        echo "Creating bucket if needed..."
+        mc mb fabricminio/fabric-storage --ignore-existing
+
+        echo "Setting public download policy..."
+        mc anonymous set download fabricminio/fabric-storage
+
+        echo "Verifying bucket policy..."
+        mc anonymous get fabricminio/fabric-storage
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: "12345678"
+    restart: on-failure
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: fabricio_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: fabricio_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  minio_data:
+  postgres_data:

@@ -1,6 +1,8 @@
 package fabricio.backend.shared.base;
 
 import java.util.List;
+import java.util.function.Function;
+
 import org.springframework.data.domain.Page;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,5 +41,20 @@ public class PageResponse<T> {
             .totalPages(page.getTotalPages())
             .isLast(page.isLast())
             .build();
+    }
+
+    public <R> PageResponse<R> map(Function<T, R> converter) {
+        List<R> mappedContent = this.content.stream()
+                .map(converter)
+                .toList();
+
+        return PageResponse.<R>builder()
+                .content(mappedContent)
+                .pageNumber(this.pageNumber)
+                .pageSize(this.pageSize)
+                .totalElements(this.totalElements)
+                .totalPages(this.totalPages)
+                .isLast(this.isLast)
+                .build();
     }
 }

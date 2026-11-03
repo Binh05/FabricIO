@@ -2,8 +2,8 @@ package fabricio.backend.shared.mock;
 
 import java.util.UUID;
 
-import fabricio.backend.modules.users.entities.User;
-import fabricio.backend.shared.enums.UserRole;
+import fabricio.backend.users.domain.User;
+import fabricio.backend.shared.security.Role;
 
 public class UserMockFactory {
 
@@ -14,7 +14,7 @@ public class UserMockFactory {
         user.setUsername("john");
         user.setEmail("john@gmail.com");
         user.setHashedPassword("hashed");
-        user.setRole(UserRole.User);
+        user.setRole(Role.User);
 
         return user;
     }

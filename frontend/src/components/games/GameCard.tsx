@@ -1,7 +1,5 @@
 import { Link } from "react-router-dom";
-// import { Heart } from "lucide-react";
-import { cn } from "@/lib/utils";
-// import { Button } from "../ui/button";
+import { cn, getYearFromISOString } from "@/lib/utils";
 import type { Game } from "@/types/Game";
 
 interface GameCardProps {
@@ -10,62 +8,37 @@ interface GameCardProps {
 }
 
 export const GameCard = ({ game, className }: GameCardProps) => {
-  // const isFavorite = false;
-
-  // const isMyGame = () => {
-  //   const dev = String(game.ownerName || "")
-  //     .trim()
-  //     .toLowerCase();
-  //   return (
-  //     dev === String(user.name).toLowerCase() ||
-  //     dev === String(user.username).toLowerCase()
-  //   );
-  // };
-
-  const formatPrice = (price: number) =>
-    price === 0 ? "Free" : `$${price.toFixed(2)}`;
 
   return (
     <Link
-      to={`/game-detail/${game.id}`}
+      to={`/play/${game.id}`}
       className={cn(
         className,
-        "bg-card border-border hover:border-primary/30 relative overflow-hidden rounded-lg border transition-all duration-300 ease-in-out hover:-translate-y-2",
+        "group bg-card border-border aspect-video hover:border-primary/30 relative overflow-hidden rounded-lg border transition-all duration-300 ease-in-out hover:scale-120 hover:z-100",
       )}
     >
-      <div className="h-50 overflow-hidden">
+      <div className="h-35 overflow-hidden">
         <img
-          className="h-full w-full object-cover"
+          className={cn("h-full w-full object-cover", game?.videoUrl ? "hidden" : "")}
           src={game.thumbnailUrl}
           alt={game.title}
         />
-      </div>
-      {/* <Button
-        className={cn(
-          "border-border hover:bg-primary/10 hover:border-primary/30 hover:text-primary bg-muted/30 absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-200",
-          isFavorite
-            ? "bg-primary/10 border-primary/30 text-primary"
-            : "text-muted",
+        {game.videoUrl && (
+          <video
+            className="h-full w-full object-cover"
+            src={game.videoUrl}
+            autoPlay
+            loop
+            muted
+          />
         )}
-        onClick={() => {}}
-      >
-        <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
-      </Button> */}
-      <div className="flex flex-col gap-4 px-6 py-4">
-        <div className="flex justify-between">
-          <div>
-            <h3 className="block text-lg font-bold capitalize">{game.title}</h3>
-            <p className="text-muted line-clamp-2 text-sm first-letter:uppercase">
-              {game.description}
-            </p>
-          </div>
-          <div
-            className={cn(
-              "text-lg font-extrabold",
-              game.price === 0 ? "text-success" : "text-warning",
-            )}
-          >
-            {formatPrice(game.price)}
+        <div className="absolute opacity-0 group-hover:opacity-100 bottom-0 inset-x-0 h-[50%] bg-linear-to-t from-primary/60 via-primary/60 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 px-3 py-1.5 truncate w-full text-xs opacity-0 group-hover:opacity-100 
+          translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+          <h1 className="font-bold text-sm">{game.title}</h1>
+          <div className="flex gap-3 items-center">
+            <span className="bg-primary/60 rounded-full px-2 py-1">{game.tags[0]?.name}</span>
+            <span>{getYearFromISOString(game.createdAt)}</span>
           </div>
         </div>
       </div>

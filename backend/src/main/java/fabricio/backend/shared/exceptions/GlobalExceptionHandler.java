@@ -1,23 +1,28 @@
 package fabricio.backend.shared.exceptions;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import fabricio.backend.shared.base.ApiResponse;
-import fabricio.backend.shared.enums.ErrorCode;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(AppException.class)
-    public ResponseEntity<ApiResponse<Void>> handleAppException(AppException ex) {
-        ErrorCode errorCode = ex.getErrorCode();
-        ApiResponse<Void> response = ApiResponse.<Void>builder()
-            .code(errorCode.getStatus())
-            .message(errorCode.getMessage())
-            .build();
-        return ResponseEntity.status(errorCode.getStatus()).body(response);
+    public ResponseEntity<?> handleAppException(
+            AppException exception
+    ) {
+        var body = Map.of(
+            "code", exception.getCode(),
+            "message", exception.getMessage()
+        );
+
+        return ResponseEntity
+            .status(exception.getStatus())
+            .body(body);
     }
 
     @ExceptionHandler(Exception.class)
