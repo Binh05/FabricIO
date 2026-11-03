@@ -69,7 +69,7 @@ export const Play = () => {
       </div>
 
       <div className="grid grid-cols-12 gap-4 items-start">
-      <div className="flex-1 col-span-9">
+      <div className="flex-1 col-span-12 xl:col-span-9">
         {gamePlayUrl ? (
           <>
             <div className="border-border bg-background relative aspect-video overflow-hidden rounded-lg border">
@@ -132,9 +132,9 @@ export const Play = () => {
         </div>
       </div>
       
-        <div className="col-span-3">
+        <div className="xl:col-span-3 hidden xl:block">
           <h2 className="mb-2 font-bold text-xl">Chơi tiếp</h2>
-          <div className="md:grid gap-3 md:grid-cols-1 lg:grid-cols-2 hidden">
+          <div className="md:grid gap-1.5 2xl:gap-2 xl:grid-cols-2">
             {games.length > 0 && (
               games.map(g => (
                 <GameCard key={g.id} game={g} className="flex-1"/>
