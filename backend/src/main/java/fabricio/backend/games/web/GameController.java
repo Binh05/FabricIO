@@ -52,6 +52,18 @@ public class GameController {
         return ApiResponse.success(GameResponse.from(gameService.uploadDraft(principal.getId(), request)));
     }
 
+    @GetMapping("/draft/me")
+    public ApiResponse<GameResponse> getDraftGame(@AuthenticationPrincipal UserPrincipal principal) {
+        GameResult result = gameService.getMyGameDraft(principal.getId());
+        return ApiResponse.success(GameResponse.from(result));
+    }
+
+    @DeleteMapping("/{gameId}/draft")
+    public ApiResponse<GameResponse> deleteGame(@PathVariable UUID gameId) {
+        gameService.deleteGameDraft(gameId);
+        return ApiResponse.noContent();
+    }
+
     @PreAuthorize("hasAuthority('GAME_CREATE')")
     @PostMapping("/{gameId}/publish")
     public ApiResponse<GameResponse> publishGame(@PathVariable UUID gameId) {

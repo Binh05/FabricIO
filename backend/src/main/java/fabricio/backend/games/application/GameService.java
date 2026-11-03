@@ -46,7 +46,11 @@ public class GameService implements GameApi {
         Page<Game> gamePage = gameRepository.findByIsDeletedFalseAndTitleContainingIgnoreCaseAndStatus(keyword, GameStatus.Ready, pageable);
         
         List<GameResult> gameResponses = gamePage.getContent().stream()
-            .map(GameResult::from)
+            .map(g -> {
+                String videoUrl = storage.publicUrl(g.getVideoKey());
+                String thumbnailUrl = storage.publicUrl(g.getThumbnailUrl());
+                return GameResult.from(g, videoUrl, thumbnailUrl);
+            })
             .collect(Collectors.toList());
 
         return PageResponse.from(gamePage, gameResponses);
@@ -55,7 +59,10 @@ public class GameService implements GameApi {
     @Transactional(readOnly = true)
     public GameResult getGameById(UUID id) {
         Game game = gameRepository.findByIdOrThrow(id);
-        return GameResult.from(game);
+
+        String videoUrl = storage.publicUrl(game.getVideoKey());
+        String thumbnailUrl = storage.publicUrl(game.getThumbnailUrl());
+        return GameResult.from(game, videoUrl, thumbnailUrl);
     }
 
     public GameResult uploadDraft(UUID userId, GameRequest req) {
@@ -71,7 +78,7 @@ public class GameService implements GameApi {
         );
 
         gameRepository.save(game);
-        return GameResult.from(game);
+        return GameResult.from(game, "", "");
     }
 
     @Transactional
@@ -86,7 +93,10 @@ public class GameService implements GameApi {
                 request.price(),
                 new HashSet<>(tags)
         );
-        return GameResult.from(game);
+
+        String videoUrl = storage.publicUrl(game.getVideoKey());
+        String thumbnailUrl = storage.publicUrl(game.getThumbnailUrl());
+        return GameResult.from(game, videoUrl, thumbnailUrl);
     }
 
     public void deleteGame(UUID id, UUID ownerId) {
@@ -104,15 +114,33 @@ public class GameService implements GameApi {
 
         game.markAsReady();
 
-        return GameResult.from(game);
+        String videoUrl = storage.publicUrl(game.getVideoKey());
+        String thumbnailUrl = storage.publicUrl(game.getThumbnailUrl());
+        return GameResult.from(game, videoUrl, thumbnailUrl);
     }
 
     public GamePlayResponse getGamePlayUrl(UUID gameId) {
         Game game = gameRepository.findByIdOrThrow(gameId);
 
-        String gamePlayUrl = storage.publicUrl(game.getGameUrl()) + "/index.html";
+        String gamePlayUrl = storage.publicUrl(game.getGameUrl()) + "index.html";
 
         return new GamePlayResponse(gamePlayUrl);
+    }
+
+    public GameResult getMyGameDraft(UUID ownerId) {
+        Game game = gameRepository.findFirstByOwnerIdAndStatusAndIsDeletedFalse(ownerId, GameStatus.Draft)
+                .orElse(null);
+
+        if (game == null) return null;
+
+        String videoUrl = storage.publicUrl(game.getVideoKey());
+        String thumbnailUrl = storage.publicUrl(game.getThumbnailUrl());
+        return GameResult.from(game, videoUrl, thumbnailUrl);
+    }
+
+    public void deleteGameDraft(UUID gameId) {
+        Game game = gameRepository.findByIdOrThrow(gameId);
+        gameRepository.delete(game);
     }
 
     private List<GameTag> resolveTagIds(List<UUID> tagIds) {
