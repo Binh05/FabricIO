@@ -2,6 +2,7 @@ package fabricio.backend.games.application.dtos;
 
 import fabricio.backend.games.domain.Game;
 import fabricio.backend.games.domain.GameTag;
+import fabricio.backend.shared.storage.ObjectStorage;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -13,7 +14,7 @@ public record GameResult(
         UUID ownerId,
         String title,
         String description,
-        String gameKey,
+        String videoUrl,
         String thumbnailUrl,
         BigDecimal price,
         List<GameTag> tags,
@@ -21,17 +22,17 @@ public record GameResult(
         Instant createdAt,
         Instant updatedAt
 ) {
-    public static GameResult from(Game game) {
+    public static GameResult from(Game game, String videoUrl, String thumbnailUrl) {
         if (game == null) return null;
         return new GameResult(
                 game.getId(),
                 game.getOwnerId(),
                 game.getTitle(),
                 game.getDescription(),
-                game.getThumbnailUrl(),
-                game.getGameUrl(),
+                videoUrl,
+                thumbnailUrl,
                 game.getPrice(),
-                List.copyOf(game.getTags()),
+                game.getTags() != null ? List.copyOf(game.getTags()) : List.of(),
                 game.getAvgRating(),
                 game.getCreatedAt(),
                 game.getUpdatedAt()
