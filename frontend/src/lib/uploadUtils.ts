@@ -1,6 +1,13 @@
 import type { UploadPurpose } from "@/types/Upload";
 
 export const UPLOAD_LIMITS = {
+  USER_AVATAR: {
+    maxBytes: 2 * 1024 * 1024, // 2MB
+    allowedExtensions: [".png", ".jpg", ".jpeg"],
+    allowedMimeTypes: ["image/png", "image/jpeg", "image/jpg"],
+    accept: "image/png,image/jpeg,image/jpg",
+    label: "PNG, JPG/JPEG (Tối đa 2MB)",
+  },
   GAME_THUMBNAIL: {
     maxBytes: 2 * 1024 * 1024, // 2MB
     allowedExtensions: [".png", ".jpg", ".jpeg"],

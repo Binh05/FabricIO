@@ -1,5 +1,6 @@
 package fabricio.backend.games.web;
 
+import java.util.List;
 import java.util.UUID;
 
 import fabricio.backend.games.application.GameService;
@@ -35,6 +36,16 @@ public class GameController {
             @RequestParam(defaultValue = "") String keyword) {
         PageResponse<GameResponse> res = gameService.getAllGames(page, size, keyword)
                 .map(GameResponse::from);
+        return ApiResponse.success(res);
+    }
+
+    @GetMapping("/me")
+    public ApiResponse<List<GameResponse>> getMyGames(
+            @AuthenticationPrincipal UserPrincipal principal) {
+        List<GameResponse> res = gameService.getMyPublishedGames(principal.getId())
+                .stream()
+                .map(GameResponse::from)
+                .toList();
         return ApiResponse.success(res);
     }
 

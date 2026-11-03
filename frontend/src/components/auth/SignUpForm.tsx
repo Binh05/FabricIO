@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 const SignUpForm = () => {
   const { signUp } = useAuth();
@@ -30,6 +31,10 @@ const SignUpForm = () => {
     e.preventDefault();
     await signUp(formData);
   };
+
+  const onOAuth = () => {
+    toast.info("Chức năng đăng nhập bằng Google hiện đang được phát triển. Vui lòng sử dụng phương thức đăng nhập thông thường.");
+  }
 
   return (
     <div className="border-border grid w-full max-w-7xl grid-cols-1 overflow-hidden rounded-lg border bg-[#141418]/70 shadow-2xl backdrop-blur-md md:rounded-lg lg:grid-cols-2">
@@ -148,6 +153,7 @@ const SignUpForm = () => {
             variant="outline"
             type="button"
             className="w-full rounded-2xl"
+            onClick={onOAuth}
           >
             Tiếp tục với Google
           </Button>
