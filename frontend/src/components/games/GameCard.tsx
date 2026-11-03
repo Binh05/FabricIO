@@ -14,7 +14,7 @@ export const GameCard = ({ game, className }: GameCardProps) => {
       to={`/play/${game.id}`}
       className={cn(
         className,
-        "group bg-card border-border aspect-video hover:border-primary/30 relative overflow-hidden rounded-lg border transition-all duration-300 ease-in-out hover:scale-120 hover:z-100",
+        "group bg-card border-border aspect-auto sm:aspect-video hover:border-primary/30 relative overflow-hidden rounded-lg border transition-all duration-300 ease-in-out hover:scale-120 hover:z-100",
       )}
     >
       <div className="h-35 overflow-hidden">

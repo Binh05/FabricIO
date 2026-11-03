@@ -8,25 +8,36 @@ import { useGame } from "@/hooks/useGame";
 import { Link, Navigate } from "react-router-dom";
 import { HomeSkeleton } from "@/components/skeletons/HomeSkeleton";
 import { GameCardSkeleton } from "@/components/skeletons/GameCardSkeleton";
+import type { Game } from "@/types/Game";
 
 export const Profile = () => {
   const { user, loading, signOut } = useAuth();
-  const { games, fetchGames, loading: gameLoading } = useGame();
+  const { fetchMyGames } = useGame();
   const [activeTab, setActiveTab] = useState("games");
+  const [myGames, setMyGames] = useState<Game[]>([]);
+  const [gameLoading, setGameLoading] = useState(false);
 
   useEffect(() => {
-    if (games.length === 0) {
-      fetchGames();
-    }
-  }, []);
+    if (!user) return;
+
+    const loadMyGames = async () => {
+      setGameLoading(true);
+      try {
+        const games = await fetchMyGames();
+        setMyGames(games);
+      } finally {
+        setGameLoading(false);
+      }
+    };
+
+    loadMyGames();
+  }, [user?.id]);
 
   if (loading) {
     return <HomeSkeleton />;
   }
 
   if (!user) return <Navigate to={"/signin"} replace />;
-
-  const authoredGames = games.filter((g) => g.ownerId === user.id);
 
   // const favoriteGames = games.filter((g) => favorites.has(g.id));
   // const tabs = isSelf ? ["games", "favorites"] : ["games"];
@@ -87,18 +98,20 @@ export const Profile = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 md:gap-2 md:grid-cols-4 xl:grid-cols-6">
         {gameLoading
           ? Array.from({ length: 3 }).map((_, index) => (
-              <GameCardSkeleton key={index} />
-            ))
-          : authoredGames.map((game) => <GameCard key={game.id} game={game} />)}
-        {/* {(activeTab === "games" ? authoredGames : favoriteGames).length ===
-          0 && (
-          <div className="bg-card border-border rounded-lg border p-12 text-center md:col-span-2 xl:col-span-3">
-            <h3 className="text-xl font-bold">Chưa có game nào</h3>
+            <GameCardSkeleton key={index} />
+          ))
+          : myGames.map((game) => <GameCard key={game.id} game={game} />)}
+        {!gameLoading && myGames.length === 0 && (
+          <div className="bg-card border-border rounded-lg border p-12 text-center md:col-span-2 xl:col-span-6 lg:col-span-4">
+            <h3 className="text-xl font-bold">Bạn chưa có game nào</h3>
+            <p className="text-muted-foreground mt-2">
+              Hãy đăng game đầu tiên của bạn!
+            </p>
           </div>
-        )} */}
+        )}
       </div>
     </section>
   );

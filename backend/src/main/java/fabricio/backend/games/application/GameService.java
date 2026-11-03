@@ -65,6 +65,18 @@ public class GameService implements GameApi {
         return GameResult.from(game, videoUrl, thumbnailUrl);
     }
 
+    @Transactional(readOnly = true)
+    public List<GameResult> getMyPublishedGames(UUID ownerId) {
+        List<Game> games = gameRepository.findByOwnerIdAndIsDeletedFalseAndStatus(ownerId, GameStatus.Ready);
+        return games.stream()
+                .map(g -> {
+                    String videoUrl = storage.publicUrl(g.getVideoKey());
+                    String thumbnailUrl = storage.publicUrl(g.getThumbnailUrl());
+                    return GameResult.from(g, videoUrl, thumbnailUrl);
+                })
+                .collect(Collectors.toList());
+    }
+
     public GameResult uploadDraft(UUID userId, GameRequest req) {
         List<UUID> tagIds = req.tagIds();
         List<GameTag> tags = resolveTagIds(tagIds);
