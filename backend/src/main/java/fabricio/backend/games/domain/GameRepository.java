@@ -1,5 +1,6 @@
 package fabricio.backend.games.domain;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,6 +17,7 @@ public interface GameRepository extends JpaRepository<Game, UUID> {
     Optional<Game> findByIdAndIsDeletedFalse(UUID id);
     boolean existsGameByIdAndOwnerIdAndIsDeletedFalse(UUID id, UUID ownerId);
     Optional<Game> findFirstByOwnerIdAndStatusAndIsDeletedFalse(UUID ownerId, GameStatus status);
+    List<Game> findByOwnerIdAndIsDeletedFalseAndStatus(UUID ownerId, GameStatus status);
     void deleteGameById(UUID id);
 
     default Game findByIdOrThrow(UUID id) {

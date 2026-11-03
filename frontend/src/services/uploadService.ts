@@ -7,6 +7,7 @@ import type {
   PresignCommand,
   PresignResult,
 } from "@/types/Upload";
+import { normalizeContentType } from "@/lib/uploadUtils";
 
 export class uploadService {
   static async presign(
@@ -47,5 +48,33 @@ export class uploadService {
     const res = await api.post("/uploads/complete", cmd);
     return res.data;
   }
-}
 
+  static async uploadAvatar(
+    userId: string,
+    file: File,
+    onProgress?: (progress: number) => void,
+  ): Promise<ApiResponse<CompleteResult>> {
+    const contentType = normalizeContentType(file, "USER_AVATAR");
+
+    const presignRes = await this.presign({
+      objectId: userId,
+      purpose: "USER_AVATAR",
+      contentType,
+      size: file.size,
+    });
+
+    await this.uploadToStorage(
+      presignRes.data.presignedUpload.url,
+      file,
+      contentType,
+      presignRes.data.presignedUpload.headers,
+      onProgress,
+    );
+
+    return await this.complete({
+      objectId: userId,
+      key: presignRes.data.key,
+      purpose: "USER_AVATAR",
+    });
+  }
+}

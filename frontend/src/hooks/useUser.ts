@@ -1,8 +1,10 @@
 import { AuthContext, type AuthContextType } from "@/context/AuthContext";
+import { uploadService } from "@/services/uploadService";
 import { userService } from "@/services/userService";
+import { UPLOAD_LIMITS } from "@/lib/uploadUtils";
 import type { User } from "@/types/User";
 import axios from "axios";
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useState } from "react";
 import { toast } from "sonner";
 
 export const useUser = () => {
@@ -12,28 +14,62 @@ export const useUser = () => {
     throw new Error("useUser phải được sử dụng bên trong AuthProvider");
   }
 
-  const { setUser } = context;
+  const { user, setUser } = context;
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const uploadAvatar = useCallback(
-    async (formData: FormData) => {
+    async (file: File) => {
+      if (!user?.id) {
+        toast.error("Không tìm thấy thông tin người dùng!");
+        return;
+      }
+
+      if (file.size > UPLOAD_LIMITS.USER_AVATAR.maxBytes) {
+        toast.error("Ảnh đại diện không được vượt quá 2MB");
+        return;
+      }
+
+      const ext = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
+      if (!UPLOAD_LIMITS.USER_AVATAR.allowedExtensions.includes(ext)) {
+        toast.error("Chỉ chấp nhận định dạng ảnh .png, .jpg, .jpeg");
+        return;
+      }
+
       try {
-        const { data } = await userService.uploadAvatar(formData);
+        setIsUploadingAvatar(true);
+        setUploadProgress(0);
+
+        const res = await uploadService.uploadAvatar(
+          user.id,
+          file,
+          (progress) => setUploadProgress(progress),
+        );
+
+        const newAvatarUrl = res.data.url;
+
         setUser((prev: User | null) => {
           if (!prev) return null;
           return {
             ...prev,
-            avatarUrl: data.avatarUrl,
+            avatarUrl: newAvatarUrl,
           };
         });
+
+        toast.success("Cập nhật ảnh đại diện thành công!");
+        return newAvatarUrl;
       } catch (error) {
         console.error("Lỗi khi upload avatar", error);
         const message = axios.isAxiosError(error)
           ? error.response?.data?.message
           : undefined;
-        toast.error(message ?? "Đã xảy ra lỗi. Hãy thử lại!");
+        toast.error(message ?? "Đã xảy ra lỗi khi tải ảnh đại diện!");
+        throw error;
+      } finally {
+        setIsUploadingAvatar(false);
       }
     },
-    [setUser],
+    [user?.id, setUser],
   );
 
   const fetchMe = async () => {
@@ -50,5 +86,5 @@ export const useUser = () => {
     }
   };
 
-  return { uploadAvatar, fetchMe };
+  return { uploadAvatar, fetchMe, isUploadingAvatar, uploadProgress };
 };

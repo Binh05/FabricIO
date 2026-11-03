@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function SignInForm() {
   const navigate = useNavigate();
@@ -27,6 +28,10 @@ export default function SignInForm() {
     e.preventDefault();
     await login(formData.username, formData.password);
   };
+
+  const onOAuth = () => {
+    toast.info("Chức năng đăng nhập bằng Google hiện đang được phát triển. Vui lòng sử dụng phương thức đăng nhập thông thường.");
+  }
 
   return (
     <div className="border-border grid w-full max-w-7xl grid-cols-1 overflow-hidden rounded-lg border bg-[#141418]/70 shadow-2xl backdrop-blur-md md:rounded-lg lg:grid-cols-[0.95fr_1.05fr]">
@@ -105,6 +110,7 @@ export default function SignInForm() {
             variant="outline"
             type="button"
             className="w-full rounded-2xl"
+            onClick={onOAuth}
           >
             Tiếp tục với Google
           </Button>
