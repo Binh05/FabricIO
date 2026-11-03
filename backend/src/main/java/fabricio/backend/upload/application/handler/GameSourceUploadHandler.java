@@ -33,6 +33,6 @@ public class GameSourceUploadHandler implements UploadPurposeHandler {
 
         storage.delete(key);
 
-        return storage.publicUrl(destPrefix + "index.html");
+        return storage.publicUrl(destPrefix, "index.html");
     }
 }

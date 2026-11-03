@@ -98,4 +98,20 @@ public class S3ObjectStorage implements ObjectStorage {
                 ? base + "/" + props.bucket() + "/" + key
                 : base + "/" + key; // S3 thật: base là domain bucket hoặc CDN
     }
+
+    @Override
+    public String publicUrl(String key, String addPath) {
+        String baseUrl = publicUrl(key);
+        if (baseUrl == null || baseUrl.isBlank()) return baseUrl;
+        if (addPath == null || addPath.isBlank()) return baseUrl;
+
+        if (baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+        }
+        if (addPath.startsWith("/")) {
+            addPath = addPath.substring(1);
+        }
+
+        return baseUrl + "/" + addPath;
+    }
 }

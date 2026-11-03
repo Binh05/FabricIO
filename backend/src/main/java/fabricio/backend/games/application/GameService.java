@@ -122,7 +122,7 @@ public class GameService implements GameApi {
     public GamePlayResponse getGamePlayUrl(UUID gameId) {
         Game game = gameRepository.findByIdOrThrow(gameId);
 
-        String gamePlayUrl = storage.publicUrl(game.getGameUrl()) + "index.html";
+        String gamePlayUrl = storage.publicUrl(game.getGameUrl(), "index.html");
 
         return new GamePlayResponse(gamePlayUrl);
     }
