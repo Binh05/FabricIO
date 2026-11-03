@@ -42,6 +42,7 @@ CREATE TABLE games (
                        title VARCHAR(255) NOT NULL,
                        description TEXT,
                        thumbnail_url VARCHAR(500),
+                       video_key VARCHAR(500),
                        game_url VARCHAR(500),
                        status VARCHAR(20) NOT NULL DEFAULT 'Draft',
                        price NUMERIC(19, 2) NOT NULL DEFAULT 0.00,
