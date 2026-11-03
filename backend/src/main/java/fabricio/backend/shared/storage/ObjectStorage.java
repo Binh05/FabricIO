@@ -11,4 +11,5 @@ public interface ObjectStorage {
     void put(String key, InputStream in, long length, String contentType);
     void delete(String key);
     String publicUrl(String key);
+    String publicUrl(String key, String addPath);
 }
