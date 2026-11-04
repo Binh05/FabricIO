@@ -16,7 +16,7 @@ export const Play = () => {
   const [isFetching, setIsFetching] = useState<boolean>(true);
 
   useEffect(() => {
-    const init = async () => {
+    const init = async (): Promise<void> => {
       try {
         if (!id) return;
         if (!games.some((game) => game.id === id)) {

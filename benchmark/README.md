@@ -18,8 +18,15 @@ docker compose -f backend/docker-compose.dev.yml exec -T postgres psql -U postgr
 
 **Chạy thử:**
 
+- Chạy backend
+
 ```text
-k6 run benchmark/k6/games-list.js -e VUS=1 -e WARMUP=1s -e DURATION=5s -e LABEL=smoke -e RUN=1 -e Token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyXzEiLCJpZCI6IjFlNDU2YTVlLTZhYTEtNDhjZS05ZjU5LWNkMGQ5ZjVkYzcxZCIsImVtYWlsIjoidXNlcl8xQGV4YW1wbGUuY29tIiwicm9sZSI6IkFkbWluIiwiaWF0IjoxNzkyNTUxODY4LCJleHAiOjE3OTI1NTI0Njh9.5WGmRXrC3fa78tclfm4F7UqXsj_NpzrQuOyQohRSVJM
+docker compose -f docker-compose.dev.yml up -d
+./gradlew bootRun
+```
+- Chạy k6
+```text
+k6 run benchmark/k6/games-list.js -e VUS=1 -e WARMUP=1s -e DURATION=5s -e LABEL=smoke -e RUN=1 -e Token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyXzEiLCJpZCI6Ijk2MjM0YWM1LWU0Y2QtNDFlMy04MzU2LWVlZjk5MzY5YjA2YiIsImVtYWlsIjoidXNlcl8xQGV4YW1wbGUuY29tIiwicm9sZSI6IkFkbWluIiwiaWF0IjoxNzkzNzc3NDY1LCJleHAiOjE3OTM3ODM0NjV9.24JIdtjrzW2RZNWhaqjbYq1HwqjP_ROx4dqLwMYE9E0
 ```
 
 **Build:**
@@ -35,4 +42,9 @@ java -jar build/libs/backend-0.0.1-SNAPSHOT.jar
 **Đo:**
 ```text
 powershell -ExecutionPolicy Bypass -File benchmark\run-all.ps1 -Label b0
+```
+
+**Đo từng kịch bản:**
+```text
+powershell -ExecutionPolicy Bypass -File benchmark\run-all.ps1 -Label b3 -Runs 3 -Scenarios @("games-list", "games-list-deep")
 ```
