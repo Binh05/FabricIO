@@ -1,0 +1,16 @@
+{
+  "label": "b1",
+  "scenario": "game-detail",
+  "run": 1,
+  "vus": 20,
+  "duration": "2m",
+  "requests": 168420,
+  "rps": 1403.5,
+  "avg": 13.8,
+  "p50": 13.6,
+  "p90": 17,
+  "p95": 18.4,
+  "p99": 21.9,
+  "max": 64.2,
+  "failed_rate": 0
+}

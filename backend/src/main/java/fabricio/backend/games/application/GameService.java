@@ -44,16 +44,29 @@ public class GameService implements GameApi {
     public PageResponse<GameResult> getAllGames(int page, int size, String keyword) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Game> gamePage = gameRepository.findByIsDeletedFalseAndTitleContainingIgnoreCaseAndStatus(keyword, GameStatus.Ready, pageable);
-        
-        List<GameResult> gameResponses = gamePage.getContent().stream()
-            .map(g -> {
-                String videoUrl = storage.publicUrl(g.getVideoKey());
-                String thumbnailUrl = storage.publicUrl(g.getThumbnailUrl());
-                return GameResult.from(g, videoUrl, thumbnailUrl);
-            })
-            .collect(Collectors.toList());
 
-        return PageResponse.from(gamePage, gameResponses);
+        List<Game> games = gamePage.getContent();
+
+        if (games.isEmpty()) {
+            return PageResponse.from(gamePage, List.of());
+        }
+
+        List<UUID> ids = games.stream()
+                .map(Game::getId)
+                .toList();
+
+        gameRepository.findAllWithTagsByIdIn(ids);
+
+        List<GameResult> results = games.stream()
+                .map(g -> {
+                    String videoUrl = storage.publicUrl(g.getVideoKey());
+                    String thumbnailUrl = storage.publicUrl(g.getThumbnailUrl());
+
+                    return GameResult.from(g, videoUrl, thumbnailUrl);
+                })
+                .toList();
+
+        return PageResponse.from(gamePage, results);
     }
 
     @Transactional(readOnly = true)
