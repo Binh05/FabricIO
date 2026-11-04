@@ -8,7 +8,6 @@ src/main/java/fabricio/backend/
 │   ├── base/                 # Các class cơ sở
 │   │   ├── BaseEntity.java   (id, createdAt, updatedAt)
 │   │   ├── ApiResponse.java  (Cấu trúc response chuẩn)
-│   │   └── PageResponse.java (Cấu trúc phân trang chuẩn)
 │   │
 │   ├── configs/              # Cấu hình hệ thống (Security, OpenAPI/Swagger)
 │   ├── exceptions/           # Xử lý lỗi tập trung (GlobalExceptionHandler, Custom Exceptions)

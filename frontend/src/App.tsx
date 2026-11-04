@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Games } from "./pages/Games";
-import { Play } from "./pages/Play";
 import { UploadGame } from "./pages/UploadGame";
 import { Profile } from "./pages/Profile";
 import { SignIn } from "./pages/SignIn";
@@ -10,6 +9,7 @@ import { GameProvider } from "./context/GameContext";
 import MainLayoutRoute from "./components/layouts/MainLayoutRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
+import PlayPageWrapper from "@/pages/PlayPageWrapper.tsx";
 
 function App() {
   return (
@@ -35,7 +35,7 @@ const AppRouter = () => {
         <Route element={<MainLayoutRoute />}>
           <Route index element={<Games />} />
           <Route path="/games" element={<Games />} />
-          <Route path="/play/:id" element={<Play />} />
+          <Route path="/play/:id" element={<PlayPageWrapper />} />
 
           <Route element={<ProtectedRoute />}>
             <Route path="/upload-game" element={<UploadGame />} />
