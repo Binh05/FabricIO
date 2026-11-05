@@ -27,21 +27,13 @@ src/main/java/fabricio/backend/
 
 ### Unit Test
 
-1. login success
-2. login wrong password
-3. refresh success
-4. refresh invalid token
-5. register success
-6. register duplicate email
-7. create game success
-8. search game with keyword
-9. search game pagination
-10. get game by id
-11. get game not found
+**Modules:**
+- Game
+- User
+- Auth
 
 ### Integration Test
 
-1. GET /games
 
 ###
 Chạy dự án:
@@ -60,4 +52,14 @@ Chạy test kiểm tra modules:
 Xem báo cáo các test đã chạy:
 ```text
 */FabricIO/backend/build/reports/tests/test/index.html
+```
+
+**Run unit test:**
+```
+./gradlew test
+```
+
+**View:**
+```
+path + build/reports/tests/test/index.html
 ```
