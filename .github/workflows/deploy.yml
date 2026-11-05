@@ -5,6 +5,7 @@ on:
   pull_request:
     branches:
       - main
+      - staging
   push:
     branches:
       - main
@@ -15,11 +16,31 @@ permissions:
   contents: read
 
 concurrency:
-  group: production
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+            backend:
+              - 'backend/**'
+              - '!backend/src/test/**'
+              - '!backend/*.md'
+
   Lint-test:
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -47,6 +68,8 @@ jobs:
         run: pnpm run build
 
   Backend-Test:
+    needs: changes
+    if: ${{ needs.changes.outputs.backend == 'true' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -72,8 +95,13 @@ jobs:
 
   Build-And-Push-Fe-Image:
     runs-on: ubuntu-latest
-    needs: Lint-test
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    needs: [ changes, Lint-test ]
+
+    if: |
+      always() &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      needs.changes.outputs.frontend == 'true' &&
+      needs.Lint-test.result == 'success'
 
     steps:
       - name: Checkout source code fe
@@ -110,9 +138,12 @@ jobs:
 
   Build-And-Push-Be-Image:
     runs-on: ubuntu-latest
-    needs: Backend-Test
-
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    needs: [ changes, Backend-Test ]
+    if: |
+      always() &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      needs.changes.outputs.backend == 'true' &&
+      needs.Backend-Test.result == 'success'
 
     steps:
       - name: Check source code be
@@ -149,9 +180,13 @@ jobs:
   deploy:
     name: Deploy to Production
     runs-on: self-hosted
-    needs: [Build-And-Push-Fe-Image, Build-And-Push-Be-Image]
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-
+    needs: [changes, Build-And-Push-Fe-Image, Build-And-Push-Be-Image]
+    if: |
+      always() &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      (needs.changes.outputs.frontend == 'true' || needs.changes.outputs.backend == 'true') &&
+      (needs.Build-And-Push-Fe-Image.result == 'success' || needs.Build-And-Push-Fe-Image.result == 'skipped') &&
+      (needs.Build-And-Push-Be-Image.result == 'success' || needs.Build-And-Push-Be-Image.result == 'skipped')
     steps:
       - name: Deploy
         run: |
