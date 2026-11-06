@@ -26,7 +26,7 @@ public enum UploadPurpose {
 
     private static final class Rules {
         static long MB = 1024 * 1024;
-        static Set<String> IMAGES = Set.of("image/png", "image/jpeg");
+        static Set<String> IMAGES = Set.of("image/png", "image/jpeg", "image/jpg");
         static Set<String> VIDEOS = Set.of("video/mp4", "video/webm");
         static Set<String> ZIPS = Set.of("application/zip", "application/x-zip-compressed");
     }
