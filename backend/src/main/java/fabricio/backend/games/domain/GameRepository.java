@@ -29,10 +29,10 @@ public interface GameRepository extends JpaRepository<Game, UUID> {
                 .orElseThrow(() -> new GameException(GameErrorCode.GAME_NOT_FOUND));
     }
     @Query("""
-    SELECT DISTINCT g
-    FROM Game g
-    LEFT JOIN FETCH g.tags
-    WHERE g.id IN :ids
-""")
+        SELECT DISTINCT g
+        FROM Game g
+        LEFT JOIN FETCH g.tags
+        WHERE g.id IN :ids
+    """)
     List<Game> findAllWithTagsByIdIn(@Param("ids") Collection<UUID> ids);
 }
