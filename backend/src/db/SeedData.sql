@@ -9,7 +9,6 @@ TRUNCATE TABLE
     games,
     game_tag_map,
     game_ratings,
-    game_media,
     game_plays,
     game_favorites,
     sessions
