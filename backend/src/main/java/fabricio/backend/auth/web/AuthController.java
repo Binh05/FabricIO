@@ -1,6 +1,8 @@
 package fabricio.backend.auth.web;
 
 import fabricio.backend.auth.application.AuthService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +17,6 @@ import fabricio.backend.auth.domain.exception.AuthException;
 import fabricio.backend.shared.base.ApiResponse;
 import fabricio.backend.shared.exceptions.AppException;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -36,13 +37,15 @@ public class AuthController {
     public ApiResponse<JwtResponse> login(@RequestBody LoginRequest req, HttpServletResponse response) {
         var jwt = authService.login(req);
 
-        Cookie cookie = new Cookie("refreshToken", jwt.refreshToken());
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
-        cookie.setPath("/");
-        cookie.setMaxAge(7* 24 * 60 *60);
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", jwt.refreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(7* 24 * 60 *60)
+                .build();
 
-        response.addCookie(cookie);
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
         return ApiResponse.success(new JwtResponse(jwt.accessToken()));
     }
@@ -52,14 +55,17 @@ public class AuthController {
             @CookieValue(name = "refreshToken", required = false) String token,
             HttpServletResponse response
     ) {
-        Cookie cookie = new Cookie("refreshToken", null);
-
         authService.signout(token);
 
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(0)
+                .build();
 
-        response.addCookie(cookie);
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         return ApiResponse.noContent();
     }
 
@@ -75,10 +81,14 @@ public class AuthController {
             return ApiResponse.success(authService.refresh(refreshToken));
         }
         catch (AppException e) {
-            Cookie cookie = new Cookie("refreshToken", null);
-            cookie.setMaxAge(0);
-            cookie.setPath("/");
-            response.addCookie(cookie);
+            ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(0)
+                    .build();
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
             throw e;
         }
     }
