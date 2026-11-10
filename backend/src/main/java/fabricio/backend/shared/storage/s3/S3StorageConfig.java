@@ -48,7 +48,7 @@ public class S3StorageConfig {
                 .region(Region.of(p.region()))
                 .credentialsProvider(credentials(p))
                 .serviceConfiguration(s3Config(p));
-        if (has(p.endpoint())) b.endpointOverride(URI.create(p.publicEndpoint()));
+        if (has(p.endpoint())) b.endpointOverride(URI.create(p.endpoint()));
         return b.build();
     }
 }
