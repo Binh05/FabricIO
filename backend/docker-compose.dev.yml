@@ -56,6 +56,30 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  redis:
+    image: redis:alpine3.23
+    container_name: fabricio_redis
+    ports:
+      - "6379:6379"
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+    command: >
+      redis-server
+      --requirepass 123456
+      --appendonly yes
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    restart: always
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "123456", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   minio_data:
   postgres_data:
+  redis_data:
+    driver: local
