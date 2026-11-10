@@ -11,7 +11,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import fabricio.backend.auth.application.AuthService;
 import fabricio.backend.auth.application.dtos.JwtResponse;
@@ -21,8 +20,8 @@ import fabricio.backend.auth.application.dtos.RegisterRequest;
 import fabricio.backend.auth.domain.exception.AuthErrorCode;
 import fabricio.backend.auth.domain.exception.AuthException;
 import fabricio.backend.shared.base.ApiResponse;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
 
 @ExtendWith(MockitoExtension.class)
 class AuthControllerTest {
@@ -55,7 +54,7 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("login: thêm cookie refreshToken và trả về access token trong body")
+    @DisplayName("login: thêm header Set-Cookie với SameSite=None, Secure và trả về access token")
     void login_success() {
         LoginResult loginResult = new LoginResult("refresh-secret-token", "access-jwt-token");
         when(authService.login(loginRequest)).thenReturn(loginResult);
@@ -66,18 +65,24 @@ class AuthControllerTest {
         assertNotNull(response.getData());
         assertEquals("access-jwt-token", response.getData().accessToken());
 
-        ArgumentCaptor<Cookie> cookieCaptor = ArgumentCaptor.forClass(Cookie.class);
-        verify(httpServletResponse).addCookie(cookieCaptor.capture());
-        Cookie cookie = cookieCaptor.getValue();
-        assertEquals("refreshToken", cookie.getName());
-        assertEquals("refresh-secret-token", cookie.getValue());
-        assertTrue(cookie.isHttpOnly());
-        assertEquals("/", cookie.getPath());
-        assertEquals(7 * 24 * 60 * 60, cookie.getMaxAge());
+        ArgumentCaptor<String> headerNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> headerValueCaptor = ArgumentCaptor.forClass(String.class);
+
+        verify(httpServletResponse).addHeader(headerNameCaptor.capture(), headerValueCaptor.capture());
+
+        assertEquals(HttpHeaders.SET_COOKIE, headerNameCaptor.getValue());
+        String cookieHeader = headerValueCaptor.getValue();
+
+        assertTrue(cookieHeader.contains("refreshToken=refresh-secret-token"));
+        assertTrue(cookieHeader.contains("HttpOnly"));
+        assertTrue(cookieHeader.contains("Secure"));
+        assertTrue(cookieHeader.contains("SameSite=None"));
+        assertTrue(cookieHeader.contains("Path=/"));
+        assertTrue(cookieHeader.contains("Max-Age=604800")); // 7 * 24 * 60 * 60 seconds
     }
 
     @Test
-    @DisplayName("signout: gọi authService.signout và xóa cookie refreshToken")
+    @DisplayName("signout: gọi authService.signout và xóa cookie refreshToken (Max-Age=0)")
     void signout_success() {
         String token = "existing-token";
 
@@ -86,11 +91,18 @@ class AuthControllerTest {
         verify(authService).signout(token);
         assertNotNull(response);
 
-        ArgumentCaptor<Cookie> cookieCaptor = ArgumentCaptor.forClass(Cookie.class);
-        verify(httpServletResponse).addCookie(cookieCaptor.capture());
-        Cookie cookie = cookieCaptor.getValue();
-        assertEquals("refreshToken", cookie.getName());
-        assertEquals(0, cookie.getMaxAge());
+        ArgumentCaptor<String> headerNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> headerValueCaptor = ArgumentCaptor.forClass(String.class);
+
+        verify(httpServletResponse).addHeader(headerNameCaptor.capture(), headerValueCaptor.capture());
+
+        assertEquals(HttpHeaders.SET_COOKIE, headerNameCaptor.getValue());
+        String cookieHeader = headerValueCaptor.getValue();
+
+        assertTrue(cookieHeader.contains("refreshToken="));
+        assertTrue(cookieHeader.contains("Max-Age=0"));
+        assertTrue(cookieHeader.contains("SameSite=None"));
+        assertTrue(cookieHeader.contains("Secure"));
     }
 
     @Test
@@ -125,10 +137,17 @@ class AuthControllerTest {
 
         assertThrows(AuthException.class, () -> authController.refreshToken(refreshToken, httpServletResponse));
 
-        ArgumentCaptor<Cookie> cookieCaptor = ArgumentCaptor.forClass(Cookie.class);
-        verify(httpServletResponse).addCookie(cookieCaptor.capture());
-        Cookie cookie = cookieCaptor.getValue();
-        assertEquals("refreshToken", cookie.getName());
-        assertEquals(0, cookie.getMaxAge());
+        ArgumentCaptor<String> headerNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> headerValueCaptor = ArgumentCaptor.forClass(String.class);
+
+        verify(httpServletResponse).addHeader(headerNameCaptor.capture(), headerValueCaptor.capture());
+
+        assertEquals(HttpHeaders.SET_COOKIE, headerNameCaptor.getValue());
+        String cookieHeader = headerValueCaptor.getValue();
+
+        assertTrue(cookieHeader.contains("refreshToken="));
+        assertTrue(cookieHeader.contains("Max-Age=0"));
+        assertTrue(cookieHeader.contains("SameSite=None"));
+        assertTrue(cookieHeader.contains("Secure"));
     }
 }
