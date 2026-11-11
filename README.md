@@ -25,6 +25,9 @@ FabricIO is a full-stack web platform where developers publish games and tools, 
 
 ## Demo
 
+[![FabricIO Demo Video](https://img.youtube.com/vi/j8uGtnIP4t0/maxresdefault.jpg)](https://youtu.be/j8uGtnIP4t0)
+
+> **[Xem Video Demo trên YouTube (00:54)](https://youtu.be/j8uGtnIP4t0)**
 
 ---
 
