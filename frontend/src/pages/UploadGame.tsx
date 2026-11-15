@@ -56,7 +56,7 @@ export const UploadGame = () => {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [fetchDraftGame]);
 
   if (!user || loadingDraft) return <SubmitGamePageSkeleton />;
 
@@ -95,9 +95,9 @@ export const UploadGame = () => {
               className={cn(
                 "size-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0",
                 step === 1
-                  ? "bg-primary text-black"
+                  ? "bg-primary text-primary-foreground"
                   : draft
-                    ? "bg-emerald-500/20 text-emerald-400"
+                    ? "bg-success/10 text-success"
                     : "bg-muted text-muted-foreground",
               )}
             >
@@ -130,7 +130,7 @@ export const UploadGame = () => {
               className={cn(
                 "size-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0",
                 step === 2
-                  ? "bg-primary text-black"
+                  ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground",
               )}
             >

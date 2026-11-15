@@ -5,21 +5,21 @@ import { Slot } from "radix-ui";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-primary active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/80",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
         gradient:
-          "bg-linear-to-br from-primary to-primary-glow text-white border-none py-3 px-6 rounded-sm font-bold cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110 shadow-glow",
+          "border-none bg-primary px-6 py-3 font-bold text-primary-foreground transition-colors duration-200 hover:bg-primary/90",
         outline:
-          "border-border bg-white/5 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10",
+          "border-chip bg-surface-container-low px-4 py-2.5 text-sm font-semibold text-foreground transition hover:bg-surface-container-high",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+          "bg-secondary text-foreground hover:bg-surface-container-high aria-expanded:bg-secondary aria-expanded:text-foreground",
         ghost:
-          "text-muted cursor-pointer rounded-sm border-none bg-transparent px-5 py-2.5 font-semibold transition-all duration-200 hover:bg-white/5 hover:text-white",
-        tab: "px-5 py-2.5 rounded-sm font-semibold transition-all duration-200 cursor-pointer hover:bg-white/5 hover:text-white aria-expanded:bg-white/10 aria-expanded:text-white",
-        icon: "w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-border text-muted cursor-pointer transition-all duration-200 hover:bg-primary/10 hover:border-primary/30 hover:text-primary",
+          "cursor-pointer rounded-sm border-none bg-transparent px-5 py-2.5 font-semibold text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground",
+        tab: "cursor-pointer rounded-sm px-5 py-2.5 font-semibold transition-colors hover:bg-white/5 hover:text-foreground aria-expanded:bg-white/10 aria-expanded:text-foreground",
+        icon: "flex size-10 items-center justify-center rounded-md border border-chip bg-surface-container-low text-muted-foreground transition-colors hover:border-primary/30 hover:bg-primary/10 hover:text-primary",
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",

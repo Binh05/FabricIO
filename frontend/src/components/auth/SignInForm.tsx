@@ -34,10 +34,10 @@ export default function SignInForm() {
   }
 
   return (
-    <div className="border-border grid w-full max-w-7xl grid-cols-1 overflow-hidden rounded-lg border bg-[#141418]/70 shadow-2xl backdrop-blur-md md:rounded-lg lg:grid-cols-[0.95fr_1.05fr]">
+    <div className="border-border grid w-full max-w-7xl grid-cols-1 overflow-hidden rounded-lg border bg-surface-container-low shadow-2xl md:rounded-lg lg:grid-cols-[0.95fr_1.05fr]">
       {/* Form panel - LEFT */}
       <div className="order-2 flex items-center justify-center bg-linear-to-b from-white/2 to-white/1 px-4 py-5 sm:px-6 md:px-8 lg:order-1 lg:px-9">
-        <div className="max-md border-border w-full rounded-3xl border bg-[#141414]/80 p-5 shadow-xl sm:p-6 md:p-8">
+        <div className="max-md border-border w-full rounded-3xl border bg-surface-container-lowest p-5 shadow-xl sm:p-6 md:p-8">
           <h2 className="mb-2 text-2xl font-extrabold md:text-3xl">
             Chào mừng trở lại
           </h2>
@@ -57,7 +57,7 @@ export default function SignInForm() {
                 placeholder="Nhập tên đăng nhập"
                 value={formData.username}
                 onChange={handleChange("username")}
-                className="border-border placeholder:text-muted/50 focus:border-primary w-full rounded-2xl border bg-black/20 px-4 py-3 text-sm text-white transition outline-none disabled:cursor-not-allowed disabled:opacity-60"
+                className="border-border placeholder:text-muted-foreground focus:border-primary w-full rounded-2xl border bg-surface-container-low px-4 py-3 text-sm text-foreground transition outline-none disabled:cursor-not-allowed disabled:opacity-60"
               />
             </div>
 
@@ -72,7 +72,7 @@ export default function SignInForm() {
                   placeholder="Nhập mật khẩu"
                   value={formData.password}
                   onChange={handleChange("password")}
-                  className="border-border placeholder:text-muted/50 focus:border-primary w-full rounded-2xl border bg-black/20 px-4 py-3 pr-12 text-sm text-white transition outline-none disabled:cursor-not-allowed disabled:opacity-60"
+                  className="border-border placeholder:text-muted-foreground focus:border-primary w-full rounded-2xl border bg-surface-container-low px-4 py-3 pr-12 text-sm text-foreground transition outline-none disabled:cursor-not-allowed disabled:opacity-60"
                 />
                 <Button
                   variant="ghost"

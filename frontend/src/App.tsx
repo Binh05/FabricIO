@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { Games } from "./pages/Games";
+import { Home } from "./pages/Home";
+import { BrowseGames } from "./pages/BrowseGames";
 import { UploadGame } from "./pages/UploadGame";
 import { Profile } from "./pages/Profile";
 import { SignIn } from "./pages/SignIn";
@@ -33,8 +34,8 @@ const AppRouter = () => {
         <Route path="/signup" element={<SignUp />} />
         {/* layout */}
         <Route element={<MainLayoutRoute />}>
-          <Route index element={<Games />} />
-          <Route path="/games" element={<Games />} />
+          <Route index element={<Home />} />
+          <Route path="/games" element={<BrowseGames />} />
           <Route path="/play/:id" element={<PlayPageWrapper />} />
 
           <Route element={<ProtectedRoute />}>

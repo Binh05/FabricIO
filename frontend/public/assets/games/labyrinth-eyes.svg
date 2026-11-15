@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <rect width="200" height="200" fill="#090a0d"/>
+  <!-- Isometric Maze Corridors -->
+  <polygon points="100,20 180,65 100,110 20,65" fill="#141720"/>
+  <polygon points="20,65 100,110 100,150 20,105" fill="#0d0e13"/>
+  <polygon points="180,65 100,110 100,150 180,105" fill="#181c26"/>
+  <!-- Inner Maze Walls -->
+  <polygon points="60,65 85,80 85,115 60,100" fill="#ffb703" fill-opacity="0.15" stroke="#ffb703" stroke-width="1"/>
+  <polygon points="140,65 115,80 115,115 140,100" fill="#ff4655" fill-opacity="0.15" stroke="#ff4655" stroke-width="1"/>
+  <!-- Glowing Eye / Rune -->
+  <circle cx="100" cy="70" r="14" fill="#ff4655" opacity="0.3"/>
+  <ellipse cx="100" cy="70" rx="9" ry="5" fill="#ffffff" stroke="#ff4655" stroke-width="1.5"/>
+  <circle cx="100" cy="70" r="3" fill="#ff4655"/>
+  <circle cx="70" cy="140" r="3" fill="#ffb703" opacity="0.8"/>
+  <circle cx="130" cy="140" r="3" fill="#ff4655" opacity="0.8"/>
+</svg>

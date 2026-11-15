@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="100%" height="100%">
+  <defs>
+    <radialGradient id="spot1" cx="30%" cy="10%" r="70%">
+      <stop offset="0%" stop-color="#00f5d4" stop-opacity="0.18"/>
+      <stop offset="50%" stop-color="#051424" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#010f1f" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="spot2" cx="70%" cy="15%" r="65%">
+      <stop offset="0%" stop-color="#ff4655" stop-opacity="0.22"/>
+      <stop offset="60%" stop-color="#051424" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#010f1f" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#08182b"/>
+      <stop offset="50%" stop-color="#04101e"/>
+      <stop offset="100%" stop-color="#010811"/>
+    </linearGradient>
+    <linearGradient id="beam1" x1="0%" y1="0%" x2="40%" y2="100%">
+      <stop offset="0%" stop-color="#00f5d4" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#00f5d4" stop-opacity="0.01"/>
+    </linearGradient>
+    <linearGradient id="beam2" x1="100%" y1="0%" x2="60%" y2="100%">
+      <stop offset="0%" stop-color="#ff4655" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#ff4655" stop-opacity="0.01"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Dark atmospheric background -->
+  <rect width="1280" height="720" fill="url(#bgGrad)"/>
+  <rect width="1280" height="720" fill="url(#spot1)"/>
+  <rect width="1280" height="720" fill="url(#spot2)"/>
+
+  <!-- Searchlight Cones -->
+  <polygon points="380,0 180,720 540,720" fill="url(#beam1)" opacity="0.6"/>
+  <polygon points="900,0 720,720 1120,720" fill="url(#beam2)" opacity="0.5"/>
+
+  <!-- Laser grid lines -->
+  <line x1="100" y1="420" x2="1180" y2="420" stroke="#ff4655" stroke-opacity="0.2" stroke-dasharray="8 12" stroke-width="1.5"/>
+  <line x1="250" y1="560" x2="650" y2="300" stroke="#ff4655" stroke-opacity="0.35" stroke-width="1.5"/>
+  <line x1="650" y1="300" x2="1050" y2="520" stroke="#ff4655" stroke-opacity="0.35" stroke-width="1.5"/>
+
+  <!-- Sensor nodes -->
+  <circle cx="250" cy="560" r="5" fill="#ff4655" opacity="0.8"/>
+  <circle cx="650" cy="300" r="6" fill="#ff4655"/>
+  <circle cx="1050" cy="520" r="5" fill="#ff4655" opacity="0.8"/>
+  <circle cx="450" cy="420" r="4" fill="#00f5d4" opacity="0.8"/>
+  <circle cx="850" cy="420" r="4" fill="#00f5d4" opacity="0.8"/>
+
+  <!-- Geometric stealth obstacles and shadows -->
+  <rect x="0" y="640" width="1280" height="80" fill="#020912"/>
+  <rect x="140" y="580" width="100" height="60" fill="#061220" rx="4"/>
+  <rect x="160" y="520" width="60" height="60" fill="#08182a" rx="4"/>
+  <rect x="1020" y="560" width="120" height="80" fill="#061220" rx="4"/>
+  <rect x="760" y="600" width="80" height="40" fill="#08182a" rx="4"/>
+
+  <!-- Sqube stealth cube with subtle white/cyan glow -->
+  <rect x="360" y="605" width="35" height="35" fill="#ffffff" rx="4" opacity="0.9"/>
+  <circle cx="372" cy="617" r="3" fill="#051424"/>
+  <circle cx="383" cy="617" r="3" fill="#051424"/>
+</svg>

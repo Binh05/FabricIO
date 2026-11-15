@@ -323,7 +323,7 @@ export const GameUploadFilesForm: React.FC<GameUploadFilesFormProps> = ({
                 className="max-h-36 rounded-lg object-contain shadow-md"
               />
               <div className="flex items-center gap-2 text-xs text-foreground font-medium">
-                <CheckCircle2 size={14} className="text-emerald-500" />
+                <CheckCircle2 size={14} className="text-success" />
                 {thumbnailFile.name} ({formatFileSize(thumbnailFile.size)})
               </div>
               <span className="text-[11px] text-muted-foreground underline">
@@ -337,7 +337,7 @@ export const GameUploadFilesForm: React.FC<GameUploadFilesFormProps> = ({
                 alt="Current thumbnail"
                 className="max-h-36 rounded-lg object-contain shadow-md"
               />
-              <span className="text-xs text-emerald-400 flex items-center gap-1">
+              <span className="text-xs text-success flex items-center gap-1">
                 <CheckCircle2 size={14} /> Đã có ảnh đại diện từ trước. Nhấp để thay ảnh mới.
               </span>
             </div>
@@ -499,13 +499,13 @@ export const GameUploadFilesForm: React.FC<GameUploadFilesFormProps> = ({
                 </div>
               </div>
 
-              <span className="text-xs text-emerald-400 font-medium shrink-0 flex items-center gap-1">
+              <span className="text-xs text-success font-medium shrink-0 flex items-center gap-1">
                 <CheckCircle2 size={14} /> Sẵn sàng
               </span>
             </div>
           ) : hasExistingSource ? (
             <div className="flex flex-col items-center gap-1 text-center">
-              <span className="text-xs text-emerald-400 flex items-center gap-1">
+              <span className="text-xs text-success flex items-center gap-1">
                 <CheckCircle2 size={14} /> Đã có build WebGL từ trước. Nhấp để thay bằng file zip mới.
               </span>
             </div>

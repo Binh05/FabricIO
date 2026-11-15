@@ -1,11 +1,11 @@
-import { Menu, Search } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState, type FormEvent } from "react";
+import { Menu, Search, Upload } from "lucide-react";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import UserAvatar from "./UserAvatar";
 import type { User } from "@/types/User";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 import { useGame } from "@/hooks/useGame";
 import { Skeleton } from "../ui/skeleton";
 import Logo from "./Logo";
@@ -18,9 +18,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-const nav = [
-  { href: "/", label: "Home", key: "/" },
-  { href: "/upload-game", label: "Upload Game", key: "/upload-game" },
+const navigation = [
+  { href: "/", label: "Home" },
+  { href: "/games", label: "Browse" },
 ];
 
 const NavLinks = ({
@@ -32,162 +32,187 @@ const NavLinks = ({
   path: string;
   onClick?: () => void;
 }) => (
-  <nav className={className}>
-    {nav.map((item) => (
-      <Link
-        key={item.key}
-        className={cn(
-          "text-muted rounded-full px-4 py-2 font-medium transition-all duration-200 hover:bg-white/10 hover:text-white",
-          path === item.href ? "bg-white/10 text-white" : "",
-        )}
-        to={item.href}
-        onClick={onClick}
-      >
-        {item.label}
-      </Link>
-    ))}
+  <nav aria-label="Main navigation" className={className}>
+    {navigation.map((item) => {
+      const active =
+        item.href === "/"
+          ? path === "/"
+          : path === item.href || path.startsWith(`${item.href}/`);
+
+      return (
+        <Link
+          key={item.href}
+          aria-current={active ? "page" : undefined}
+          className={cn(
+            "rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-white/5 hover:text-foreground",
+            active ? "bg-surface-container-high text-foreground" : "text-muted-foreground",
+          )}
+          to={item.href}
+          onClick={onClick}
+        >
+          {item.label}
+        </Link>
+      );
+    })}
   </nav>
 );
 
 export default function Header({ user }: { user: User | null }) {
   const { token } = useAuth();
-  const { fetchGames, loading } = useGame();
+  const { loading } = useGame();
   const location = useLocation();
-  const path = location.pathname;
-  const [keyword, setKeyword] = useState<string>("");
+  const [searchParams] = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setKeyword(e.target.value);
-  };
+  const onSearch = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formQuery = new FormData(event.currentTarget).get("q");
+    const query = typeof formQuery === "string" ? formQuery.trim() : "";
+    const params = new URLSearchParams();
+    if (query) params.set("q", query);
+    const search = params.toString();
 
-  const onSearch = (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (keyword.trim() === "") return;
-    fetchGames(keyword, 0, 9);
-
-    if (isOpen) setIsOpen(false);
-    navigate(`/games?q=${keyword}`);
+    navigate(`/games${search ? `?${search}` : ""}`);
+    setIsOpen(false);
   };
 
   return (
-    <header className="border-border sticky top-0 z-10 flex h-20 items-center justify-between gap-4 border-b bg-[#0f0f0f]/85 px-4 backdrop-blur-lg md:px-10">
-      <Logo />
+    <header className="sticky top-0 z-30 h-12 border-b border-border-subtle bg-surface/95 py-8 backdrop-blur-md sm:px-4 lg:px-8">
+      <div className="mx-auto flex h-full max-w-400 items-center justify-between gap-4">
+        <Logo />
 
-      {/* Desktop Search */}
-      <form
-        onSubmit={onSearch}
-        className="border-border text-muted hidden h-12 max-w-125 flex-1 items-center gap-3 rounded-full border bg-white/5 px-4 md:flex"
-      >
-        <Search size={18} />
-        <input
-          className="text-foreground w-full border-none bg-transparent outline-none"
-          type="search"
-          placeholder="Search games..."
-          value={keyword}
-          onChange={handleChange}
-        />
-      </form>
+        <form
+          key={searchParams.get("q") ?? ""}
+          onSubmit={onSearch}
+          className="hidden h-10 max-w-xl flex-1 items-center gap-3 rounded-md border border-border-subtle bg-surface-container-lowest px-3 text-muted-foreground transition-colors focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/50 focus-within:ring-offset-2 focus-within:ring-offset-surface md:flex"
+        >
+          <Search aria-hidden="true" size={17} />
+          <label
+            htmlFor="desktop-game-search"
+            className="shrink-0 text-xs font-medium text-muted-foreground"
+          >
+            Search
+          </label>
+          <input
+            id="desktop-game-search"
+            className="min-w-0 w-full border-none bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-primary"
+            type="search"
+            name="q"
+            placeholder="Search games, studios tags (e.g. Cyberpunk, Roguelike)..."
+            defaultValue={searchParams.get("q") ?? ""}
+          />
+        </form>
 
-      <div className="flex items-center gap-2 md:gap-4">
-        {/* Desktop Nav */}
-        <NavLinks className="hidden gap-1 md:flex" path={path} />
+        <div className="flex items-center gap-2 sm:gap-3">
+          <NavLinks
+            className="hidden items-center gap-1 md:flex"
+            path={location.pathname}
+          />
 
-        {/* User / Login - Always visible or slightly adjusted */}
-        <div className="flex items-center gap-2">
+          <Button
+            variant="gradient"
+            size="sm"
+            asChild
+            className="hidden h-9 sm:inline-flex bg-primary/80 shadow-lg shadow-primary/50"
+          >
+            <Link to="/upload-game">
+              <Upload aria-hidden="true" />
+              Upload game
+            </Link>
+          </Button>
+
           {loading ? (
             <Skeleton className="size-8 rounded-full" />
           ) : !token ? (
-            <Button variant="ghost" asChild className="hidden md:inline-flex">
-              <Link to="/signin">Login</Link>
+            <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
+              <Link to="/signin">Log in</Link>
             </Button>
           ) : (
-            <Link to="/profile">
+            <Link to="/profile" aria-label="Open profile">
               <UserAvatar
-                name={user?.username ?? "gamestore "}
+                name={user?.username ?? "FabricIO"}
                 avatarUrl={user?.avatarUrl ?? ""}
                 type="header"
               />
             </Link>
           )}
 
-          {/* Mobile Menu Trigger */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="icon"
-                className={cn("md:hidden", isOpen && "hidden")}
+                className="md:hidden"
+                aria-label="Open navigation menu"
               >
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle menu</span>
+                <Menu aria-hidden="true" />
               </Button>
             </SheetTrigger>
             <SheetContent
               side="right"
-              aria-describedby="nav menu"
-              className="border-l-border bg-[#0f0f0f] p-0 pr-8 text-white"
+              aria-describedby="mobile-navigation-description"
+              className="border-l border-border-subtle bg-surface p-0 text-foreground"
             >
-              <SheetHeader className="border-border border-b p-6">
-                <SheetTitle className="text-left text-white">
+              <SheetHeader className="border-b border-border-subtle p-5">
+                <SheetTitle className="text-left text-foreground">
                   <Logo />
                 </SheetTitle>
-                <SheetDescription className="sr-only">
-                  logo website
+                <SheetDescription
+                  id="mobile-navigation-description"
+                  className="sr-only"
+                >
+                  Navigate FabricIO and find games.
                 </SheetDescription>
               </SheetHeader>
 
-              <div className="flex flex-col gap-6 p-6">
-                {/* Mobile Search */}
+              <div className="flex flex-col gap-6 p-5">
                 <form
+                  key={searchParams.get("q") ?? ""}
                   onSubmit={onSearch}
-                  className="border-border text-muted flex h-12 w-full items-center gap-3 rounded-full border bg-white/5 px-4"
+                  className="flex h-11 w-full items-center gap-3 rounded-md border border-border-subtle bg-surface-container-lowest px-3 text-muted-foreground transition-colors focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/50 focus-within:ring-offset-2 focus-within:ring-offset-surface"
                 >
-                  <Search size={18} />
+                  <Search aria-hidden="true" size={17} />
+                  <label
+                    htmlFor="mobile-game-search"
+                    className="shrink-0 text-xs font-medium text-muted-foreground"
+                  >
+                    Search
+                  </label>
                   <input
-                    className="text-foreground w-full border-none bg-transparent outline-none"
+                    id="mobile-game-search"
+                    className="min-w-0 w-full border-none bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-primary"
                     type="search"
-                    placeholder="Search games..."
-                    value={keyword}
-                    onChange={handleChange}
+                    name="q"
+                    placeholder="Search games, studios tags (e.g. Cyberpunk, Roguelike)..."
+                    defaultValue={searchParams.get("q") ?? ""}
                   />
                 </form>
 
-                {/* Mobile Nav */}
-                <div className="flex flex-col gap-4">
-                  {nav.map((item) => (
-                    <Link
-                      key={item.key}
-                      className={cn(
-                        "px-2 py-1 text-lg font-medium transition-colors",
-                        path === item.href
-                          ? "text-white"
-                          : "text-muted-foreground hover:text-white",
-                      )}
-                      to={item.href}
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
+                <NavLinks
+                  className="flex flex-col gap-2"
+                  path={location.pathname}
+                  onClick={() => setIsOpen(false)}
+                />
 
-                <div className="border-border mt-4 border-t pt-4">
-                  {!token && (
-                    <Button
-                      className="h-auto w-full justify-start px-2 py-1 text-lg font-medium"
-                      variant="ghost"
-                      asChild
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <Link to="/signin">Login</Link>
-                    </Button>
-                  )}
-                </div>
+                <Button variant="gradient" asChild className="w-full">
+                  <Link to="/upload-game" onClick={() => setIsOpen(false)}>
+                    <Upload aria-hidden="true" />
+                    Upload game
+                  </Link>
+                </Button>
+
+                {!token && (
+                  <Button variant="outline" asChild className="w-full">
+                    <Link to="/signin" onClick={() => setIsOpen(false)}>
+                      Log in
+                    </Link>
+                  </Button>
+                )}
               </div>
             </SheetContent>
           </Sheet>
+
         </div>
       </div>
     </header>

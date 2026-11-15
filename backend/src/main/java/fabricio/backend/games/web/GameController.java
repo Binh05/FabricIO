@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import fabricio.backend.games.application.GameService;
+import fabricio.backend.games.application.dtos.GameDetailResult;
 import fabricio.backend.games.application.dtos.GameResult;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,11 +31,11 @@ public class GameController {
     }
 
     @GetMapping
-    public ApiResponse<PageResponse<GameResponse>> getAllGames(
+    public ApiResponse<PageResponse<GameResponse>> getPagiGame(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "") String keyword) {
-        PageResponse<GameResponse> res = gameService.getAllGames(page, size, keyword)
+        PageResponse<GameResponse> res = gameService.getPagiGames(page, size, keyword)
                 .map(GameResponse::from);
         return ApiResponse.success(res);
     }
@@ -50,8 +51,8 @@ public class GameController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<GameResponse> getGameById(@PathVariable UUID id) {
-        return ApiResponse.success(GameResponse.from(gameService.getGameById(id)));
+    public ApiResponse<GameDetailResult> getGameById(@PathVariable UUID id) {
+        return ApiResponse.success(gameService.getGameById(id));
     }
 
     @PreAuthorize("hasAuthority('GAME_CREATE')")

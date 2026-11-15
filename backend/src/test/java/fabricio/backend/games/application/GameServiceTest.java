@@ -8,6 +8,9 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
 
+import fabricio.backend.games.application.dtos.GameDetailResult;
+import fabricio.backend.users.UserApi;
+import fabricio.backend.users.UserSummary;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,6 +45,9 @@ class GameServiceTest {
     @InjectMocks
     private GameService gameService;
 
+    @Mock
+    private UserApi userApi;
+
     private UUID ownerId;
     private UUID gameId;
     private Game mockGame;
@@ -69,7 +75,7 @@ class GameServiceTest {
     // ==================== GET ALL GAMES ====================
 
     @Test
-    @DisplayName("getAllGames: trả về danh sách phân trang khi có kết quả")
+    @DisplayName("getPagiGames: trả về danh sách phân trang khi có kết quả")
     void getAllGames_withContent() {
         Page<Game> page = new PageImpl<>(List.of(mockGame));
         when(gameRepository.findByIsDeletedFalseAndTitleContainingIgnoreCaseAndStatus(
@@ -78,7 +84,7 @@ class GameServiceTest {
         when(storage.publicUrl("videos/preview.mp4")).thenReturn("https://storage/preview.mp4");
         when(storage.publicUrl("thumb/game.png")).thenReturn("https://storage/thumb.png");
 
-        PageResponse<GameResult> response = gameService.getAllGames(0, 10, "Super");
+        PageResponse<GameResult> response = gameService.getPagiGames(0, 10, "Super");
 
         assertNotNull(response);
         assertEquals(1, response.getContent().size());
@@ -88,14 +94,14 @@ class GameServiceTest {
     }
 
     @Test
-    @DisplayName("getAllGames: trả về danh sách rỗng khi không có game nào")
+    @DisplayName("getPagiGames: trả về danh sách rỗng khi không có game nào")
     void getAllGames_empty() {
         Page<Game> emptyPage = new PageImpl<>(Collections.emptyList());
         when(gameRepository.findByIsDeletedFalseAndTitleContainingIgnoreCaseAndStatus(
                 anyString(), eq(GameStatus.Ready), any(Pageable.class)
         )).thenReturn(emptyPage);
 
-        PageResponse<GameResult> response = gameService.getAllGames(0, 10, "empty");
+        PageResponse<GameResult> response = gameService.getPagiGames(0, 10, "empty");
 
         assertNotNull(response);
         assertTrue(response.getContent().isEmpty());
@@ -107,11 +113,24 @@ class GameServiceTest {
     @Test
     @DisplayName("getGameById: thành công khi tìm thấy game")
     void getGameById_success() {
+        UUID ownerId = mockGame.getOwnerId(); // Hoặc UUID cố định khớp với mockGame
+        UserSummary mockOwner = new UserSummary(
+                ownerId,
+                "Bin05",
+                "user@gmail.com",
+                "Nguyen Bin05",
+                "bio",
+                "avatar/user.png"
+        );
+
         when(gameRepository.findByIdOrThrow(gameId)).thenReturn(mockGame);
-        when(storage.publicUrl("videos/preview.mp4")).thenReturn("https://storage/preview.mp4");
+        when(userApi.findUserSummaryById(ownerId)).thenReturn(Optional.of(mockOwner));
+
+        when(storage.publicUrl("avatar/user.png")).thenReturn("https://storage/avatar.png");
+        when(storage.publicUrl("games/supergame", "index.html")).thenReturn("https://storage/supergame/index.html");
         when(storage.publicUrl("thumb/game.png")).thenReturn("https://storage/thumb.png");
 
-        GameResult result = gameService.getGameById(gameId);
+        GameDetailResult result = gameService.getGameById(gameId);
 
         assertNotNull(result);
         assertEquals(gameId, result.id());

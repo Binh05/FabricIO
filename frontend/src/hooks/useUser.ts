@@ -4,7 +4,7 @@ import { userService } from "@/services/userService";
 import { UPLOAD_LIMITS } from "@/lib/uploadUtils";
 import type { User } from "@/types/User";
 import axios from "axios";
-import { useCallback, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { toast } from "sonner";
 
 export const useUser = () => {
@@ -18,8 +18,7 @@ export const useUser = () => {
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const uploadAvatar = useCallback(
-    async (file: File) => {
+  const uploadAvatar = async (file: File) => {
       if (!user?.id) {
         toast.error("Không tìm thấy thông tin người dùng!");
         return;
@@ -68,9 +67,7 @@ export const useUser = () => {
       } finally {
         setIsUploadingAvatar(false);
       }
-    },
-    [user?.id, setUser],
-  );
+    }
 
   const fetchMe = async () => {
     try {

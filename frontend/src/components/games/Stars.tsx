@@ -16,26 +16,34 @@ export const Stars = ({
   const rounded = Math.round(rating);
 
   return (
-    <div className="flex items-center gap-2">
+    <div
+      className="flex items-center gap-2"
+      role={interactive ? undefined : "img"}
+      aria-label={interactive ? undefined : `Rated ${rating.toFixed(1)} out of 5`}
+    >
       <div className="flex items-center gap-1">
         {Array.from({ length: 5 }, (_, index) => {
           const value = index + 1;
           const filled = value <= rounded;
           return (
-            <span
+            <button
               key={index}
-              className={`${filled ? "text-yellow-400" : "text-white/10"} transition-colors duration-200`}
-              style={interactive ? { cursor: "pointer" } : {}}
-              onClick={() =>
-                interactive && onRate && gameId && onRate(gameId, value)
-              }
+              type="button"
+              aria-label={interactive ? `Rate ${value} stars` : undefined}
+              aria-hidden={!interactive}
+              tabIndex={interactive ? 0 : -1}
+              disabled={!interactive || !onRate || !gameId}
+              className={`${filled ? "text-cyan" : "text-white/20"} transition-colors duration-200 disabled:cursor-default`}
+              onClick={() => {
+                if (interactive && gameId) onRate?.(gameId, value);
+              }}
             >
               <Star size={18} fill={filled ? "currentColor" : "none"} />
-            </span>
+            </button>
           );
         })}
       </div>
-      <span className="text-muted text-sm font-medium">
+      <span className="text-muted-foreground text-sm font-medium">
         {interactive ? `${rounded || 0}/5` : rating.toFixed(1)}
       </span>
     </div>

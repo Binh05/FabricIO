@@ -2,7 +2,7 @@ import { GameContext } from "@/context/GameContext";
 import { gameService } from "@/services/gameService";
 import type { Game, GameTag, PostGameRequest } from "@/types/Game";
 import axios from "axios";
-import { useContext } from "react";
+import { useCallback, useContext } from "react";
 import { toast } from "sonner";
 
 interface UseGame {
@@ -48,7 +48,7 @@ export const useGame = (): UseGame => {
     setTotalElements,
   } = context;
 
-  const fetchDraftGame = async (): Promise<Game | null> => {
+  const fetchDraftGame = useCallback(async (): Promise<Game | null> => {
     try {
       const res = await gameService.getDraftGame();
       return res.data ?? null;
@@ -56,7 +56,7 @@ export const useGame = (): UseGame => {
       console.error("Lỗi khi lấy bản nháp game", error);
       return null;
     }
-  };
+  }, []);
 
   const createDraft = async (data: PostGameRequest): Promise<Game> => {
     try {
@@ -131,28 +131,27 @@ export const useGame = (): UseGame => {
     }
   };
 
-  const fetchGames = async (
-    keyword: string = "",
-    page: number = 0,
-    size: number = 10,
-  ) => {
-    try {
-      setLoading(true);
-      const { data } = await gameService.fetchGames(keyword, page, size);
+  const fetchGames = useCallback(
+    async (keyword: string = "", page: number = 0, size: number = 10) => {
+      try {
+        setLoading(true);
+        const { data } = await gameService.fetchGames(keyword, page, size);
 
-      setGames(data.content);
-      setTotalPages(data.totalPages);
-      setTotalElements(data.totalElements);
-    } catch (error) {
-      console.error("Lỗi khi fetch games", error);
-      const message = axios.isAxiosError(error)
-        ? error.response?.data?.message
-        : undefined;
-      toast.error(message ?? "Đã xảy ra lỗi. Hãy thử lại!");
-    } finally {
-      setLoading(false);
-    }
-  };
+        setGames(data.content);
+        setTotalPages(data.totalPages);
+        setTotalElements(data.totalElements);
+      } catch (error) {
+        console.error("Lỗi khi fetch games", error);
+        const message = axios.isAxiosError(error)
+          ? error.response?.data?.message
+          : undefined;
+        toast.error(message ?? "Đã xảy ra lỗi. Hãy thử lại!");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setGames, setLoading, setTotalElements, setTotalPages],
+  );
 
   const fetchMyGames = async (): Promise<Game[]> => {
     try {
@@ -173,7 +172,12 @@ export const useGame = (): UseGame => {
       setLoading(true);
       const { data } = await gameService.getGameById(id);
 
-      setGames((prev) => [...prev, data]);
+      setGames((prev) => {
+        const existingIndex = prev.findIndex((game) => game.id === data.id);
+        if (existingIndex === -1) return [...prev, data];
+
+        return prev.map((game) => (game.id === data.id ? data : game));
+      });
     } catch (error) {
       console.error("Lỗi khi fetch game by id", error);
       const message = axios.isAxiosError(error)
@@ -200,7 +204,7 @@ export const useGame = (): UseGame => {
     }
   };
 
-  const fetchGameTags = async () => {
+  const fetchGameTags = useCallback(async () => {
     try {
       const { data } = await gameService.getGameTags();
 
@@ -212,7 +216,7 @@ export const useGame = (): UseGame => {
         : undefined;
       toast.error(message ?? "Đã xảy ra lỗi. Hãy thử lại!");
     }
-  };
+  }, [setTags]);
 
   return {
     uploadGame,
