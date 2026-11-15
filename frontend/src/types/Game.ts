@@ -9,8 +9,16 @@ export interface Game {
   price: number;
   tags: GameTag[];
   avgRating: number;
+  ratingCount: number;
   createdAt: string;
   updatedAt: string;
+  author?: GameAuthor | null;
+}
+
+export interface GameAuthor {
+  id: string;
+  fullName: string;
+  avatarUrl: string;
 }
 
 export interface GameTag {

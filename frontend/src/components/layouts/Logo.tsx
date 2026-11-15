@@ -4,11 +4,14 @@ import Fab_logo from "@/assets/Fab_logo.png";
 const Logo = () => {
   return (
     <Link
-      className="flex items-center gap-3 text-[22px] font-extrabold tracking-[-0.5px]"
+      aria-label="FabricIO home"
+      className="flex shrink-0 items-center gap-2"
       to="/"
     >
-      <img src={Fab_logo} alt="web logo" className="size-14" />
-      <span>FabricIO</span>
+      <img src={Fab_logo} alt="" className="size-10 rounded-md" />
+      <span className="text-2xl font-extrabold tracking-[-0.03em]">
+        Fabric<span className="text-primary">IO</span>
+      </span>
     </Link>
   );
 };

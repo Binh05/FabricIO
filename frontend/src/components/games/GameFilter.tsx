@@ -1,4 +1,4 @@
-import type { Filter } from "@/pages/Games";
+import type { Filter } from "@/pages/BrowseGames";
 import type { GameTag } from "@/types/Game";
 import type React from "react";
 

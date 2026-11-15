@@ -1,14 +1,14 @@
-import type { GameTag } from "@/types/Game";
+import type { GameTag as GameTagData } from "@/types/Game";
 
-const GameTag = ({ tag }: { tag: GameTag }) => {
+const GameTagChip = ({ tag }: { tag: GameTagData }) => {
   return (
     <span
       key={tag.id}
-      className="text-muted border-border rounded-full border bg-white/5 px-3 py-1 text-[13px]"
+      className="rounded-sm border border-border-chip bg-surface-container-low px-2.5 py-1 text-xs text-foreground"
     >
       {tag.name}
     </span>
   );
 };
 
-export default GameTag;
+export default GameTagChip;

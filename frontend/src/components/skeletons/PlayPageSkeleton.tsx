@@ -19,7 +19,7 @@ export const PlayPageSkeleton = () => {
 
       <div className="flex-1 space-y-4">
         {/* Iframe Viewport Skeleton (aspect-video) */}
-        <div className="border-border bg-background/50 relative flex aspect-video items-center justify-center overflow-hidden rounded-lg border">
+        <div className="border-border bg-surface-container-lowest/50 relative flex aspect-video items-center justify-center overflow-hidden rounded-lg border">
           {/* Play Button Center Circle */}
           <Skeleton className="bg-muted/20 size-20 rounded-full" />
         </div>

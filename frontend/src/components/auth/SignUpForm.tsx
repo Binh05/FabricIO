@@ -37,9 +37,9 @@ const SignUpForm = () => {
   }
 
   return (
-    <div className="border-border grid w-full max-w-7xl grid-cols-1 overflow-hidden rounded-lg border bg-[#141418]/70 shadow-2xl backdrop-blur-md md:rounded-lg lg:grid-cols-2">
+    <div className="border-border grid w-full max-w-7xl grid-cols-1 overflow-hidden rounded-lg border bg-surface-container-low shadow-2xl md:rounded-lg lg:grid-cols-2">
       <div className="order-2 flex w-full items-center justify-center bg-linear-to-b from-white/2 to-white/1 px-4 py-5 sm:px-6 md:px-8 lg:order-1 lg:px-9">
-        <div className="border-border w-full max-w-lg rounded-3xl border bg-[#141414]/80 p-5 shadow-xl sm:p-6 md:p-8">
+        <div className="border-border w-full max-w-lg rounded-3xl border bg-surface-container-lowest p-5 shadow-xl sm:p-6 md:p-8">
           <h2 className="mb-2 text-2xl font-extrabold md:text-3xl">Đăng ký</h2>
 
           <p className="text-muted mt-2 text-sm leading-6">
@@ -70,7 +70,7 @@ const SignUpForm = () => {
                   value={formData.username}
                   onChange={handleChange("username")}
                   disabled={loading}
-                  className="border-border placeholder:text-muted/50 focus:border-primary w-full rounded-2xl border bg-black/20 px-4 py-2.5 text-sm text-white outline-none"
+                  className="border-border placeholder:text-muted-foreground focus:border-primary w-full rounded-2xl border bg-surface-container-low px-4 py-2.5 text-sm text-foreground outline-none"
                 />
               </div>
 
@@ -84,7 +84,7 @@ const SignUpForm = () => {
                   value={formData.fullName}
                   onChange={handleChange("fullName")}
                   disabled={loading}
-                  className="border-border placeholder:text-muted/50 focus:border-primary w-full rounded-2xl border bg-black/20 px-4 py-2.5 text-sm text-white outline-none"
+                  className="border-border placeholder:text-muted-foreground focus:border-primary w-full rounded-2xl border bg-surface-container-low px-4 py-2.5 text-sm text-foreground outline-none"
                 />
               </div>
             </div>
@@ -99,7 +99,7 @@ const SignUpForm = () => {
                 value={formData.email}
                 onChange={handleChange("email")}
                 disabled={loading}
-                className="border-border placeholder:text-muted/50 focus:border-primary w-full rounded-2xl border bg-black/20 px-4 py-2.5 text-sm text-white outline-none"
+                className="border-border placeholder:text-muted-foreground focus:border-primary w-full rounded-2xl border bg-surface-container-low px-4 py-2.5 text-sm text-foreground outline-none"
               />
             </div>
 
@@ -114,7 +114,7 @@ const SignUpForm = () => {
                   value={formData.password}
                   onChange={handleChange("password")}
                   disabled={loading}
-                  className="border-border placeholder:text-muted/50 focus:border-primary w-full rounded-2xl border bg-black/20 px-4 py-2.5 text-sm text-white outline-none"
+                  className="border-border placeholder:text-muted-foreground focus:border-primary w-full rounded-2xl border bg-surface-container-low px-4 py-2.5 text-sm text-foreground outline-none"
                 />
               </div>
 
@@ -128,7 +128,7 @@ const SignUpForm = () => {
                   value={formData.confirmPassword}
                   onChange={handleChange("confirmPassword")}
                   disabled={loading}
-                  className="border-border placeholder:text-muted/50 focus:border-primary w-full rounded-2xl border bg-black/20 px-4 py-2.5 text-sm text-white outline-none"
+                  className="border-border placeholder:text-muted-foreground focus:border-primary w-full rounded-2xl border bg-surface-container-low px-4 py-2.5 text-sm text-foreground outline-none"
                 />
               </div>
             </div>

@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
 
+import fabricio.backend.games.application.dtos.GameDetailResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -111,7 +112,7 @@ class GameServiceTest {
         when(storage.publicUrl("videos/preview.mp4")).thenReturn("https://storage/preview.mp4");
         when(storage.publicUrl("thumb/game.png")).thenReturn("https://storage/thumb.png");
 
-        GameResult result = gameService.getGameById(gameId);
+        GameDetailResult result = gameService.getGameById(gameId);
 
         assertNotNull(result);
         assertEquals(gameId, result.id());

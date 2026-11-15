@@ -7,8 +7,9 @@ import java.util.stream.Collectors;
 import fabricio.backend.games.GameApi;
 import fabricio.backend.games.GameAsset;
 import fabricio.backend.games.web.dto.GameRequest;
-import fabricio.backend.games.web.dto.GameResponse;
 import fabricio.backend.shared.storage.ObjectStorage;
+import fabricio.backend.users.UserApi;
+import fabricio.backend.users.UserSummary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,18 +31,21 @@ public class GameService implements GameApi {
     private final GameRepository gameRepository;
     private final GameTagRepository gameTagRepository;
     private final ObjectStorage storage;
+    private final UserApi userApi;
 
     public GameService(GameRepository gameRepository,
                        GameTagRepository gameTagRepository,
-                       ObjectStorage storage
+                       ObjectStorage storage,
+                       UserApi userApi
     ) {
         this.gameRepository = gameRepository;
         this.gameTagRepository = gameTagRepository;
         this.storage = storage;
+        this.userApi = userApi;
     }
 
     @Transactional(readOnly = true)
-    public PageResponse<GameResult> getAllGames(int page, int size, String keyword) {
+    public PageResponse<GameResult> getPagiGames(int page, int size, String keyword) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Game> gamePage = gameRepository.findByIsDeletedFalseAndTitleContainingIgnoreCaseAndStatus(keyword, GameStatus.Ready, pageable);
 
@@ -70,12 +74,21 @@ public class GameService implements GameApi {
     }
 
     @Transactional(readOnly = true)
-    public GameResult getGameById(UUID id) {
+    public GameDetailResult getGameById(UUID id) {
         Game game = gameRepository.findByIdOrThrow(id);
+
+        UserSummary owner = userApi.findUserSummaryById(game.getOwnerId())
+                .orElseThrow(() -> new GameException(GameErrorCode.GAME_NOT_FOUND));
+
+        GameAuthor author = new GameAuthor(
+                owner.id(),
+                owner.fullName(),
+                storage.publicUrl(owner.avatarKey())
+        );
 
         String videoUrl = storage.publicUrl(game.getVideoKey());
         String thumbnailUrl = storage.publicUrl(game.getThumbnailUrl());
-        return GameResult.from(game, videoUrl, thumbnailUrl);
+        return GameDetailResult.from(game, videoUrl, thumbnailUrl, author);
     }
 
     @Transactional(readOnly = true)

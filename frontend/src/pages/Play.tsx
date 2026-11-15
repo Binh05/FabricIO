@@ -6,6 +6,7 @@ import { Play as PlayGame } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { PlayPageSkeleton } from "@/components/skeletons/PlayPageSkeleton";
 import { GameCard } from "@/components/games/GameCard";
+import GameDescription from "@/components/games/GameDescription";
 
 export const Play = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,12 +20,12 @@ export const Play = () => {
     const init = async (): Promise<void> => {
       try {
         if (!id) return;
-        if (!games.some((game) => game.id === id)) {
+        if (games.filter((game) => game.id !== id).length === 0) {
           setIsFetching(true);
-          await fetchGameById(id);
           await fetchGames("", 0, 66);
         }
 
+        await fetchGameById(id);
         const url = await fetchGamePlayUrl(id);
         setGamePlayUrl(url);
       } finally {
@@ -72,7 +73,7 @@ export const Play = () => {
       <div className="flex-1 col-span-12 xl:col-span-9">
         {gamePlayUrl ? (
           <>
-            <div className="border-border bg-background relative aspect-video overflow-hidden rounded-lg border">
+            <div className="border-border bg-surface-container-lowest relative aspect-video overflow-hidden rounded-lg border">
               {isPlaying ? (
                 <iframe
                   id="webgl-iframe"
@@ -125,10 +126,7 @@ export const Play = () => {
           </div>
         )}
         <div className="border-border mt-4 rounded-xl border bg-white/3 p-4">
-          <div className="text-muted mb-2 text-[12px] font-bold tracking-wider uppercase">
-            Mô tả
-          </div>
-          <div className="text-muted text-sm leading-7">{game.description}</div>
+          <GameDescription game={game} />
         </div>
       </div>
       
