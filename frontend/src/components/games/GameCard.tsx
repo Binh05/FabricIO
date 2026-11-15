@@ -104,11 +104,11 @@ export const GameCard = ({
         )}
       </div>
 
-      <div className="flex flex-1 flex-col py-6 px-4">
-        <h3 className="truncate text-xl font-bold text-foreground transition-colors group-hover:text-primary">
+      <div className="flex flex-1 flex-col p-2 md:py-6 md:px-4">
+        <h3 className="truncate text-sm sm:text-xl font-bold text-foreground transition-colors group-hover:text-primary">
           {game.title}
         </h3>
-        <p className="mt-0.5 font-mono truncate text-sm text-muted-foreground">{authorName}</p>
+        <p className="mt-0.5 font-mono truncate text-xs sm:text-sm text-muted-foreground">{authorName}</p>
 
         <div className="mt-3 p-2 rounded-xs font-mono flex items-center bg-background justify-between text-xs sm:text-sm">
           <div className="flex items-center gap-1">

@@ -61,7 +61,7 @@ export const UploadGame = () => {
   if (!user || loadingDraft) return <SubmitGamePageSkeleton />;
 
   return (
-    <section className="mb-16 w-full flex flex-col items-center">
+    <section className="mb-16 sm:px-3 w-full flex flex-col items-center">
       <div className="w-full max-w-4xl">
         {/* Header */}
         <div className="mb-8">

@@ -138,7 +138,7 @@ export const Play = () => {
   };
 
   return (
-    <div className="w-full pb-16 mt-4">
+    <div className="w-full sm:px-3 pb-16 mt-4">
       {/* Breadcrumb Navigation */}
       <nav
         aria-label="Breadcrumb"
