@@ -48,7 +48,7 @@ export const Play = () => {
 
       setIsFetching(true);
       try {
-        const [detailRes, _] = await Promise.all([
+        const [detailRes] = await Promise.all([
           fetchGameById(id).catch(() => null),
           games.length === 0 ? fetchGames("", 0, 10).catch(() => null) : Promise.resolve(),
         ]);
