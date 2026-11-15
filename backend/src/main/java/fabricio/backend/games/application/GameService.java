@@ -86,9 +86,9 @@ public class GameService implements GameApi {
                 storage.publicUrl(owner.avatarKey())
         );
 
-        String videoUrl = storage.publicUrl(game.getVideoKey());
+        String gameUrl = storage.publicUrl(game.getGameUrl(), "index.html");
         String thumbnailUrl = storage.publicUrl(game.getThumbnailUrl());
-        return GameDetailResult.from(game, videoUrl, thumbnailUrl, author);
+        return GameDetailResult.from(game, gameUrl, thumbnailUrl, author);
     }
 
     @Transactional(readOnly = true)

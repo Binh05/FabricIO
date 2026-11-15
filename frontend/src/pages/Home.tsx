@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
-  ArrowRight,
   ChevronDown,
   Rocket,
   SearchX,
@@ -15,7 +14,6 @@ import { HomeSkeleton } from "@/components/skeletons/HomeSkeleton";
 
 export const Home = () => {
   const { games, fetchGames, loading } = useGame();
-  const [isCompactGrid, setIsCompactGrid] = useState(false);
 
   useEffect(() => {
     void fetchGames("", 0, 8);

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="shiftBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#140609"/>
+      <stop offset="100%" stop-color="#070204"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" fill="url(#shiftBg)"/>
+  <!-- Isometric Grid / Red Lines -->
+  <line x1="20" y1="180" x2="180" y2="40" stroke="#ff4655" stroke-opacity="0.3" stroke-width="2"/>
+  <line x1="50" y1="190" x2="190" y2="70" stroke="#ff4655" stroke-opacity="0.2" stroke-width="1.5"/>
+  <!-- Isometric 3D Red Cubes -->
+  <!-- Cube 1 Top, Left, Right -->
+  <polygon points="100,50 140,70 100,90 60,70" fill="#ff4655"/>
+  <polygon points="60,70 100,90 100,135 60,115" fill="#a01824"/>
+  <polygon points="140,70 100,90 100,135 140,115" fill="#cf2a37"/>
+  <!-- Sub cube / shadow block -->
+  <polygon points="135,110 165,125 135,140 105,125" fill="#ff4655" opacity="0.8"/>
+  <polygon points="105,125 135,140 135,165 105,150" fill="#75121b"/>
+  <polygon points="165,125 135,140 135,165 165,150" fill="#a01824"/>
+</svg>
