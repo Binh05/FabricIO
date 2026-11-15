@@ -40,7 +40,7 @@ export const BrowseGames = () => {
   }
 
   return (
-    <div className="mx-auto w-full px-4 pb-16 lg:px-8">
+    <div className="mx-auto w-full sm:px-3 pb-16 lg:px-8">
       <section aria-labelledby="games-heading" className="mt-4">
         <div className="mb-6 flex lg:flex-row lg:items-end lg:justify-between">
           <div>
@@ -56,7 +56,7 @@ export const BrowseGames = () => {
         {games.length === 0 ? (
           <NotGame />
         ) : (
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-1.5 md:gap-3 md:grid-cols-4">
             {games.map((game) => (
               <GameCard key={game.id} game={game} />
             ))}

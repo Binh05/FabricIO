@@ -18,7 +18,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex min-h-screen flex-col">
       <Header user={user} />
-      <div className="mx-auto flex w-full max-w-400 flex-1 flex-col p-8 pt-0 lg:flex-row">
+      <div className="mx-auto flex w-full max-w-400 p-3 flex-1 flex-col lg:flex-row">
         <main className="min-w-0 flex-1 mx-auto">{children}</main>
       </div>
     </div>

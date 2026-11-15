@@ -78,7 +78,7 @@ export default function Header({ user }: { user: User | null }) {
   };
 
   return (
-    <header className="sticky top-0 z-30 h-12 border-b border-border-subtle bg-surface/95 py-8 backdrop-blur-md sm:px-4 lg:px-8">
+    <header className="sticky px-2 top-0 z-30 h-12 border-b border-border-subtle bg-surface/95 py-8 backdrop-blur-md sm:px-4 lg:px-8">
       <div className="mx-auto flex h-full max-w-400 items-center justify-between gap-4">
         <Logo />
 

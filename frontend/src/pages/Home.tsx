@@ -25,8 +25,8 @@ export const Home = () => {
   const previewGames = games.slice(1, 4);
 
   return (
-    <div className="-mt-1 w-[calc(100%+3rem)] bg-background text-foreground">
-      <div className="mx-auto w-full px-4 py-6 sm:px-6 lg:px-8">
+    <div className="w-[calc(100%)] bg-background text-foreground">
+      <div className="mx-auto w-full py-6 sm:px-3 lg:px-8">
         {/* Top Featured Spotlight */}
         {games.length > 0 && <GameNewestDrop
           game={featuredGame}
