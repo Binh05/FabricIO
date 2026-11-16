@@ -36,7 +36,6 @@ export const GameCard = ({
 
   const authorName =
     game.author?.fullName?.trim() ||
-    (game as unknown as { studio?: string }).studio ||
     "Indie Creator";
 
   const rating = game.avgRating > 0 ? game.avgRating : 5;
@@ -108,7 +107,7 @@ export const GameCard = ({
         <h3 className="truncate text-sm sm:text-xl font-bold text-foreground transition-colors group-hover:text-primary">
           {game.title}
         </h3>
-        <p className="mt-0.5 font-mono truncate text-xs sm:text-sm text-muted-foreground">{authorName}</p>
+        <p className="mt-0.5 font-mono truncate text-xs sm:text-sm text-muted-foreground capitalize">{authorName}</p>
 
         <div className="mt-3 p-2 rounded-xs font-mono flex items-center bg-background justify-between text-xs sm:text-sm">
           <div className="flex items-center gap-1">

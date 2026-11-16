@@ -1,5 +1,7 @@
 package fabricio.backend.users;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,4 +13,5 @@ public interface UserApi {
     Optional<UserAuthInfo> findUserAuthInfoByUsername(String username);
     Optional<UserSummary> findUserSummaryById(UUID userId);
     String updateAvatar(UpdateAvatarCommand cmd);
+    Map<UUID, UserSummary> getAuthorsByIds(Collection<UUID> userIds);
 }

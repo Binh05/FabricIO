@@ -19,6 +19,7 @@ export interface GameAuthor {
   id: string;
   fullName: string;
   avatarUrl: string;
+  bio: string | null;
 }
 
 export interface GameTag {

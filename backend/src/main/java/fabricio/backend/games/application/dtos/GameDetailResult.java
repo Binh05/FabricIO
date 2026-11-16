@@ -20,9 +20,9 @@ public record GameDetailResult(
         double avgRating,
         Instant createdAt,
         Instant updatedAt,
-        GameAuthor author
+        AuthorDto author
 ) {
-    public static GameDetailResult from(Game game, String gameUrl, String thumbnailUrl, GameAuthor author) {
+    public static GameDetailResult from(Game game, String gameUrl, String thumbnailUrl, AuthorDto author) {
         if (game == null) return null;
         return new GameDetailResult(
                 game.getId(),

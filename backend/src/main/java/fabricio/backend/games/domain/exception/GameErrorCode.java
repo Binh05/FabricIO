@@ -8,6 +8,7 @@ public enum GameErrorCode {
     GAME_ACCESS_DENIED(403, "Bạn không có quyền truy cập game"),
     ASSET_TYPE_INVALID(400, "Asset Game Type không hợp lệ"),
     GAME_NOT_FOUND(404, "Game không tồn tại"),
+    GAME_OWNER_NOT_FOUND(404, "Game owner không tồn tại"),
     GAME_TAG_INVALID(400, "Game tag không hợp lệ"),
     RATING_NOT_FOUND(404, "Rating không tồn tại"),
     TAG_NOT_FOUND(404, "Tag không tìm thấy"),

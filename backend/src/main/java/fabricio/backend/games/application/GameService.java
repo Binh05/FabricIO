@@ -58,15 +58,21 @@ public class GameService implements GameApi {
         List<UUID> ids = games.stream()
                 .map(Game::getId)
                 .toList();
-
         gameRepository.findAllWithTagsByIdIn(ids);
+
+        Set<UUID> authorIds = games.stream()
+                .map(Game::getOwnerId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        Map<UUID, UserSummary> authors = userApi.getAuthorsByIds(authorIds);
 
         List<GameResult> results = games.stream()
                 .map(g -> {
                     String videoUrl = storage.publicUrl(g.getVideoKey());
                     String thumbnailUrl = storage.publicUrl(g.getThumbnailUrl());
+                    AuthorDto author = AuthorDto.fromUserSummary(authors.get(g.getOwnerId()));
 
-                    return GameResult.from(g, videoUrl, thumbnailUrl);
+                    return GameResult.from(g, videoUrl, thumbnailUrl, author);
                 })
                 .toList();
 
@@ -80,10 +86,11 @@ public class GameService implements GameApi {
         UserSummary owner = userApi.findUserSummaryById(game.getOwnerId())
                 .orElseThrow(() -> new GameException(GameErrorCode.GAME_NOT_FOUND));
 
-        GameAuthor author = new GameAuthor(
+        AuthorDto author = new AuthorDto(
                 owner.id(),
                 owner.fullName(),
-                storage.publicUrl(owner.avatarKey())
+                storage.publicUrl(owner.avatarUrl()),
+                owner.bio()
         );
 
         String gameUrl = storage.publicUrl(game.getGameUrl(), "index.html");
@@ -94,11 +101,13 @@ public class GameService implements GameApi {
     @Transactional(readOnly = true)
     public List<GameResult> getMyPublishedGames(UUID ownerId) {
         List<Game> games = gameRepository.findByOwnerIdAndIsDeletedFalseAndStatus(ownerId, GameStatus.Ready);
+        AuthorDto author = getAuthorOrThrow(ownerId);
+
         return games.stream()
                 .map(g -> {
                     String videoUrl = storage.publicUrl(g.getVideoKey());
                     String thumbnailUrl = storage.publicUrl(g.getThumbnailUrl());
-                    return GameResult.from(g, videoUrl, thumbnailUrl);
+                    return GameResult.from(g, videoUrl, thumbnailUrl, author);
                 })
                 .collect(Collectors.toList());
     }
@@ -106,6 +115,7 @@ public class GameService implements GameApi {
     public GameResult uploadDraft(UUID userId, GameRequest req) {
         List<UUID> tagIds = req.tagIds();
         List<GameTag> tags = resolveTagIds(tagIds);
+        AuthorDto author = getAuthorOrThrow(userId);
 
         Game game = Game.createDraft(
             userId,
@@ -116,7 +126,7 @@ public class GameService implements GameApi {
         );
 
         gameRepository.save(game);
-        return GameResult.from(game, "", "");
+        return GameResult.from(game, "", "", author);
     }
 
     @Transactional
@@ -131,10 +141,11 @@ public class GameService implements GameApi {
                 request.price(),
                 new HashSet<>(tags)
         );
+        AuthorDto author = getAuthorOrThrow(ownerId);
 
         String videoUrl = storage.publicUrl(game.getVideoKey());
         String thumbnailUrl = storage.publicUrl(game.getThumbnailUrl());
-        return GameResult.from(game, videoUrl, thumbnailUrl);
+        return GameResult.from(game, videoUrl, thumbnailUrl, author);
     }
 
     public void deleteGame(UUID id, UUID ownerId) {
@@ -151,10 +162,11 @@ public class GameService implements GameApi {
         Game game = gameRepository.findByIdOrThrow(gameId);
 
         game.markAsReady();
+        AuthorDto author = getAuthorOrThrow(game.getOwnerId());
 
         String videoUrl = storage.publicUrl(game.getVideoKey());
         String thumbnailUrl = storage.publicUrl(game.getThumbnailUrl());
-        return GameResult.from(game, videoUrl, thumbnailUrl);
+        return GameResult.from(game, videoUrl, thumbnailUrl, author);
     }
 
     public GamePlayResponse getGamePlayUrl(UUID gameId) {
@@ -170,10 +182,11 @@ public class GameService implements GameApi {
                 .orElse(null);
 
         if (game == null) return null;
+        AuthorDto author = getAuthorOrThrow(game.getOwnerId());
 
         String videoUrl = storage.publicUrl(game.getVideoKey());
         String thumbnailUrl = storage.publicUrl(game.getThumbnailUrl());
-        return GameResult.from(game, videoUrl, thumbnailUrl);
+        return GameResult.from(game, videoUrl, thumbnailUrl, author);
     }
 
     public void deleteGameDraft(UUID gameId) {
@@ -192,6 +205,12 @@ public class GameService implements GameApi {
         }
 
         return tags;
+    }
+
+    private AuthorDto getAuthorOrThrow(UUID ownerId) {
+        UserSummary summary = userApi.findUserSummaryById(ownerId)
+                .orElseThrow(() -> new GameException(GameErrorCode.GAME_OWNER_NOT_FOUND));
+        return AuthorDto.fromUserSummary(summary);
     }
 
     @Override

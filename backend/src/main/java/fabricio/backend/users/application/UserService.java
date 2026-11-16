@@ -1,8 +1,7 @@
 package fabricio.backend.users.application;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import fabricio.backend.shared.storage.ObjectStorage;
 import fabricio.backend.users.UpdateAvatarCommand;
@@ -112,7 +111,7 @@ public class UserService implements UserApi {
 
     @Override
     public Optional<UserSummary> findUserSummaryById(UUID userId) {
-        return userRepository.findById(userId).map(UserSummary::from);
+        return userRepository.findById(userId).map(this::toSummary);
     }
 
     @Override
@@ -130,8 +129,33 @@ public class UserService implements UserApi {
         return oldKey;
     }
 
+    @Override
+    @Transactional
+    public Map<UUID, UserSummary> getAuthorsByIds(Collection<UUID> userIds) {
+        if (userIds.isEmpty()) {
+            return Map.of();
+        }
+
+        return userRepository.findAllById(userIds)
+                .stream()
+                .collect(Collectors.toMap(
+                        User::getId,
+                        this::toSummary
+                ));
+    }
+
     private UserAuthInfo toAuthInfo(User u) {
         return new UserAuthInfo(u.getId(), u.getEmail(), u.getUsername(), u.getFullName(),
                 u.getHashedPassword(), u.getRole(), u.getRole().getPermissions());
+    }
+
+    private UserSummary toSummary(User u) {
+        if (u == null) return null;
+        return new UserSummary(
+                u.getId(),
+                u.getFullName(),
+                storage.publicUrl(u.getAvatarUrl()),
+                u.getBio()
+        );
     }
 }
