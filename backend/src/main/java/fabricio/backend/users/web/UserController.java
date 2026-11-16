@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fabricio.backend.shared.security.UserPrincipal;
 import fabricio.backend.users.application.dtos.UserResponse;
+import fabricio.backend.users.application.dtos.FetchUserResult;
 import fabricio.backend.users.application.dtos.UserUpdateRequest;
 import fabricio.backend.users.domain.User;
 import fabricio.backend.shared.base.ApiResponse;
@@ -32,12 +33,12 @@ public class UserController {
 
     @GetMapping("/user/me")
     public ApiResponse<UserResponse> fetchMe(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        var res = userService.getUserById(userPrincipal.getId());
+        var res = userService.getCurrentUserById(userPrincipal.getId());
         return ApiResponse.success(res);
     }
 
     @GetMapping("/user/{id}")
-    public ApiResponse<UserResponse> getUserById(@PathVariable UUID id) {
+    public ApiResponse<FetchUserResult> getUserById(@PathVariable UUID id) {
         return ApiResponse.success(userService.getUserById(id));
     }
 

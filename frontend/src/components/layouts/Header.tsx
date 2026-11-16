@@ -1,7 +1,18 @@
 import { useState, type FormEvent } from "react";
 import { Menu, Search, Upload } from "lucide-react";
-import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from "@/components/ui/input-group";
 import { useAuth } from "@/hooks/useAuth";
 import UserAvatar from "./UserAvatar";
 import type { User } from "@/types/User";
@@ -44,8 +55,10 @@ const NavLinks = ({
           key={item.href}
           aria-current={active ? "page" : undefined}
           className={cn(
-            "rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-white/5 hover:text-foreground",
-            active ? "bg-surface-container-high text-foreground" : "text-muted-foreground",
+            "hover:text-foreground rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-white/5",
+            active
+              ? "bg-surface-container-high text-foreground"
+              : "text-muted-foreground",
           )}
           to={item.href}
           onClick={onClick}
@@ -78,30 +91,31 @@ export default function Header({ user }: { user: User | null }) {
   };
 
   return (
-    <header className="sticky px-2 top-0 z-30 h-12 border-b border-border-subtle bg-surface/95 py-8 backdrop-blur-md sm:px-4 lg:px-8">
+    <header className="border-border-subtle bg-surface/95 sticky top-0 z-30 h-12 border-b px-2 py-8 backdrop-blur-md sm:px-4 lg:px-8">
       <div className="mx-auto flex h-full max-w-400 items-center justify-between gap-4">
         <Logo />
 
         <form
           key={searchParams.get("q") ?? ""}
           onSubmit={onSearch}
-          className="hidden h-10 max-w-xl flex-1 items-center gap-3 rounded-md border border-border-subtle bg-surface-container-lowest px-3 text-muted-foreground transition-colors focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/50 focus-within:ring-offset-2 focus-within:ring-offset-surface md:flex"
+          className="hidden max-w-xl flex-1 md:flex"
         >
-          <Search aria-hidden="true" size={17} />
-          <label
-            htmlFor="desktop-game-search"
-            className="shrink-0 text-xs font-medium text-muted-foreground"
-          >
-            Search
-          </label>
-          <input
-            id="desktop-game-search"
-            className="min-w-0 w-full border-none bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-primary"
-            type="search"
-            name="q"
-            placeholder="Search games, studios tags (e.g. Cyberpunk, Roguelike)..."
-            defaultValue={searchParams.get("q") ?? ""}
-          />
+          <InputGroup className="border-border-subtle bg-surface-container-lowest text-muted-foreground focus-within:border-primary focus-within:ring-primary/50 focus-within:ring-offset-surface h-10 rounded-md transition-colors focus-within:ring-2 focus-within:ring-offset-2">
+            <InputGroupAddon className="pl-3">
+              <Search aria-hidden="true" size={17} />
+              <InputGroupText className="text-xs font-medium">
+                <label htmlFor="desktop-game-search">Search</label>
+              </InputGroupText>
+            </InputGroupAddon>
+            <InputGroupInput
+              id="desktop-game-search"
+              type="search"
+              name="q"
+              placeholder="Search games, studios tags (e.g. Cyberpunk, Roguelike)..."
+              defaultValue={searchParams.get("q") ?? ""}
+              className="text-foreground placeholder:text-muted-foreground text-sm"
+            />
+          </InputGroup>
         </form>
 
         <div className="flex items-center gap-2 sm:gap-3">
@@ -114,7 +128,7 @@ export default function Header({ user }: { user: User | null }) {
             variant="gradient"
             size="sm"
             asChild
-            className="hidden h-9 sm:inline-flex bg-primary/80 shadow-lg shadow-primary/50"
+            className="bg-primary/80 shadow-primary/50 hidden h-9 shadow-lg sm:inline-flex"
           >
             <Link to="/upload-game">
               <Upload aria-hidden="true" />
@@ -125,7 +139,12 @@ export default function Header({ user }: { user: User | null }) {
           {loading ? (
             <Skeleton className="size-8 rounded-full" />
           ) : !token ? (
-            <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
+            <Button
+              variant="ghost"
+              size="sm"
+              asChild
+              className="hidden sm:inline-flex"
+            >
               <Link to="/signin">Log in</Link>
             </Button>
           ) : (
@@ -152,10 +171,10 @@ export default function Header({ user }: { user: User | null }) {
             <SheetContent
               side="right"
               aria-describedby="mobile-navigation-description"
-              className="border-l border-border-subtle bg-surface p-0 text-foreground"
+              className="border-border-subtle bg-surface text-foreground border-l p-0"
             >
-              <SheetHeader className="border-b border-border-subtle p-5">
-                <SheetTitle className="text-left text-foreground">
+              <SheetHeader className="border-border-subtle border-b p-5">
+                <SheetTitle className="text-foreground text-left">
                   <Logo />
                 </SheetTitle>
                 <SheetDescription
@@ -170,23 +189,24 @@ export default function Header({ user }: { user: User | null }) {
                 <form
                   key={searchParams.get("q") ?? ""}
                   onSubmit={onSearch}
-                  className="flex h-11 w-full items-center gap-3 rounded-md border border-border-subtle bg-surface-container-lowest px-3 text-muted-foreground transition-colors focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/50 focus-within:ring-offset-2 focus-within:ring-offset-surface"
+                  className="w-full"
                 >
-                  <Search aria-hidden="true" size={17} />
-                  <label
-                    htmlFor="mobile-game-search"
-                    className="shrink-0 text-xs font-medium text-muted-foreground"
-                  >
-                    Search
-                  </label>
-                  <input
-                    id="mobile-game-search"
-                    className="min-w-0 w-full border-none bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-primary"
-                    type="search"
-                    name="q"
-                    placeholder="Search games, studios tags (e.g. Cyberpunk, Roguelike)..."
-                    defaultValue={searchParams.get("q") ?? ""}
-                  />
+                  <InputGroup className="border-border-subtle bg-surface-container-lowest text-muted-foreground focus-within:border-primary focus-within:ring-primary/50 focus-within:ring-offset-surface h-11 rounded-md transition-colors focus-within:ring-2 focus-within:ring-offset-2">
+                    <InputGroupAddon className="pl-3">
+                      <Search aria-hidden="true" size={17} />
+                      <InputGroupText className="text-xs font-medium">
+                        <label htmlFor="mobile-game-search">Search</label>
+                      </InputGroupText>
+                    </InputGroupAddon>
+                    <InputGroupInput
+                      id="mobile-game-search"
+                      type="search"
+                      name="q"
+                      placeholder="Search games, studios tags (e.g. Cyberpunk, Roguelike)..."
+                      defaultValue={searchParams.get("q") ?? ""}
+                      className="text-foreground placeholder:text-muted-foreground text-sm"
+                    />
+                  </InputGroup>
                 </form>
 
                 <NavLinks
@@ -212,7 +232,6 @@ export default function Header({ user }: { user: User | null }) {
               </div>
             </SheetContent>
           </Sheet>
-
         </div>
       </div>
     </header>

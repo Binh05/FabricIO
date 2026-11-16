@@ -67,6 +67,11 @@ export class gameService {
     return res.data;
   }
 
+  static async fetchUserGames(userId: string): Promise<ApiResponse<Game[]>> {
+    const res = await api.get(`/games/user/${userId}`);
+    return res.data;
+  }
+
   static async getGameById(id: string): Promise<ApiResponse<Game>> {
     const res = await api.get(`/games/${id}`);
 

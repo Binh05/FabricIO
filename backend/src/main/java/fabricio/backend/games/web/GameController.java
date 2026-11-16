@@ -50,6 +50,15 @@ public class GameController {
         return ApiResponse.success(res);
     }
 
+    @GetMapping("/user/{userId}")
+    public ApiResponse<List<GameResponse>> getUserGames(@PathVariable UUID userId) {
+        List<GameResponse> res = gameService.getPublishedGamesByUser(userId)
+                .stream()
+                .map(GameResponse::from)
+                .toList();
+        return ApiResponse.success(res);
+    }
+
     @GetMapping("/{id}")
     public ApiResponse<GameDetailResult> getGameById(@PathVariable UUID id) {
         return ApiResponse.success(gameService.getGameById(id));

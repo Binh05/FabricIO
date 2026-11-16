@@ -14,6 +14,7 @@ interface UseGame {
   publishGame: (gameId: string) => Promise<Game>;
   fetchGames: (keyword?: string, page?: number, size?: number) => Promise<void>;
   fetchMyGames: () => Promise<Game[]>;
+  fetchUserGames: (userId: string) => Promise<Game[]>;
   fetchGameById: (id: string) => Promise<void>;
   fetchGamePlayUrl: (gameId: string) => Promise<string>;
   fetchGameTags: () => Promise<void>;
@@ -167,6 +168,20 @@ export const useGame = (): UseGame => {
     }
   };
 
+  const fetchUserGames = async (userId: string): Promise<Game[]> => {
+    try {
+      const { data } = await gameService.fetchUserGames(userId);
+      return data;
+    } catch (error) {
+      console.error("Lỗi khi fetch games của user", error);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      toast.error(message ?? "Đã xảy ra lỗi khi tải game của người dùng!");
+      return [];
+    }
+  };
+
   const fetchGameById = async (id: string) => {
     try {
       setLoading(true);
@@ -227,6 +242,7 @@ export const useGame = (): UseGame => {
     publishGame,
     fetchGames,
     fetchMyGames,
+    fetchUserGames,
     fetchGameById,
     fetchGamePlayUrl,
     fetchGameTags,

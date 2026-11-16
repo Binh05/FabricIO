@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import UserAvatar from "@/components/layouts/UserAvatar";
 import AvatarUpload from "@/components/profile/AvatarUpload";
+import ProfileEditForm from "@/components/profile/ProfileEditForm";
 import { useGame } from "@/hooks/useGame";
 import { Link, Navigate } from "react-router-dom";
 import { HomeSkeleton } from "@/components/skeletons/HomeSkeleton";
@@ -39,8 +40,6 @@ export const Profile = () => {
 
   if (!user) return <Navigate to={"/signin"} replace />;
 
-  // const favoriteGames = games.filter((g) => favorites.has(g.id));
-  // const tabs = isSelf ? ["games", "favorites"] : ["games"];
   const tabs = ["games"];
 
   const onSignOut = async (
@@ -51,8 +50,8 @@ export const Profile = () => {
   };
 
   return (
-    <section className="mb-16">
-      <div className="bg-card border-border mb-10 flex flex-col items-center gap-8 rounded-lg border p-10 md:flex-row md:items-start">
+    <section className="m-6 mb-6">
+      <div className="bg-card border-border mb-6 flex flex-col items-center gap-8 rounded-lg border p-10 md:flex-row md:items-start">
         <div className="relative">
           <UserAvatar
             name={user.username}
@@ -85,6 +84,8 @@ export const Profile = () => {
         </div>
       </div>
 
+      <ProfileEditForm user={user} />
+
       <div className="border-border mb-8 flex gap-2 border-b px-2 pb-3">
         {tabs.map((tab) => (
           <Button
@@ -98,14 +99,14 @@ export const Profile = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 md:gap-2 md:grid-cols-4 xl:grid-cols-6">
+      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 md:grid-cols-4 md:gap-2 xl:grid-cols-6">
         {gameLoading
           ? Array.from({ length: 3 }).map((_, index) => (
-            <GameCardSkeleton key={index} />
-          ))
+              <GameCardSkeleton key={index} />
+            ))
           : myGames.map((game) => <GameCard key={game.id} game={game} />)}
         {!gameLoading && myGames.length === 0 && (
-          <div className="bg-card border-border rounded-lg border p-12 text-center md:col-span-2 xl:col-span-6 lg:col-span-4">
+          <div className="bg-card border-border rounded-lg border p-12 text-center md:col-span-2 lg:col-span-4 xl:col-span-6">
             <h3 className="text-xl font-bold">Bạn chưa có game nào</h3>
             <p className="text-muted-foreground mt-2">
               Hãy đăng game đầu tiên của bạn!
