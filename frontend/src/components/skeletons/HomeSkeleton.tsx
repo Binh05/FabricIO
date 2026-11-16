@@ -4,28 +4,44 @@ import { GameFeaturedDropSkeleton } from "./GameFeaturedDropSkeleton";
 
 export const HomeSkeleton = () => {
   return (
-    <div className="-mx-6 -mt-6 w-[calc(100%+3rem)]">
-      <div className="mx-auto w-full max-w-7xl px-4 lg:px-8">
+    <div className="w-full bg-background text-foreground">
+      <div className="mx-auto w-full py-6 sm:px-3 lg:px-8">
         <GameFeaturedDropSkeleton />
 
-        <section className="mt-8 mb-12">
-          <div className="mb-5 flex items-center justify-between">
-            <Skeleton className="h-8 w-48" />
-            <Skeleton className="h-10 w-40" />
+        <section className="mt-12">
+          <div className="mb-6 flex items-center gap-3">
+            <Skeleton className="h-6 w-1.5 rounded-full" />
+            <Skeleton className="h-8 w-40" />
           </div>
 
-          <div className="mb-4 flex flex-wrap gap-2">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <Skeleton key={index} className="h-11 w-20 rounded-sm" />
-            ))}
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
             {Array.from({ length: 8 }).map((_, index) => (
               <GameCardSkeleton key={index} />
             ))}
           </div>
+
+          <div className="mt-8 flex justify-center">
+            <Skeleton className="h-10 w-56 rounded-lg" />
+          </div>
         </section>
+
+        <section className="mt-14 rounded-2xl border border-border-subtle bg-surface-container p-6 sm:p-8 lg:p-10">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="w-full max-w-2xl space-y-3">
+              <Skeleton className="h-4 w-44" />
+              <Skeleton className="h-8 w-full max-w-xl" />
+              <Skeleton className="h-5 w-full" />
+              <Skeleton className="h-5 w-5/6" />
+            </div>
+            <Skeleton className="h-12 w-48 shrink-0 rounded-lg" />
+          </div>
+        </section>
+
+        <footer className="mt-14 flex flex-col gap-5 border-t border-border-subtle pt-8 pb-10 sm:flex-row sm:items-center sm:justify-between">
+          <Skeleton className="h-4 w-52" />
+          <Skeleton className="h-4 w-72" />
+          <Skeleton className="h-4 w-56" />
+        </footer>
       </div>
     </div>
   );
