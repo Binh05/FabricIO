@@ -81,6 +81,8 @@ class GameServiceTest {
         when(gameRepository.findByIsDeletedFalseAndTitleContainingIgnoreCaseAndStatus(
                 eq("Super"), eq(GameStatus.Ready), any(Pageable.class)
         )).thenReturn(page);
+        when(userApi.getAuthorsByIds(Set.of(ownerId)))
+                .thenReturn(Map.of(ownerId, ownerSummary()));
         when(storage.publicUrl("videos/preview.mp4")).thenReturn("https://storage/preview.mp4");
         when(storage.publicUrl("thumb/game.png")).thenReturn("https://storage/thumb.png");
 
@@ -90,6 +92,7 @@ class GameServiceTest {
         assertEquals(1, response.getContent().size());
         assertEquals("Super Game", response.getContent().get(0).title());
         assertEquals("https://storage/thumb.png", response.getContent().get(0).thumbnailUrl());
+        assertEquals(ownerId, response.getContent().get(0).author().id());
         verify(gameRepository).findAllWithTagsByIdIn(List.of(gameId));
     }
 
@@ -116,11 +119,9 @@ class GameServiceTest {
         UUID ownerId = mockGame.getOwnerId(); // Hoặc UUID cố định khớp với mockGame
         UserSummary mockOwner = new UserSummary(
                 ownerId,
-                "Bin05",
-                "user@gmail.com",
                 "Nguyen Bin05",
-                "bio",
-                "avatar/user.png"
+                "avatar/user.png",
+                "bio"
         );
 
         when(gameRepository.findByIdOrThrow(gameId)).thenReturn(mockGame);
@@ -144,6 +145,7 @@ class GameServiceTest {
     void getMyPublishedGames_success() {
         when(gameRepository.findByOwnerIdAndIsDeletedFalseAndStatus(ownerId, GameStatus.Ready))
                 .thenReturn(List.of(mockGame));
+        when(userApi.findUserSummaryById(ownerId)).thenReturn(Optional.of(ownerSummary()));
         when(storage.publicUrl("videos/preview.mp4")).thenReturn("https://storage/preview.mp4");
         when(storage.publicUrl("thumb/game.png")).thenReturn("https://storage/thumb.png");
 
@@ -164,6 +166,7 @@ class GameServiceTest {
 
         GameRequest request = new GameRequest("Draft Title", "Draft Desc", BigDecimal.TEN, List.of(tagId));
         when(gameTagRepository.findAllById(List.of(tagId))).thenReturn(List.of(tag));
+        when(userApi.findUserSummaryById(ownerId)).thenReturn(Optional.of(ownerSummary()));
 
         GameResult result = gameService.uploadDraft(ownerId, request);
 
@@ -180,6 +183,7 @@ class GameServiceTest {
     void updateGame_success() {
         GameRequest request = new GameRequest("Updated Title", "Updated Desc", BigDecimal.valueOf(25), Collections.emptyList());
         when(gameRepository.findByIdOrThrow(gameId)).thenReturn(mockGame);
+        when(userApi.findUserSummaryById(ownerId)).thenReturn(Optional.of(ownerSummary()));
         when(storage.publicUrl(mockGame.getVideoKey())).thenReturn("video-url");
         when(storage.publicUrl(mockGame.getThumbnailUrl())).thenReturn("thumb-url");
 
@@ -239,6 +243,7 @@ class GameServiceTest {
     void publishGame_success() {
         mockGame.setStatus(GameStatus.Draft);
         when(gameRepository.findByIdOrThrow(gameId)).thenReturn(mockGame);
+        when(userApi.findUserSummaryById(ownerId)).thenReturn(Optional.of(ownerSummary()));
         when(storage.publicUrl(mockGame.getVideoKey())).thenReturn("video-url");
         when(storage.publicUrl(mockGame.getThumbnailUrl())).thenReturn("thumb-url");
 
@@ -290,11 +295,16 @@ class GameServiceTest {
 
         when(gameRepository.findFirstByOwnerIdAndStatusAndIsDeletedFalse(ownerId, GameStatus.Draft))
                 .thenReturn(Optional.of(draftGame));
+        when(userApi.findUserSummaryById(ownerId)).thenReturn(Optional.of(ownerSummary()));
 
         GameResult result = gameService.getMyGameDraft(ownerId);
 
         assertNotNull(result);
         assertEquals("Draft", result.title());
+    }
+
+    private UserSummary ownerSummary() {
+        return new UserSummary(ownerId, "Nguyen Bin05", "avatar/user.png", "bio");
     }
 
     @Test
