@@ -265,11 +265,24 @@ export const Play = () => {
 
             <div className="flex items-start gap-3 pt-4">
               <div className="flex items-baseline">
-                <UserAvatar
-                  name={authorName}
-                  avatarUrl={game.author?.avatarUrl}
-                  type="describe"
-                />
+                {game.author?.id ? (
+                  <Link
+                    to={`/profile/${game.author.id}`}
+                    aria-label={`View ${authorName}'s profile`}
+                  >
+                    <UserAvatar
+                      name={authorName}
+                      avatarUrl={game.author?.avatarUrl}
+                      type="describe"
+                    />
+                  </Link>
+                ) : (
+                  <UserAvatar
+                    name={authorName}
+                    avatarUrl={game.author?.avatarUrl}
+                    type="describe"
+                  />
+                )}
               </div>
               <div className="-mt-1.5">
                 <h2 className="text-foreground w-28 shrink-0 text-sm font-semibold sm:w-32 sm:text-lg">

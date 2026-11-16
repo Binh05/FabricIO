@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import fabricio.backend.users.application.dtos.UserResponse;
 import fabricio.backend.users.application.dtos.UserUpdateRequest;
+import fabricio.backend.users.application.dtos.FetchUserResult;
 import fabricio.backend.users.UserApi;
 import fabricio.backend.users.UserAuthInfo;
 import fabricio.backend.users.domain.exception.UserErrorCode;
@@ -32,22 +33,33 @@ public class UserService implements UserApi {
         this.storage = storage;
     }
 
-    public UserResponse getUserById(UUID id) {
+    public FetchUserResult getUserById(UUID id) {
         var entity = userRepository.findById(id)
             .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
-        String avatarUrl = storage.publicUrl(entity.getAvatarUrl());
+        return new FetchUserResult(
+                entity.getId(),
+                entity.getFullName(),
+                entity.getBio(),
+                storage.publicUrl(entity.getAvatarUrl()),
+                entity.getCreatedAt()
+        );
+    }
+
+    public UserResponse getCurrentUserById(UUID id) {
+        var entity = userRepository.findById(id)
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
         return UserResponse.builder()
-            .id(entity.getId())
-            .username(entity.getUsername())
-            .fullName(entity.getFullName())
-            .email(entity.getEmail())
-            .bio(entity.getBio())
-            .avatarUrl(avatarUrl)
-            .createdAt(entity.getCreatedAt())
-            .updatedAt(entity.getUpdatedAt())
-            .build();
+                .id(entity.getId())
+                .username(entity.getUsername())
+                .fullName(entity.getFullName())
+                .email(entity.getEmail())
+                .bio(entity.getBio())
+                .avatarUrl(storage.publicUrl(entity.getAvatarUrl()))
+                .createdAt(entity.getCreatedAt())
+                .updatedAt(entity.getUpdatedAt())
+                .build();
     }
 
     public List<User> getAllUser() {
@@ -68,7 +80,7 @@ public class UserService implements UserApi {
             .username(user.getUsername())
             .fullName(user.getFullName())
             .bio(user.getBio())
-            .avatarUrl(user.getAvatarUrl())
+            .avatarUrl(storage.publicUrl(user.getAvatarUrl()))
             .createdAt(user.getCreatedAt())
             .updatedAt(user.getUpdatedAt())
             .build();

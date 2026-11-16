@@ -19,6 +19,7 @@ import fabricio.backend.shared.security.Role;
 import fabricio.backend.shared.security.UserPrincipal;
 import fabricio.backend.users.application.UserService;
 import fabricio.backend.users.application.dtos.UserResponse;
+import fabricio.backend.users.application.dtos.FetchUserResult;
 import fabricio.backend.users.application.dtos.UserUpdateRequest;
 import fabricio.backend.users.domain.User;
 
@@ -50,24 +51,31 @@ class UserControllerTest {
     @Test
     @DisplayName("fetchMe: trả về thông tin của current user")
     void fetchMe_success() {
-        when(userService.getUserById(userId)).thenReturn(mockUserResponse);
+        when(userService.getCurrentUserById(userId)).thenReturn(mockUserResponse);
 
         ApiResponse<UserResponse> response = userController.fetchMe(userPrincipal);
 
         assertNotNull(response);
         assertEquals(mockUserResponse, response.getData());
-        verify(userService).getUserById(userId);
+        verify(userService).getCurrentUserById(userId);
     }
 
     @Test
     @DisplayName("getUserById: trả về thông tin user theo ID")
     void getUserById_success() {
-        when(userService.getUserById(userId)).thenReturn(mockUserResponse);
+        FetchUserResult fetchUserResult = new FetchUserResult(
+                userId,
+                "Test User",
+                "Bio",
+                "https://storage/avatar.png",
+                null
+        );
+        when(userService.getUserById(userId)).thenReturn(fetchUserResult);
 
-        ApiResponse<UserResponse> response = userController.getUserById(userId);
+        ApiResponse<FetchUserResult> response = userController.getUserById(userId);
 
         assertNotNull(response);
-        assertEquals(mockUserResponse, response.getData());
+        assertEquals(fetchUserResult, response.getData());
         verify(userService).getUserById(userId);
     }
 

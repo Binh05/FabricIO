@@ -100,6 +100,11 @@ public class GameService implements GameApi {
 
     @Transactional(readOnly = true)
     public List<GameResult> getMyPublishedGames(UUID ownerId) {
+        return getPublishedGamesByUser(ownerId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GameResult> getPublishedGamesByUser(UUID ownerId) {
         List<Game> games = gameRepository.findByOwnerIdAndIsDeletedFalseAndStatus(ownerId, GameStatus.Ready);
         AuthorDto author = getAuthorOrThrow(ownerId);
 

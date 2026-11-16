@@ -24,6 +24,7 @@ import fabricio.backend.users.UserAuthInfo;
 import fabricio.backend.users.UserSummary;
 import fabricio.backend.users.application.dtos.UserResponse;
 import fabricio.backend.users.application.dtos.UserUpdateRequest;
+import fabricio.backend.users.application.dtos.FetchUserResult;
 import fabricio.backend.users.domain.User;
 import fabricio.backend.users.domain.UserRepository;
 import fabricio.backend.users.domain.exception.UserErrorCode;
@@ -61,15 +62,13 @@ class UserServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
         when(storage.publicUrl("avatars/avatar1.png")).thenReturn("https://storage/avatars/avatar1.png");
 
-        UserResponse response = userService.getUserById(userId);
+        FetchUserResult response = userService.getUserById(userId);
 
         assertNotNull(response);
-        assertEquals(userId, response.getId());
-        assertEquals("testuser", response.getUsername());
-        assertEquals("test@example.com", response.getEmail());
-        assertEquals("Test User", response.getFullName());
-        assertEquals("Hello world", response.getBio());
-        assertEquals("https://storage/avatars/avatar1.png", response.getAvatarUrl());
+        assertEquals(userId, response.id());
+        assertEquals("Test User", response.fullName());
+        assertEquals("Hello world", response.bio());
+        assertEquals("https://storage/avatars/avatar1.png", response.avatarUrl());
     }
 
     @Test
@@ -107,6 +106,7 @@ class UserServiceTest {
         req.setBio("Updated Bio");
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
+        when(storage.publicUrl("avatars/avatar1.png")).thenReturn("https://storage/avatars/avatar1.png");
 
         UserResponse response = userService.updateProfile(userId, req);
 
@@ -114,6 +114,7 @@ class UserServiceTest {
         assertEquals("Updated Name", response.getFullName());
         assertEquals("Updated Bio", response.getBio());
         assertEquals(mockUser.getUsername(), response.getUsername());
+        assertEquals("https://storage/avatars/avatar1.png", response.getAvatarUrl());
     }
 
     @Test

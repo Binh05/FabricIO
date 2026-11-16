@@ -2,7 +2,7 @@ import { AuthContext, type AuthContextType } from "@/context/AuthContext";
 import { uploadService } from "@/services/uploadService";
 import { userService } from "@/services/userService";
 import { UPLOAD_LIMITS } from "@/lib/uploadUtils";
-import type { User } from "@/types/User";
+import type { FetchUserResult, User, UserUpdateRequest } from "@/types/User";
 import axios from "axios";
 import { useContext, useState } from "react";
 import { toast } from "sonner";
@@ -17,6 +17,7 @@ export const useUser = () => {
   const { user, setUser } = context;
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
 
   const uploadAvatar = async (file: File) => {
       if (!user?.id) {
@@ -83,5 +84,49 @@ export const useUser = () => {
     }
   };
 
-  return { uploadAvatar, fetchMe, isUploadingAvatar, uploadProgress };
+  const fetchUserById = async (
+    userId: string,
+  ): Promise<FetchUserResult | null> => {
+    try {
+      const { data: fetchedUser } = await userService.getUserById(userId);
+      return fetchedUser;
+    } catch (error) {
+      console.error("Lỗi khi lấy thông tin user", error);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      toast.error(message ?? "Không thể tải thông tin người dùng!");
+      return null;
+    }
+  };
+
+  const updateProfile = async (request: UserUpdateRequest) => {
+    try {
+      setIsUpdatingProfile(true);
+      const { data: updatedUser } = await userService.updateProfile(request);
+
+      if (updatedUser) setUser(updatedUser);
+      toast.success("Cập nhật hồ sơ thành công!");
+      return updatedUser;
+    } catch (error) {
+      console.error("Lỗi khi cập nhật hồ sơ", error);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      toast.error(message ?? "Đã xảy ra lỗi khi cập nhật hồ sơ!");
+      throw error;
+    } finally {
+      setIsUpdatingProfile(false);
+    }
+  };
+
+  return {
+    uploadAvatar,
+    fetchMe,
+    fetchUserById,
+    updateProfile,
+    isUploadingAvatar,
+    isUpdatingProfile,
+    uploadProgress,
+  };
 };
