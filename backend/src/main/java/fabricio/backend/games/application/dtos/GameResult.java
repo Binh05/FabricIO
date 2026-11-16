@@ -12,6 +12,7 @@ import java.util.UUID;
 public record GameResult(
         UUID id,
         UUID ownerId,
+        AuthorDto author,
         String title,
         String description,
         String videoUrl,
@@ -22,11 +23,12 @@ public record GameResult(
         Instant createdAt,
         Instant updatedAt
 ) {
-    public static GameResult from(Game game, String videoUrl, String thumbnailUrl) {
+    public static GameResult from(Game game, String videoUrl, String thumbnailUrl, AuthorDto author) {
         if (game == null) return null;
         return new GameResult(
                 game.getId(),
                 game.getOwnerId(),
+                author,
                 game.getTitle(),
                 game.getDescription(),
                 videoUrl,

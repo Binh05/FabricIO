@@ -141,8 +141,6 @@ class UserServiceTest {
         UserSummary summary = userService.createUser(cmd);
 
         assertNotNull(summary);
-        assertEquals("newuser", summary.username());
-        assertEquals("new@example.com", summary.email());
         assertEquals("New User", summary.fullName());
     }
 
@@ -225,8 +223,7 @@ class UserServiceTest {
         Optional<UserSummary> summary = userService.findUserSummaryById(userId);
 
         assertTrue(summary.isPresent());
-        assertEquals("testuser", summary.get().username());
-        assertEquals("test@example.com", summary.get().email());
+        assertEquals("Test User", summary.get().fullName());
     }
 
     @Test

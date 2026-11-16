@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback } from "../ui/avatar";
 import { cn } from "@/lib/utils";
 
 interface IUserAvatarProps {
-  type: "header" | "profile";
+  type: "header" | "profile" | "describe";
   name: string;
   avatarUrl?: string;
   className?: string;
@@ -24,6 +24,7 @@ function UserAvatar({
           className,
           type === "header" && "size-8 text-sm",
           type === "profile" && "size-24 text-4xl shadow-md",
+          type === "describe" && "size-12 text-lg",
         )}
       >
         <AvatarImage src={avatarUrl} alt="avatar" className="rounded-full object-cover aspect-square" />
@@ -31,6 +32,7 @@ function UserAvatar({
           className={cn(
             `${bgColor} font-semibold text-foreground`,
             type === "profile" && "text-4xl",
+            type === "describe" && "text-lg",
           )}
         >
           {name.charAt(0).toUpperCase()}

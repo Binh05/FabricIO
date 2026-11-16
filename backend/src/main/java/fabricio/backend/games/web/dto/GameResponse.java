@@ -1,5 +1,6 @@
 package fabricio.backend.games.web.dto;
 
+import fabricio.backend.games.application.dtos.AuthorDto;
 import fabricio.backend.games.application.dtos.GameResult;
 import fabricio.backend.games.domain.Game;
 import fabricio.backend.games.domain.GameTag;
@@ -12,6 +13,7 @@ import java.util.UUID;
 public record GameResponse(
     UUID id,
     UUID ownerId,
+    AuthorDto author,
     String title,
     String description,
     String videoUrl,
@@ -27,6 +29,7 @@ public record GameResponse(
         return new GameResponse(
                 game.id(),
                 game.ownerId(),
+                game.author() != null ? game.author() : null,
                 game.title(),
                 game.description(),
                 game.videoUrl(),
