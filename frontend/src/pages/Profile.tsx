@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import {
-  Check,
   Gamepad2,
   LogOut,
   Pencil,

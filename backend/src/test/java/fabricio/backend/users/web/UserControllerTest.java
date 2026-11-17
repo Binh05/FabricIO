@@ -65,6 +65,7 @@ class UserControllerTest {
     void getUserById_success() {
         FetchUserResult fetchUserResult = new FetchUserResult(
                 userId,
+                "testuser",
                 "Test User",
                 "Bio",
                 "https://storage/avatar.png",
