@@ -31,7 +31,7 @@ const AvatarUpload = () => {
   return (
     <>
       <Button
-        className="absolute -right-1 -bottom-1 rounded-full bg-secondary p-0 cursor-pointer disabled:cursor-not-allowed"
+        className="absolute -right-1.5 -bottom-1.5 size-7 sm:size-8 rounded-sm bg-surface-container-high hover:bg-surface-container-highest border border-border-chip p-0 cursor-pointer disabled:cursor-not-allowed shadow-sm"
         variant="secondary"
         size="icon"
         onClick={handleClick}
@@ -40,9 +40,9 @@ const AvatarUpload = () => {
         type="button"
       >
         {isUploadingAvatar ? (
-          <Loader2 className="text-muted size-5 stroke-2 animate-spin" />
+          <Loader2 className="text-muted-foreground size-3.5 sm:size-4 stroke-2 animate-spin" />
         ) : (
-          <Camera className="text-muted size-5 stroke-2" />
+          <Camera className="text-muted-foreground size-3.5 sm:size-4 stroke-2" />
         )}
       </Button>
       <input

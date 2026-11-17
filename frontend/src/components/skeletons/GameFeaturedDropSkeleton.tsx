@@ -2,8 +2,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export const GameFeaturedDropSkeleton = () => {
   return (
-    <Skeleton className="min-h-[290px] rounded-lg border border-border-subtle sm:min-h-[310px] lg:min-h-[340px]">
-      <div className="flex min-h-[290px] flex-col justify-end gap-3 p-5 sm:min-h-[310px] sm:p-8 lg:min-h-[340px]">
+    <Skeleton className="border-border-subtle min-h-72.5 rounded-lg border sm:min-h-77.5 lg:min-h-85">
+      <div className="flex min-h-72.5 flex-col justify-end gap-3 p-5 sm:min-h-77.5 sm:p-8 lg:min-h-85">
         <Skeleton className="h-8 w-3/4 max-w-xl sm:h-10" />
         <Skeleton className="h-4 w-full max-w-2xl" />
         <Skeleton className="h-4 w-2/3 max-w-xl" />

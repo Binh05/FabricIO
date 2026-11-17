@@ -14,7 +14,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { PlayPageSkeleton } from "@/components/skeletons/PlayPageSkeleton";
 import type { Game } from "@/types/Game";
 import { GameCard } from "@/components/games/GameCard";
-import DescribeContainer from "@/components/games/DescribeContainer";
+import { Card } from "@/components/ui/card";
 import UserAvatar from "@/components/layouts/UserAvatar";
 
 interface TagItem {
@@ -254,16 +254,14 @@ export const Play = () => {
             </div>
           </div>
 
-          <DescribeContainer>
-            <div className="flex items-start justify-between gap-4">
-              <div className="min-w-0">
-                <h1 className="text-foreground text-2xl font-extrabold tracking-tight sm:text-3xl">
-                  Author
-                </h1>
-              </div>
+          <Card className="border-border-subtle bg-surface-container-low rounded-sm p-6 sm:p-7">
+            <div className="min-w-0">
+              <h1 className="text-foreground text-2xl font-extrabold tracking-tight sm:text-3xl">
+                Author
+              </h1>
             </div>
 
-            <div className="flex items-start gap-3 pt-4">
+            <div className="flex items-start gap-3">
               <div className="flex items-baseline">
                 {game.author?.id ? (
                   <Link
@@ -293,10 +291,10 @@ export const Play = () => {
                 </span>
               </div>
             </div>
-          </DescribeContainer>
+          </Card>
 
           {/* Game Details Card */}
-          <DescribeContainer>
+          <Card className="border-border-subtle bg-surface-container-low rounded-sm p-6 sm:p-7">
             {/* Header: Title, Subtitle & Share Button */}
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
@@ -371,10 +369,10 @@ export const Play = () => {
                 </span>
               ))}
             </div>
-          </DescribeContainer>
+          </Card>
 
           {/* About the Game Card */}
-          <DescribeContainer>
+          <Card className="border-border-subtle bg-surface-container-low rounded-sm p-6 sm:p-7">
             {/* Header with 3 red horizontal lines */}
             <div className="flex items-center gap-2.5">
               <div
@@ -396,7 +394,7 @@ export const Play = () => {
                 {aboutBody}
               </p>
             </div>
-          </DescribeContainer>
+          </Card>
         </div>
 
         {/* Right Column: Related Games */}

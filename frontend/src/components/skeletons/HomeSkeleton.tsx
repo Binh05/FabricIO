@@ -4,8 +4,8 @@ import { GameFeaturedDropSkeleton } from "./GameFeaturedDropSkeleton";
 
 export const HomeSkeleton = () => {
   return (
-    <div className="w-full bg-background text-foreground">
-      <div className="mx-auto w-full py-6 sm:px-3 lg:px-8">
+    <div className="bg-background text-foreground w-full">
+      <div className="mx-auto my-6 w-full sm:px-3 lg:px-8">
         <GameFeaturedDropSkeleton />
 
         <section className="mt-12">
@@ -25,7 +25,7 @@ export const HomeSkeleton = () => {
           </div>
         </section>
 
-        <section className="mt-14 rounded-2xl border border-border-subtle bg-surface-container p-6 sm:p-8 lg:p-10">
+        <section className="border-border-subtle bg-surface-container mt-14 rounded-2xl border p-6 sm:p-8 lg:p-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="w-full max-w-2xl space-y-3">
               <Skeleton className="h-4 w-44" />
@@ -37,7 +37,7 @@ export const HomeSkeleton = () => {
           </div>
         </section>
 
-        <footer className="mt-14 flex flex-col gap-5 border-t border-border-subtle pt-8 pb-10 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="border-border-subtle mt-14 flex flex-col gap-5 border-t pt-8 pb-10 sm:flex-row sm:items-center sm:justify-between">
           <Skeleton className="h-4 w-52" />
           <Skeleton className="h-4 w-72" />
           <Skeleton className="h-4 w-56" />
