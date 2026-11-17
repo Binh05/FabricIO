@@ -3,6 +3,12 @@ import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "../ui/input-group";
+import { Mail, Lock, UserRound } from "lucide-react";
 
 const SignUpForm = () => {
   const { signUp } = useAuth();
@@ -33,13 +39,15 @@ const SignUpForm = () => {
   };
 
   const onOAuth = () => {
-    toast.info("Chức năng đăng nhập bằng Google hiện đang được phát triển. Vui lòng sử dụng phương thức đăng nhập thông thường.");
-  }
+    toast.info(
+      "Chức năng đăng nhập bằng Google hiện đang được phát triển. Vui lòng sử dụng phương thức đăng nhập thông thường.",
+    );
+  };
 
   return (
-    <div className="border-border grid w-full max-w-7xl grid-cols-1 overflow-hidden rounded-lg border bg-surface-container-low shadow-2xl md:rounded-lg lg:grid-cols-2">
-      <div className="order-2 flex w-full items-center justify-center bg-linear-to-b from-white/2 to-white/1 px-4 py-5 sm:px-6 md:px-8 lg:order-1 lg:px-9">
-        <div className="border-border w-full max-w-lg rounded-3xl border bg-surface-container-lowest p-5 shadow-xl sm:p-6 md:p-8">
+    <div className="grid w-full max-w-7xl grid-cols-1 overflow-hidden lg:grid-cols-2">
+      <div className="order-2 flex w-full items-center justify-center px-4 py-5 sm:px-6 md:px-8 lg:order-1 lg:px-9">
+        <div className="border-border bg-surface-container-lowest w-full max-w-lg rounded-md border p-5 shadow-xl sm:p-6 md:p-8">
           <h2 className="mb-2 text-2xl font-extrabold md:text-3xl">Đăng ký</h2>
 
           <p className="text-muted mt-2 text-sm leading-6">
@@ -47,13 +55,13 @@ const SignUpForm = () => {
           </p>
 
           {error && (
-            <div className="border-primary/20 bg-primary/10 text-primary mt-3 rounded-2xl border px-4 py-2.5 text-sm">
+            <div className="border-primary/20 bg-primary/10 text-primary mt-3 rounded-sm border px-4 py-2.5 text-sm">
               {error}
             </div>
           )}
 
           {successMessage && (
-            <div className="border-success/20 bg-success/10 text-success mt-3 rounded-2xl border px-4 py-2.5 text-sm">
+            <div className="border-success/20 bg-success/10 text-success mt-3 rounded-sm border px-4 py-2.5 text-sm">
               {successMessage}
             </div>
           )}
@@ -61,75 +69,120 @@ const SignUpForm = () => {
           <form onSubmit={handleSubmit} className="mt-5 space-y-3">
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div className="flex flex-col gap-2 text-left">
-                <label className="text-muted block text-sm font-medium">
+                <label
+                  htmlFor="signup-username"
+                  className="text-muted block text-sm font-medium"
+                >
                   Tên đăng nhập
                 </label>
-                <input
-                  type="text"
-                  placeholder="Tên đăng nhập"
-                  value={formData.username}
-                  onChange={handleChange("username")}
-                  disabled={loading}
-                  className="border-border placeholder:text-muted-foreground focus:border-primary w-full rounded-2xl border bg-surface-container-low px-4 py-2.5 text-sm text-foreground outline-none"
-                />
+                <InputGroup className="border-border bg-surface-container-low focus-within:border-primary h-11 rounded-sm">
+                  <InputGroupAddon>
+                    <UserRound />
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    id="signup-username"
+                    type="text"
+                    placeholder="Tên đăng nhập"
+                    value={formData.username}
+                    onChange={handleChange("username")}
+                    disabled={loading}
+                    className="text-foreground placeholder:text-muted-foreground px-3 text-sm"
+                  />
+                </InputGroup>
               </div>
 
               <div className="flex flex-col gap-2 text-left">
-                <label className="text-muted block text-sm font-medium">
+                <label
+                  htmlFor="signup-full-name"
+                  className="text-muted block text-sm font-medium"
+                >
                   Họ tên
                 </label>
-                <input
-                  type="text"
-                  placeholder="Tên hiển thị"
-                  value={formData.fullName}
-                  onChange={handleChange("fullName")}
-                  disabled={loading}
-                  className="border-border placeholder:text-muted-foreground focus:border-primary w-full rounded-2xl border bg-surface-container-low px-4 py-2.5 text-sm text-foreground outline-none"
-                />
+                <InputGroup className="border-border bg-surface-container-low focus-within:border-primary h-11 rounded-sm">
+                  <InputGroupAddon>
+                    <UserRound />
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    id="signup-full-name"
+                    type="text"
+                    placeholder="Tên hiển thị"
+                    value={formData.fullName}
+                    onChange={handleChange("fullName")}
+                    disabled={loading}
+                    className="text-foreground placeholder:text-muted-foreground px-3 text-sm"
+                  />
+                </InputGroup>
               </div>
             </div>
 
             <div className="flex flex-col gap-2 text-left">
-              <label className="text-muted block text-sm font-medium">
+              <label
+                htmlFor="signup-email"
+                className="text-muted block text-sm font-medium"
+              >
                 Email
               </label>
-              <input
-                type="email"
-                placeholder="Nhập email"
-                value={formData.email}
-                onChange={handleChange("email")}
-                disabled={loading}
-                className="border-border placeholder:text-muted-foreground focus:border-primary w-full rounded-2xl border bg-surface-container-low px-4 py-2.5 text-sm text-foreground outline-none"
-              />
+              <InputGroup className="border-border bg-surface-container-low focus-within:border-primary h-11 rounded-sm">
+                <InputGroupAddon>
+                  <Mail />
+                </InputGroupAddon>
+                <InputGroupInput
+                  id="signup-email"
+                  type="email"
+                  placeholder="Nhập email"
+                  value={formData.email}
+                  onChange={handleChange("email")}
+                  disabled={loading}
+                  className="text-foreground placeholder:text-muted-foreground px-3 text-sm"
+                />
+              </InputGroup>
             </div>
 
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div className="flex flex-col gap-2 text-left">
-                <label className="text-muted block text-sm font-medium">
+                <label
+                  htmlFor="signup-password"
+                  className="text-muted block text-sm font-medium"
+                >
                   Mật khẩu
                 </label>
-                <input
-                  type="password"
-                  placeholder="Mật khẩu"
-                  value={formData.password}
-                  onChange={handleChange("password")}
-                  disabled={loading}
-                  className="border-border placeholder:text-muted-foreground focus:border-primary w-full rounded-2xl border bg-surface-container-low px-4 py-2.5 text-sm text-foreground outline-none"
-                />
+                <InputGroup className="border-border bg-surface-container-low focus-within:border-primary h-11 rounded-sm">
+                  <InputGroupAddon>
+                    <Lock />
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    id="signup-password"
+                    type="password"
+                    placeholder="Mật khẩu"
+                    value={formData.password}
+                    onChange={handleChange("password")}
+                    disabled={loading}
+                    className="text-foreground placeholder:text-muted-foreground px-3 text-sm"
+                  />
+                </InputGroup>
               </div>
 
               <div className="flex flex-col gap-2 text-left">
-                <label className="text-muted block text-sm font-medium">
+                <label
+                  htmlFor="signup-confirm-password"
+                  className="text-muted block text-sm font-medium"
+                >
                   Xác nhận mật khẩu
                 </label>
-                <input
-                  type="password"
-                  placeholder="Xác nhận"
-                  value={formData.confirmPassword}
-                  onChange={handleChange("confirmPassword")}
-                  disabled={loading}
-                  className="border-border placeholder:text-muted-foreground focus:border-primary w-full rounded-2xl border bg-surface-container-low px-4 py-2.5 text-sm text-foreground outline-none"
-                />
+                <InputGroup className="border-border bg-surface-container-low focus-within:border-primary h-11 rounded-sm">
+                  <InputGroupAddon>
+                    <Lock />
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    id="signup-confirm-password"
+                    type="password"
+                    placeholder="Xác nhận"
+                    value={formData.confirmPassword}
+                    onChange={handleChange("confirmPassword")}
+                    disabled={loading}
+                    className="text-foreground placeholder:text-muted-foreground px-3 text-sm"
+                  />
+                </InputGroup>
               </div>
             </div>
 
@@ -137,7 +190,7 @@ const SignUpForm = () => {
               variant="gradient"
               type="submit"
               disabled={loading}
-              className="shadow-primary/20 w-full rounded-2xl shadow-lg active:scale-95"
+              className="shadow-primary/20 text-foreground w-full rounded-sm py-4 shadow-lg active:scale-95"
             >
               {loading ? "Đang tạo tài khoản..." : "Tạo tài khoản"}
             </Button>
@@ -152,7 +205,7 @@ const SignUpForm = () => {
           <Button
             variant="outline"
             type="button"
-            className="w-full rounded-2xl"
+            className="w-full rounded-sm"
             onClick={onOAuth}
           >
             Tiếp tục với Google
@@ -171,8 +224,8 @@ const SignUpForm = () => {
       </div>
 
       {/* Info is order-1 on mobile, order-2 on desktop -> places it on the RIGHT on desktop, and on TOP on mobile */}
-      <div className="border-border order-1 hidden w-full flex-col justify-center border-b bg-[radial-gradient(circle_at_top_right,rgba(255,95,65,0.18),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))] px-5 py-8 sm:px-8 md:flex md:px-10 lg:order-2 lg:border-b-0 lg:border-l lg:px-12 lg:py-14">
-        <span className="border-primary/20 bg-primary/10 text-primary inline-block w-fit rounded-full border px-4 py-2 text-sm font-semibold">
+      <div className="border-border order-1 hidden w-full flex-col justify-center rounded-sm border-b bg-[radial-gradient(circle_at_top_right,rgba(255,95,65,0.18),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))] px-5 py-8 sm:px-8 md:flex md:px-10 lg:order-2 lg:border-b-0 lg:border-l lg:px-12 lg:py-14">
+        <span className="border-primary/20 bg-primary/10 text-primary inline-block w-fit rounded-md border px-4 py-2 text-sm font-semibold">
           Tham gia cộng đồng FabricIO
         </span>
 
@@ -194,7 +247,7 @@ const SignUpForm = () => {
           ].map((item) => (
             <span
               key={item}
-              className="border-border text-muted rounded-full border bg-white/5 px-4 py-2 text-sm"
+              className="border-border text-muted rounded-sm border bg-white/5 px-4 py-2 text-sm"
             >
               {item}
             </span>

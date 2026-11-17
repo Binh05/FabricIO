@@ -24,6 +24,26 @@ interface TagItem {
   countColorClass?: string;
 }
 
+interface LinkWrapperProps {
+  to: string;
+  children: React.ReactNode;
+  username: string | null | undefined;
+}
+
+const LinkWrapper = ({ to, children, username }: LinkWrapperProps) => {
+  return (
+    <>
+      {username ? (
+        <Link to={to} aria-label={`View ${username}'s profile`}>
+          {children}
+        </Link>
+      ) : (
+        children
+      )}
+    </>
+  );
+};
+
 export const Play = () => {
   const { id } = useParams<{ id: string }>();
   const { games, fetchGameById, fetchGames } = useGame();
@@ -263,27 +283,28 @@ export const Play = () => {
 
             <div className="flex items-start gap-3">
               <div className="flex items-baseline">
-                {game.author?.id ? (
-                  <Link
-                    to={`/profile/${game.author.id}`}
-                    aria-label={`View ${authorName}'s profile`}
-                  >
-                    <UserAvatar
-                      name={authorName}
-                      avatarUrl={game.author?.avatarUrl}
-                      type="describe"
-                    />
-                  </Link>
-                ) : (
+                <LinkWrapper
+                  to={`/u/${game.author?.username}`}
+                  username={game.author?.username}
+                >
                   <UserAvatar
                     name={authorName}
                     avatarUrl={game.author?.avatarUrl}
                     type="describe"
                   />
-                )}
+                </LinkWrapper>
               </div>
               <div className="-mt-1.5">
-                <h2 className="text-foreground w-28 shrink-0 text-sm font-semibold sm:w-32 sm:text-lg">
+                <LinkWrapper
+                  to={`/u/${game.author?.username}`}
+                  username={game.author?.username}
+                >
+                  <span className="text-secondary-foreground font-mono font-semibold hover:underline">
+                    @{game.author?.username}
+                  </span>
+                </LinkWrapper>
+
+                <h2 className="text-foreground shrink-0 text-sm font-semibold sm:text-lg">
                   {authorName}
                 </h2>
                 <span className="text-muted-foreground line-clamp-3 text-xs leading-relaxed font-medium sm:text-sm">

@@ -20,9 +20,9 @@ const formatJoinDate = (dateString?: string | Date) => {
 };
 
 const PublicProfile = () => {
-  const { id } = useParams<{ id: string }>();
+  const { username } = useParams<{ username: string }>();
   const { user } = useAuth();
-  const { fetchUserById } = useUser();
+  const { fetchUserByUsername } = useUser();
   const { fetchUserGames } = useGame();
   const [profile, setProfile] = useState<FetchUserResult | null>(null);
   const [games, setGames] = useState<Game[]>([]);
@@ -32,16 +32,16 @@ const PublicProfile = () => {
     let isMounted = true;
 
     const loadProfile = async () => {
-      if (!id) {
+      if (!username) {
         setLoading(false);
         return;
       }
 
       setLoading(true);
-      const [fetchedProfile, fetchedGames] = await Promise.all([
-        fetchUserById(id),
-        fetchUserGames(id),
-      ]);
+      const fetchedProfile = await fetchUserByUsername(username);
+      const fetchedGames = fetchedProfile
+        ? await fetchUserGames(fetchedProfile.id)
+        : [];
 
       if (!isMounted) return;
 
@@ -55,7 +55,7 @@ const PublicProfile = () => {
     return () => {
       isMounted = false;
     };
-  }, [id]);
+  }, [fetchUserByUsername, fetchUserGames, username]);
 
   if (loading) {
     return (

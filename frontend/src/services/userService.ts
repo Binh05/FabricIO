@@ -21,8 +21,10 @@ export class userService {
     return res.data;
   }
 
-  static async getUserById(id: string): Promise<ApiResponse<FetchUserResult>> {
-    const res = await api.get(`/user/${id}`);
+  static async getUserByUsername(
+    username: string,
+  ): Promise<ApiResponse<FetchUserResult>> {
+    const res = await api.get(`/user/${encodeURIComponent(username)}`);
 
     return res.data;
   }

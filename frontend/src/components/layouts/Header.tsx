@@ -55,7 +55,7 @@ const NavLinks = ({
           key={item.href}
           aria-current={active ? "page" : undefined}
           className={cn(
-            "hover:text-foreground rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-white/5",
+            "hover:text-foreground rounded-xs px-3 py-2 text-sm font-medium transition-colors hover:bg-white/5",
             active
               ? "bg-surface-container-high text-foreground"
               : "text-muted-foreground",
@@ -128,7 +128,7 @@ export default function Header({ user }: { user: User | null }) {
             variant="gradient"
             size="sm"
             asChild
-            className="bg-primary/80 shadow-primary/50 hidden h-9 shadow-lg sm:inline-flex"
+            className="bg-primary/80 shadow-primary/50 hidden h-9 rounded-xs shadow-lg sm:inline-flex"
           >
             <Link to="/upload-game">
               <Upload aria-hidden="true" />

@@ -33,8 +33,8 @@ public class UserService implements UserApi {
         this.storage = storage;
     }
 
-    public FetchUserResult getUserById(UUID id) {
-        var entity = userRepository.findById(id)
+    public FetchUserResult getUserByUsername(String username) {
+        var entity = userRepository.findByUsername(username)
             .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
         return new FetchUserResult(
@@ -118,8 +118,8 @@ public class UserService implements UserApi {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<UserAuthInfo> findUserAuthInfoByUsername(String username) {
-        return userRepository.findByUsername(username).map(this::toAuthInfo);
+    public Optional<UserAuthInfo> findUserAuthInfoByEmail(String email) {
+        return userRepository.findByEmail(email).map(this::toAuthInfo);
     }
 
     @Override
@@ -166,6 +166,7 @@ public class UserService implements UserApi {
         if (u == null) return null;
         return new UserSummary(
                 u.getId(),
+                u.getUsername(),
                 u.getFullName(),
                 storage.publicUrl(u.getAvatarUrl()),
                 u.getBio()

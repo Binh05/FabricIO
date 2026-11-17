@@ -1,19 +1,22 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 import { toast } from "sonner";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "../ui/input-group";
+import { Lock, Mail } from "lucide-react";
 
 export default function SignInForm() {
-  const navigate = useNavigate();
   const { login } = useAuth();
 
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: "",
   });
-
-  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange =
     (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,18 +29,20 @@ export default function SignInForm() {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await login(formData.username, formData.password);
+    await login(formData.email, formData.password);
   };
 
   const onOAuth = () => {
-    toast.info("Chức năng đăng nhập bằng Google hiện đang được phát triển. Vui lòng sử dụng phương thức đăng nhập thông thường.");
-  }
+    toast.info(
+      "Chức năng đăng nhập bằng Google hiện đang được phát triển. Vui lòng sử dụng phương thức đăng nhập thông thường.",
+    );
+  };
 
   return (
-    <div className="border-border grid w-full max-w-7xl grid-cols-1 overflow-hidden rounded-lg border bg-surface-container-low shadow-2xl md:rounded-lg lg:grid-cols-[0.95fr_1.05fr]">
+    <div className="grid w-full max-w-7xl grid-cols-1 overflow-hidden lg:grid-cols-2">
       {/* Form panel - LEFT */}
-      <div className="order-2 flex items-center justify-center bg-linear-to-b from-white/2 to-white/1 px-4 py-5 sm:px-6 md:px-8 lg:order-1 lg:px-9">
-        <div className="max-md border-border w-full rounded-3xl border bg-surface-container-lowest p-5 shadow-xl sm:p-6 md:p-8">
+      <div className="order-2 flex items-center justify-center px-4 py-5 sm:px-6 md:px-8 lg:order-1 lg:px-9">
+        <div className="border-border bg-surface-container-lowest w-full max-w-lg rounded-md border p-5 shadow-xl sm:p-6 md:p-8">
           <h2 className="mb-2 text-2xl font-extrabold md:text-3xl">
             Chào mừng trở lại
           </h2>
@@ -49,52 +54,54 @@ export default function SignInForm() {
 
           <form onSubmit={onSubmit} className="mt-6 space-y-4">
             <div className="flex flex-col gap-2 text-left">
-              <label className="text-muted block text-sm font-medium">
-                Tên đăng nhập
+              <label
+                htmlFor="signin-email"
+                className="text-muted block text-sm font-medium"
+              >
+                Email
               </label>
-              <input
-                type="text"
-                placeholder="Nhập tên đăng nhập"
-                value={formData.username}
-                onChange={handleChange("username")}
-                className="border-border placeholder:text-muted-foreground focus:border-primary w-full rounded-2xl border bg-surface-container-low px-4 py-3 text-sm text-foreground transition outline-none disabled:cursor-not-allowed disabled:opacity-60"
-              />
+              <InputGroup className="border-border bg-surface-container-low focus-within:border-primary h-11 rounded-sm">
+                <InputGroupAddon>
+                  <Mail />
+                </InputGroupAddon>
+                <InputGroupInput
+                  id="signin-email"
+                  type="email"
+                  placeholder="Nhập email"
+                  value={formData.email}
+                  onChange={handleChange("email")}
+                  className="text-foreground placeholder:text-muted-foreground px-3 text-sm"
+                />
+              </InputGroup>
             </div>
 
             <div className="flex flex-col gap-2 text-left">
-              <label className="text-muted block text-sm font-medium">
+              <label
+                htmlFor="signin-password"
+                className="text-muted block text-sm font-medium"
+              >
                 Mật khẩu
               </label>
 
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
+              <InputGroup className="border-border bg-surface-container-low focus-within:border-primary h-11 rounded-sm">
+                <InputGroupAddon>
+                  <Lock />
+                </InputGroupAddon>
+                <InputGroupInput
+                  id="signin-password"
+                  type="password"
                   placeholder="Nhập mật khẩu"
                   value={formData.password}
                   onChange={handleChange("password")}
-                  className="border-border placeholder:text-muted-foreground focus:border-primary w-full rounded-2xl border bg-surface-container-low px-4 py-3 pr-12 text-sm text-foreground transition outline-none disabled:cursor-not-allowed disabled:opacity-60"
+                  className="text-foreground placeholder:text-muted-foreground px-3 text-sm"
                 />
-                <Button
-                  variant="ghost"
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  className="text-muted absolute top-1/2 right-4 -translate-y-1/2 text-sm"
-                >
-                  {showPassword ? "Ẩn" : "Hiện"}
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-3 text-sm">
-              <span className="text-primary hover:text-primary-glow cursor-pointer font-medium">
-                Quên mật khẩu?
-              </span>
+              </InputGroup>
             </div>
 
             <Button
               variant="gradient"
               type="submit"
-              className="shadow-primary/20 w-full rounded-2xl shadow-lg active:scale-95"
+              className="shadow-primary/20 hover:bg-primary-glow/90 text-foreground w-full rounded-sm py-4 font-semibold shadow-lg active:scale-95"
             >
               Đăng nhập
             </Button>
@@ -109,7 +116,7 @@ export default function SignInForm() {
           <Button
             variant="outline"
             type="button"
-            className="w-full rounded-2xl"
+            className="w-full rounded-sm py-4 font-semibold"
             onClick={onOAuth}
           >
             Tiếp tục với Google
@@ -128,15 +135,8 @@ export default function SignInForm() {
       </div>
 
       {/* Info panel - RIGHT */}
-      <div className="border-border order-1 hidden flex-col justify-center border-b bg-[radial-gradient(circle_at_top_right,rgba(255,95,65,0.18),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))] px-5 py-8 sm:px-8 md:flex md:px-10 lg:order-2 lg:border-b-0 lg:border-l lg:px-12 lg:py-14">
-        <span
-          onClick={() => navigate("/")}
-          className="border-primary/20 bg-primary/10 text-primary hover:bg-primary/20 inline-block w-fit cursor-pointer rounded-full border px-4 py-2 text-sm font-semibold transition"
-        >
-          Về FabricIO
-        </span>
-
-        <h1 className="mt-5 text-3xl leading-tight font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
+      <div className="border-border order-1 hidden flex-col justify-center rounded-md border-b bg-[radial-gradient(circle_at_top_right,rgba(255,95,65,0.18),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))] px-5 py-8 sm:px-8 md:flex md:px-10 lg:order-2 lg:border-b-0 lg:border-l lg:px-12 lg:py-14">
+        <h1 className="text-3xl leading-tight font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
           Quay lại thế giới game và cộng đồng của bạn.
         </h1>
 
@@ -154,14 +154,14 @@ export default function SignInForm() {
           ].map((item) => (
             <div
               key={item}
-              className="border-border text-muted rounded-2xl border bg-white/5 px-4 py-4 text-sm"
+              className="border-border text-muted rounded-sm border bg-white/5 px-4 py-4 text-sm"
             >
               {item}
             </div>
           ))}
         </div>
 
-        <div className="border-primary/20 bg-primary/5 mt-8 rounded-3xl border p-5">
+        <div className="border-primary/20 bg-primary/5 mt-8 rounded-md border p-5">
           <p className="text-muted text-sm leading-7 italic">
             "Khám phá thế giới mới, chia sẻ suy nghĩ và lưu giữ dấu ấn chơi game
             của bạn trên một nền tảng gọn gàng."

@@ -4,11 +4,11 @@ import type { ApiResponse } from "@/types/BaseResponse";
 
 export class authService {
   static async login({
-    username,
+    email,
     password,
   }: LoginForm): Promise<ApiResponse<JwtResponse>> {
     const res = await api.post("/auth/login", {
-      username,
+      email,
       password,
     });
 

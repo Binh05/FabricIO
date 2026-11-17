@@ -61,8 +61,8 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("getUserById: trả về thông tin user theo ID")
-    void getUserById_success() {
+    @DisplayName("getUserByUsername: trả về thông tin user theo username")
+    void getUserByUsername_success() {
         FetchUserResult fetchUserResult = new FetchUserResult(
                 userId,
                 "testuser",
@@ -71,13 +71,14 @@ class UserControllerTest {
                 "https://storage/avatar.png",
                 null
         );
-        when(userService.getUserById(userId)).thenReturn(fetchUserResult);
+        String username = fetchUserResult.username();
+        when(userService.getUserByUsername(username)).thenReturn(fetchUserResult);
 
-        ApiResponse<FetchUserResult> response = userController.getUserById(userId);
+        ApiResponse<FetchUserResult> response = userController.getUserByUsername(username);
 
         assertNotNull(response);
         assertEquals(fetchUserResult, response.getData());
-        verify(userService).getUserById(userId);
+        verify(userService).getUserByUsername(username);
     }
 
     @Test
