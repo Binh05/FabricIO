@@ -39,6 +39,7 @@ public class UserService implements UserApi {
 
         return new FetchUserResult(
                 entity.getId(),
+                entity.getUsername(),
                 entity.getFullName(),
                 entity.getBio(),
                 storage.publicUrl(entity.getAvatarUrl()),

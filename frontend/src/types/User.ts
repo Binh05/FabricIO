@@ -16,6 +16,7 @@ export interface UserUpdateRequest {
 
 export interface FetchUserResult {
   id: string;
+  username: string;
   fullName: string;
   bio: string | null;
   avatarUrl: string | null;
