@@ -10,7 +10,7 @@ public interface UserApi {
     boolean existsByEmail(String email);
     boolean existsByUsername(String username);
     Optional<UserAuthInfo> findUserAuthInfoById(UUID id);
-    Optional<UserAuthInfo> findUserAuthInfoByUsername(String username);
+    Optional<UserAuthInfo> findUserAuthInfoByEmail(String email);
     Optional<UserSummary> findUserSummaryById(UUID userId);
     String updateAvatar(UpdateAvatarCommand cmd);
     Map<UUID, UserSummary> getAuthorsByIds(Collection<UUID> userIds);

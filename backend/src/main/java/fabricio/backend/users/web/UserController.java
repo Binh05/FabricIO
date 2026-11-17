@@ -37,9 +37,9 @@ public class UserController {
         return ApiResponse.success(res);
     }
 
-    @GetMapping("/user/{id}")
-    public ApiResponse<FetchUserResult> getUserById(@PathVariable UUID id) {
-        return ApiResponse.success(userService.getUserById(id));
+    @GetMapping("/user/{username}")
+    public ApiResponse<FetchUserResult> getUserByUsername(@PathVariable String username) {
+        return ApiResponse.success(userService.getUserByUsername(username));
     }
 
     @GetMapping("/user")

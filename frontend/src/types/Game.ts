@@ -17,6 +17,7 @@ export interface Game {
 
 export interface GameAuthor {
   id: string;
+  username: string;
   fullName: string;
   avatarUrl: string;
   bio: string | null;

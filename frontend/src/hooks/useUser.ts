@@ -4,7 +4,7 @@ import { userService } from "@/services/userService";
 import { UPLOAD_LIMITS } from "@/lib/uploadUtils";
 import type { FetchUserResult, User, UserUpdateRequest } from "@/types/User";
 import axios from "axios";
-import { useContext, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { toast } from "sonner";
 
 export const useUser = () => {
@@ -84,21 +84,23 @@ export const useUser = () => {
     }
   };
 
-  const fetchUserById = async (
-    userId: string,
-  ): Promise<FetchUserResult | null> => {
-    try {
-      const { data: fetchedUser } = await userService.getUserById(userId);
-      return fetchedUser;
-    } catch (error) {
-      console.error("Lỗi khi lấy thông tin user", error);
-      const message = axios.isAxiosError(error)
-        ? error.response?.data?.message
-        : undefined;
-      toast.error(message ?? "Không thể tải thông tin người dùng!");
-      return null;
-    }
-  };
+  const fetchUserByUsername = useCallback(
+    async (username: string): Promise<FetchUserResult | null> => {
+      try {
+        const { data: fetchedUser } =
+          await userService.getUserByUsername(username);
+        return fetchedUser;
+      } catch (error) {
+        console.error("Lỗi khi lấy thông tin user", error);
+        const message = axios.isAxiosError(error)
+          ? error.response?.data?.message
+          : undefined;
+        toast.error(message ?? "Không thể tải thông tin người dùng!");
+        return null;
+      }
+    },
+    [],
+  );
 
   const updateProfile = async (request: UserUpdateRequest) => {
     try {
@@ -123,7 +125,7 @@ export const useUser = () => {
   return {
     uploadAvatar,
     fetchMe,
-    fetchUserById,
+    fetchUserByUsername,
     updateProfile,
     isUploadingAvatar,
     isUpdatingProfile,

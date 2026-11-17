@@ -41,7 +41,7 @@ class AuthControllerTest {
     @BeforeEach
     void setUp() {
         registerRequest = new RegisterRequest("john@example.com", "john", "John Doe", "password123");
-        loginRequest = new LoginRequest("john", "password123");
+        loginRequest = new LoginRequest("john@example.com", "password123");
     }
 
     @Test

@@ -36,13 +36,13 @@ export const useAuth = () => {
   );
 
   const login = useCallback(
-    async (username: string, password: string) => {
+    async (email: string, password: string) => {
       try {
         setLoading(true);
         sessionStorage.clear();
         context.clearAuthState();
 
-        const { data } = await authService.login({ username, password });
+        const { data } = await authService.login({ email, password });
 
         context.setToken(data.accessToken);
         sessionStorage.setItem("access_token", data.accessToken);

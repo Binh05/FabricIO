@@ -116,6 +116,7 @@ class GameServiceTest {
         UUID ownerId = mockGame.getOwnerId(); // Hoặc UUID cố định khớp với mockGame
         UserSummary mockOwner = new UserSummary(
                 ownerId,
+                "nguyenbinh05",
                 "Nguyen Bin05",
                 "avatar/user.png",
                 "bio");
@@ -123,7 +124,6 @@ class GameServiceTest {
         when(gameRepository.findByIdOrThrow(gameId)).thenReturn(mockGame);
         when(userApi.findUserSummaryById(ownerId)).thenReturn(Optional.of(mockOwner));
 
-        when(storage.publicUrl("avatar/user.png")).thenReturn("https://storage/avatar.png");
         when(storage.publicUrl("games/supergame", "index.html")).thenReturn("https://storage/supergame/index.html");
         when(storage.publicUrl("thumb/game.png")).thenReturn("https://storage/thumb.png");
 
@@ -296,7 +296,12 @@ class GameServiceTest {
     }
 
     private UserSummary ownerSummary() {
-        return new UserSummary(ownerId, "Nguyen Bin05", "avatar/user.png", "bio");
+        return new UserSummary(
+                ownerId,
+                "nguyenbinh05",
+                "Nguyen Bin05",
+                "avatar/user.png",
+                "bio");
     }
 
     @Test

@@ -54,15 +54,15 @@ class UserServiceTest {
         mockUser.setBio("Hello world");
     }
 
-    // ==================== GET USER BY ID ====================
+    // ==================== GET USER BY USERNAME ====================
 
     @Test
-    @DisplayName("getUserById: thành công khi user tồn tại")
-    void getUserById_success() {
-        when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
+    @DisplayName("getUserByUsername: thành công khi user tồn tại")
+    void getUserByUsername_success() {
+        when(userRepository.findByUsername(mockUser.getUsername())).thenReturn(Optional.of(mockUser));
         when(storage.publicUrl("avatars/avatar1.png")).thenReturn("https://storage/avatars/avatar1.png");
 
-        FetchUserResult response = userService.getUserById(userId);
+        FetchUserResult response = userService.getUserByUsername(mockUser.getUsername());
 
         assertNotNull(response);
         assertEquals(userId, response.id());
@@ -72,11 +72,11 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("getUserById: ném UserException khi không tìm thấy user")
-    void getUserById_notFound_throwsException() {
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+    @DisplayName("getUserByUsername: ném UserException khi không tìm thấy user")
+    void getUserByUsername_notFound_throwsException() {
+        when(userRepository.findByUsername(mockUser.getUsername())).thenReturn(Optional.empty());
 
-        UserException ex = assertThrows(UserException.class, () -> userService.getUserById(userId));
+        UserException ex = assertThrows(UserException.class, () -> userService.getUserByUsername(mockUser.getUsername()));
 
         assertEquals(UserErrorCode.USER_NOT_FOUND.name(), ex.getCode());
         assertEquals(404, ex.getStatus());
@@ -194,22 +194,22 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("findUserAuthInfoByUsername: trả về Optional<UserAuthInfo>")
-    void findUserAuthInfoByUsername_success() {
-        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(mockUser));
+    @DisplayName("findUserAuthInfoByEmail: trả về Optional<UserAuthInfo>")
+    void findUserAuthInfoByEmail_success() {
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(mockUser));
 
-        Optional<UserAuthInfo> authInfo = userService.findUserAuthInfoByUsername("testuser");
+        Optional<UserAuthInfo> authInfo = userService.findUserAuthInfoByEmail("test@example.com");
 
         assertTrue(authInfo.isPresent());
         assertEquals("testuser", authInfo.get().username());
     }
 
     @Test
-    @DisplayName("findUserAuthInfoByUsername: trả về empty khi không tìm thấy")
-    void findUserAuthInfoByUsername_notFound() {
-        when(userRepository.findByUsername("unknown")).thenReturn(Optional.empty());
+    @DisplayName("findUserAuthInfoByEmail: trả về empty khi không tìm thấy")
+    void findUserAuthInfoByEmail_notFound() {
+        when(userRepository.findByEmail("unknown@example.com")).thenReturn(Optional.empty());
 
-        Optional<UserAuthInfo> authInfo = userService.findUserAuthInfoByUsername("unknown");
+        Optional<UserAuthInfo> authInfo = userService.findUserAuthInfoByEmail("unknown@example.com");
 
         assertTrue(authInfo.isEmpty());
     }

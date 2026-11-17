@@ -43,7 +43,7 @@ const AppRouter = () => {
           <Route index element={<Home />} />
           <Route path="/games" element={<BrowseGames />} />
           <Route path="/play/:id" element={<PlayPageWrapper />} />
-          <Route path="/profile/:id" element={<PublicProfile />} />
+          <Route path="/u/:username" element={<PublicProfile />} />
 
           <Route element={<ProtectedRoute />}>
             <Route path="/upload-game" element={<UploadGame />} />

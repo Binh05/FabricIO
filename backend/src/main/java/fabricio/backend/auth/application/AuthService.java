@@ -45,7 +45,7 @@ public class AuthService {
     }
 
     public LoginResult login(LoginRequest req) {
-        var user = UserApi.findUserAuthInfoByUsername(req.username())
+        var user = UserApi.findUserAuthInfoByEmail(req.email())
         .orElseThrow(() -> new AuthException(AuthErrorCode.ACCOUNT_ERROR));
 
         if (!passwordEncoder.matches(req.password(), user.hashedPassword())) {

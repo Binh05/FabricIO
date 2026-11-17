@@ -86,16 +86,9 @@ public class GameService implements GameApi {
         UserSummary owner = userApi.findUserSummaryById(game.getOwnerId())
                 .orElseThrow(() -> new GameException(GameErrorCode.GAME_NOT_FOUND));
 
-        AuthorDto author = new AuthorDto(
-                owner.id(),
-                owner.fullName(),
-                storage.publicUrl(owner.avatarUrl()),
-                owner.bio()
-        );
-
         String gameUrl = storage.publicUrl(game.getGameUrl(), "index.html");
         String thumbnailUrl = storage.publicUrl(game.getThumbnailUrl());
-        return GameDetailResult.from(game, gameUrl, thumbnailUrl, author);
+        return GameDetailResult.from(game, gameUrl, thumbnailUrl, AuthorDto.fromUserSummary(owner));
     }
 
     @Transactional(readOnly = true)

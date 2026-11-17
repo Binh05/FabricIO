@@ -61,7 +61,7 @@ class AuthServiceTest {
     void setUp() {
         userId = UUID.randomUUID();
         registerRequest = new RegisterRequest("john@example.com", "john", "John Doe", "password123");
-        loginRequest = new LoginRequest("john", "password123");
+        loginRequest = new LoginRequest("john@example.com", "password123");
         userAuthInfo = new UserAuthInfo(
                 userId,
                 "john@example.com",
@@ -119,7 +119,7 @@ class AuthServiceTest {
     @Test
     @DisplayName("login: thành công khi đúng thông tin đăng nhập")
     void login_success() {
-        when(userApi.findUserAuthInfoByUsername("john")).thenReturn(Optional.of(userAuthInfo));
+        when(userApi.findUserAuthInfoByEmail("john@example.com")).thenReturn(Optional.of(userAuthInfo));
         when(passwordEncoder.matches("password123", "hashed-secret")).thenReturn(true);
         when(tokenProvider.generateToken(any(UserPrincipal.class))).thenReturn("access-jwt-token");
 
@@ -135,9 +135,9 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("login: ném lỗi ACCOUNT_ERROR khi không tìm thấy username")
+    @DisplayName("login: ném lỗi ACCOUNT_ERROR khi không tìm thấy email")
     void login_userNotFound_throwsException() {
-        when(userApi.findUserAuthInfoByUsername("john")).thenReturn(Optional.empty());
+        when(userApi.findUserAuthInfoByEmail("john@example.com")).thenReturn(Optional.empty());
 
         AuthException exception = assertThrows(AuthException.class, () -> authService.login(loginRequest));
 
@@ -149,7 +149,7 @@ class AuthServiceTest {
     @Test
     @DisplayName("login: ném lỗi ACCOUNT_ERROR khi mật khẩu sai")
     void login_wrongPassword_throwsException() {
-        when(userApi.findUserAuthInfoByUsername("john")).thenReturn(Optional.of(userAuthInfo));
+        when(userApi.findUserAuthInfoByEmail("john@example.com")).thenReturn(Optional.of(userAuthInfo));
         when(passwordEncoder.matches("password123", "hashed-secret")).thenReturn(false);
 
         AuthException exception = assertThrows(AuthException.class, () -> authService.login(loginRequest));

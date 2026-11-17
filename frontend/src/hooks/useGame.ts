@@ -168,7 +168,7 @@ export const useGame = (): UseGame => {
     }
   };
 
-  const fetchUserGames = async (userId: string): Promise<Game[]> => {
+  const fetchUserGames = useCallback(async (userId: string): Promise<Game[]> => {
     try {
       const { data } = await gameService.fetchUserGames(userId);
       return data;
@@ -180,7 +180,7 @@ export const useGame = (): UseGame => {
       toast.error(message ?? "Đã xảy ra lỗi khi tải game của người dùng!");
       return [];
     }
-  };
+  }, []);
 
   const fetchGameById = async (id: string) => {
     try {
