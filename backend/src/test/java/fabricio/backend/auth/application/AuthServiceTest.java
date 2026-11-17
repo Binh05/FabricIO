@@ -31,7 +31,6 @@ import fabricio.backend.auth.domain.exception.AuthException;
 import fabricio.backend.shared.security.JwtTokenProvider;
 import fabricio.backend.shared.security.Role;
 import fabricio.backend.shared.security.UserPrincipal;
-import fabricio.backend.users.CreateUserCommand;
 import fabricio.backend.users.UserApi;
 import fabricio.backend.users.UserAuthInfo;
 
@@ -70,8 +69,7 @@ class AuthServiceTest {
                 "John Doe",
                 "hashed-secret",
                 Role.User,
-                Collections.emptySet()
-        );
+                Collections.emptySet());
     }
 
     // ==================== REGISTER ====================
@@ -85,12 +83,10 @@ class AuthServiceTest {
 
         authService.register(registerRequest);
 
-        verify(userApi).createUser(argThat(cmd ->
-                cmd.username().equals("john") &&
+        verify(userApi).createUser(argThat(cmd -> cmd.username().equals("john") &&
                 cmd.email().equals("john@example.com") &&
                 cmd.fullName().equals("John Doe") &&
-                cmd.passwordHash().equals("hashed-secret")
-        ));
+                cmd.passwordHash().equals("hashed-secret")));
     }
 
     @Test
@@ -134,10 +130,8 @@ class AuthServiceTest {
         assertNotNull(result.refreshToken());
         assertFalse(result.refreshToken().isBlank());
 
-        verify(authRepository).save(argThat(session ->
-                session.getUserId().equals(userId) &&
-                session.getToken().equals(result.refreshToken())
-        ));
+        verify(authRepository).save(argThat(session -> session.getUserId().equals(userId) &&
+                session.getToken().equals(result.refreshToken())));
     }
 
     @Test

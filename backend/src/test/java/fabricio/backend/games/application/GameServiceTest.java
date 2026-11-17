@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.*;
 
 import fabricio.backend.games.application.dtos.GameDetailResult;
@@ -79,8 +78,7 @@ class GameServiceTest {
     void getAllGames_withContent() {
         Page<Game> page = new PageImpl<>(List.of(mockGame));
         when(gameRepository.findByIsDeletedFalseAndTitleContainingIgnoreCaseAndStatus(
-                eq("Super"), eq(GameStatus.Ready), any(Pageable.class)
-        )).thenReturn(page);
+                eq("Super"), eq(GameStatus.Ready), any(Pageable.class))).thenReturn(page);
         when(userApi.getAuthorsByIds(Set.of(ownerId)))
                 .thenReturn(Map.of(ownerId, ownerSummary()));
         when(storage.publicUrl("videos/preview.mp4")).thenReturn("https://storage/preview.mp4");
@@ -101,8 +99,7 @@ class GameServiceTest {
     void getAllGames_empty() {
         Page<Game> emptyPage = new PageImpl<>(Collections.emptyList());
         when(gameRepository.findByIsDeletedFalseAndTitleContainingIgnoreCaseAndStatus(
-                anyString(), eq(GameStatus.Ready), any(Pageable.class)
-        )).thenReturn(emptyPage);
+                anyString(), eq(GameStatus.Ready), any(Pageable.class))).thenReturn(emptyPage);
 
         PageResponse<GameResult> response = gameService.getPagiGames(0, 10, "empty");
 
@@ -121,8 +118,7 @@ class GameServiceTest {
                 ownerId,
                 "Nguyen Bin05",
                 "avatar/user.png",
-                "bio"
-        );
+                "bio");
 
         when(gameRepository.findByIdOrThrow(gameId)).thenReturn(mockGame);
         when(userApi.findUserSummaryById(ownerId)).thenReturn(Optional.of(mockOwner));
@@ -181,7 +177,8 @@ class GameServiceTest {
     @Test
     @DisplayName("updateGame: cập nhật thông tin game khi là owner")
     void updateGame_success() {
-        GameRequest request = new GameRequest("Updated Title", "Updated Desc", BigDecimal.valueOf(25), Collections.emptyList());
+        GameRequest request = new GameRequest("Updated Title", "Updated Desc", BigDecimal.valueOf(25),
+                Collections.emptyList());
         when(gameRepository.findByIdOrThrow(gameId)).thenReturn(mockGame);
         when(userApi.findUserSummaryById(ownerId)).thenReturn(Optional.of(ownerSummary()));
         when(storage.publicUrl(mockGame.getVideoKey())).thenReturn("video-url");
@@ -202,9 +199,7 @@ class GameServiceTest {
         GameRequest request = new GameRequest("New Title", "Desc", BigDecimal.ONE, Collections.emptyList());
         when(gameRepository.findByIdOrThrow(gameId)).thenReturn(mockGame);
 
-        GameException ex = assertThrows(GameException.class, () ->
-                gameService.updateGame(gameId, request, strangerId)
-        );
+        GameException ex = assertThrows(GameException.class, () -> gameService.updateGame(gameId, request, strangerId));
 
         assertEquals(GameErrorCode.GAME_ACCESS_DENIED.name(), ex.getCode());
     }
@@ -229,9 +224,7 @@ class GameServiceTest {
         UUID strangerId = UUID.randomUUID();
         when(gameRepository.findByIdOrThrow(gameId)).thenReturn(mockGame);
 
-        GameException ex = assertThrows(GameException.class, () ->
-                gameService.deleteGame(gameId, strangerId)
-        );
+        GameException ex = assertThrows(GameException.class, () -> gameService.deleteGame(gameId, strangerId));
 
         assertEquals(GameErrorCode.GAME_ACCESS_DENIED.name(), ex.getCode());
     }
@@ -259,9 +252,7 @@ class GameServiceTest {
         mockGame.setThumbnailUrl(null);
         when(gameRepository.findByIdOrThrow(gameId)).thenReturn(mockGame);
 
-        GameException ex = assertThrows(GameException.class, () ->
-                gameService.publishGame(gameId)
-        );
+        GameException ex = assertThrows(GameException.class, () -> gameService.publishGame(gameId));
 
         assertEquals(GameErrorCode.GAME_REQUIRE_NULL.name(), ex.getCode());
     }
@@ -272,7 +263,8 @@ class GameServiceTest {
     @DisplayName("getGamePlayUrl: trả về GamePlayResponse với link index.html")
     void getGamePlayUrl_success() {
         when(gameRepository.findByIdOrThrow(gameId)).thenReturn(mockGame);
-        when(storage.publicUrl("games/supergame", "index.html")).thenReturn("https://storage/games/supergame/index.html");
+        when(storage.publicUrl("games/supergame", "index.html"))
+                .thenReturn("https://storage/games/supergame/index.html");
 
         GamePlayResponse response = gameService.getGamePlayUrl(gameId);
 
