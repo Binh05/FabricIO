@@ -18,6 +18,7 @@ public record GameDetailResult(
         BigDecimal price,
         List<GameTag> tags,
         double avgRating,
+        int ratingCount,
         Instant createdAt,
         Instant updatedAt,
         AuthorDto author
@@ -34,6 +35,7 @@ public record GameDetailResult(
                 game.getPrice(),
                 game.getTags() != null ? List.copyOf(game.getTags()) : List.of(),
                 game.getAvgRating(),
+                game.getRatingCount(),
                 game.getCreatedAt(),
                 game.getUpdatedAt(),
                 author
