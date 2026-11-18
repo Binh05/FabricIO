@@ -20,6 +20,7 @@ public record GameResponse(
     BigDecimal price,
     List<GameTag> tags,
     double avgRating,
+    int ratingCount,
     Instant createdAt,
     Instant updatedAt
 ) {
@@ -36,6 +37,7 @@ public record GameResponse(
                 game.price(),
                 game.tags() != null ? List.copyOf(game.tags()) : List.of(),
                 game.avgRating(),
+                game.ratingCount(),
                 game.createdAt(),
                 game.updatedAt()
         );
