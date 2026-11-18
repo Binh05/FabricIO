@@ -1,7 +1,6 @@
 package fabricio.backend.shared.security;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
 
 import io.jsonwebtoken.Claims;
@@ -27,8 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
-            FilterChain filterChain
-    ) throws ServletException, IOException {
+            FilterChain filterChain) throws ServletException, IOException {
         String jwt = getJwtFromRequest(request);
         if (StringUtils.hasText(jwt)) {
             tokenProvider.parse(jwt).ifPresent(claims -> authenticate(claims, request));
@@ -53,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             logger.warn("Invalid token claims, request stays unauthenticated", ex);
         }
     }
-    
+
     private String getJwtFromRequest(HttpServletRequest request) {
         var bearerToken = request.getHeader("Authorization");
         // Hỗ trợ cả 'Bearer ' và 'bearer '
@@ -63,4 +61,3 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 }
-

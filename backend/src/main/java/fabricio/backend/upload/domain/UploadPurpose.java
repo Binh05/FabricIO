@@ -1,13 +1,11 @@
 package fabricio.backend.upload.domain;
 
-import io.minio.messages.Owner;
-
 import java.util.Set;
 
 public enum UploadPurpose {
     USER_AVATAR(OwnerType.USER, "avatars", Rules.IMAGES, 2 * Rules.MB),
     GAME_THUMBNAIL(OwnerType.GAME, "thumbnails", Rules.IMAGES, 2 * Rules.MB),
-    GAME_VIDEO(OwnerType.GAME, "videos", Rules.VIDEOS, 20 * Rules.MB),
+    GAME_VIDEO(OwnerType.GAME, "videos", Rules.VIDEOS, 10 * Rules.MB),
     GAME_SOURCE(OwnerType.GAME, "sources", Rules.ZIPS, 100 * Rules.MB);
 
     public enum OwnerType {

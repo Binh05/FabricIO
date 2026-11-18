@@ -2,6 +2,8 @@ import { api } from "@/lib/api";
 import type { ApiResponse, PageResponse } from "@/types/BaseResponse";
 import type {
   Game,
+  GameRatingResponse,
+  GameRatingResult,
   GamePlayResponse,
   GameTag,
   PostGameRequest,
@@ -83,6 +85,28 @@ export class gameService {
   ): Promise<ApiResponse<GamePlayResponse>> {
     const res = await api.get(`/games/${gameId}/play`);
 
+    return res.data;
+  }
+
+  static async upsertGameRating(
+    gameId: string,
+    stars: number,
+  ): Promise<ApiResponse<GameRatingResult>> {
+    const res = await api.post(`/game/${gameId}/ratings`, { stars });
+    return res.data;
+  }
+
+  static async deleteGameRating(
+    gameId: string,
+  ): Promise<ApiResponse<GameRatingResult>> {
+    const res = await api.delete(`/game/${gameId}/ratings`);
+    return res.data;
+  }
+
+  static async getMyRating(
+    gameId: string,
+  ): Promise<ApiResponse<GameRatingResponse | null>> {
+    const res = await api.get(`/game/${gameId}/ratings/my-rating`);
     return res.data;
   }
 

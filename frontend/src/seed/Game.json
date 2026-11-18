@@ -1,0 +1,41 @@
+{
+    "id": "0a1d658d-a1e9-1753-81a1-eca5d2df0002",
+    "ownerId": "0a1fc0e0-a1c4-1baa-81a1-c48e11320099",
+    "title": "Cyber Shadow: Neon Drift",
+    "description": "Hóa thân thành một runner bí ẩn trong thế giới Cyberpunk rực rỡ ánh đèn neon, nơi tốc độ và phản xạ sinh tồn quyết định mạng sống của bạn! Lấy cảm hứng từ **Katana ZERO** và **Ghostrunner**, tựa game hành động nhịp độ cao này đưa bạn vào những màn vượt chướng ngại vật nghẹt thở giữa các tòa nhà chọc trời.\n\nVới cơ chế điều khiển mượt mà và chính xác đến từng mili-giây, bạn có thể thực hiện những pha parkour đỉnh cao:\n\n* **A / D:** Chạy bứt tốc và điều hướng trên không.\n* **Space:** Nhảy tường (Wall-jump) và lộn nhào qua bẫy laser.\n* **Left Click:** Chém năng lượng (Cyber Slash) – phản đòn đạn của kẻ địch.\n* **Shift:** Lướt bóng (Shadow Dash) để vượt qua khoảng trống lớn hoặc né đòn chí mạng.\n* **E:** Kích hoạt làm chậm thời gian (Bullet Time) trong 3 giây.\n\nHãy chinh phục bảng xếp hạng tốc độ (Speedrun), thu thập các mảnh dữ liệu ẩn và khám phá bí mật đen tối đằng sau tập đoàn Arasaka phiên bản web!",
+    "thumbnailUrl": "https://pub.fabricio.id.vn/games/0a1d658d-a1e9-1753-81a1-eca5d2df0002/thumbnails/8f14e45f-ceea-467a-9a36-1d4321a2e7b1.png",
+    "videoUrl": "https://pub.fabricio.id.vn/games/0a1d658d-a1e9-1753-81a1-eca5d2df0002/videos/gameplay-trailer.mp4",
+    "gameUrl": "https://pub.fabricio.id.vn/games/0a1d658d-a1e9-1753-81a1-eca5d2df0002/play/3c9b7a21-5f4e-4d8a-9b12-7e6f8a9c0d1e/index.html",
+    "price": 15000.00,
+    "tags": [
+        {
+            "id": "ec768957-6437-4810-a909-f359d3b8cbd8",
+            "createdAt": "2026-11-10T06:49:39.932369Z",
+            "updatedAt": "2026-11-10T06:49:39.932369Z",
+            "name": "Action"
+        },
+        {
+            "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+            "createdAt": "2026-11-12T08:15:20.112000Z",
+            "updatedAt": "2026-11-12T08:15:20.112000Z",
+            "name": "Cyberpunk"
+        },
+        {
+            "id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            "createdAt": "2026-11-12T08:16:05.441000Z",
+            "updatedAt": "2026-11-12T08:16:05.441000Z",
+            "name": "Runner"
+        }
+    ],
+    "avgRating": 4.8,
+    "ratingCount": 142,
+    "createdAt": "2026-11-18T08:30:00.000000Z",
+    "updatedAt": "2026-11-18T08:40:15.120450Z",
+    "author": {
+        "id": "0a1fc0e0-a1c4-1baa-81a1-c48e11320099",
+        "username": "neon_coder",
+        "fullName": "Minh Dev Indie",
+        "avatarUrl": "https://pub.fabricio.id.vn/users/0a1fc0e0-a1c4-1baa-81a1-c48e11320099/avatars/1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d.png",
+        "bio": "Đam mê làm game 2D pixel art và các tựa game tốc độ cao trên trình duyệt."
+    }
+}

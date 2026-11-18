@@ -1,6 +1,5 @@
 package fabricio.backend.games.domain;
 
-import fabricio.backend.users.domain.User;
 import fabricio.backend.shared.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -18,7 +17,6 @@ import java.util.UUID;
     }
 )
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -36,7 +34,7 @@ public class GameRating extends BaseEntity {
     @Column(nullable = false)
     private int stars;
 
-    // Nhận xét tùy chọn kèm theo rating
-    @Column(columnDefinition = "TEXT")
-    private String review;
+    public void updateStars(int stars) {
+        this.stars = stars;
+    }
 }
