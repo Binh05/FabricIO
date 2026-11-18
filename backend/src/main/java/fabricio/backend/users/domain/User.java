@@ -27,7 +27,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class User extends BaseEntity {
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(nullable = false, unique = true, length = 15)
     private String username;
 
     @Column(nullable = false)
@@ -39,7 +39,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String fullName;
 
-    @Column(length = 200)
+    @Column(length = 500)
     private String bio;
 
     @Column(length = 500)

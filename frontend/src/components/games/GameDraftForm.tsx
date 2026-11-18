@@ -144,6 +144,7 @@ const GameDraftForm = ({
             <input
               className={cn(inputClass, errors.title && "border-destructive")}
               placeholder="Super Platformer 3000"
+              maxLength={150}
               {...register("title")}
             />
 
@@ -179,6 +180,7 @@ const GameDraftForm = ({
                 errors.description && "border-destructive",
               )}
               placeholder="Mô tả ngắn về game của bạn..."
+              maxLength={2000}
               {...register("description")}
             />
 
