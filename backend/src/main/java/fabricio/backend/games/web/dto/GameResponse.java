@@ -2,7 +2,6 @@ package fabricio.backend.games.web.dto;
 
 import fabricio.backend.games.application.dtos.AuthorDto;
 import fabricio.backend.games.application.dtos.GameResult;
-import fabricio.backend.games.domain.Game;
 import fabricio.backend.games.domain.GameTag;
 
 import java.math.BigDecimal;

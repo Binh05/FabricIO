@@ -1,6 +1,12 @@
 import { GameContext } from "@/context/GameContext";
 import { gameService } from "@/services/gameService";
-import type { Game, GameTag, PostGameRequest } from "@/types/Game";
+import type {
+  Game,
+  GameRatingResult,
+  GameRatingResponse,
+  GameTag,
+  PostGameRequest,
+} from "@/types/Game";
 import axios from "axios";
 import { useCallback, useContext } from "react";
 import { toast } from "sonner";
@@ -15,8 +21,14 @@ interface UseGame {
   fetchGames: (keyword?: string, page?: number, size?: number) => Promise<void>;
   fetchMyGames: () => Promise<Game[]>;
   fetchUserGames: (userId: string) => Promise<Game[]>;
-  fetchGameById: (id: string) => Promise<void>;
+  fetchGameById: (id: string) => Promise<Game | undefined>;
   fetchGamePlayUrl: (gameId: string) => Promise<string>;
+  upsertGameRating: (
+    gameId: string,
+    stars: number,
+  ) => Promise<GameRatingResult>;
+  deleteGameRating: (gameId: string) => Promise<GameRatingResult>;
+  fetchMyRating: (gameId: string) => Promise<GameRatingResponse | null>;
   fetchGameTags: () => Promise<void>;
   games: Game[];
   setGames: React.Dispatch<React.SetStateAction<Game[]>>;
@@ -182,7 +194,7 @@ export const useGame = (): UseGame => {
     }
   }, []);
 
-  const fetchGameById = async (id: string) => {
+  const fetchGameById = async (id: string): Promise<Game | undefined> => {
     try {
       setLoading(true);
       const { data } = await gameService.getGameById(id);
@@ -193,12 +205,14 @@ export const useGame = (): UseGame => {
 
         return prev.map((game) => (game.id === data.id ? data : game));
       });
+      return data;
     } catch (error) {
       console.error("Lỗi khi fetch game by id", error);
       const message = axios.isAxiosError(error)
         ? error.response?.data?.message
         : undefined;
       toast.error(message ?? "Đã xảy ra lỗi. Hãy thử lại!");
+      return undefined;
     } finally {
       setLoading(false);
     }
@@ -218,6 +232,75 @@ export const useGame = (): UseGame => {
       throw error;
     }
   };
+
+  const upsertGameRating = useCallback(
+    async (
+      gameId: string,
+      stars: number,
+    ): Promise<GameRatingResult> => {
+      try {
+        const { data } = await gameService.upsertGameRating(gameId, stars);
+        setGames((prev) =>
+          prev.map((game) =>
+            game.id === gameId
+              ? { ...game, avgRating: data.avgRating, ratingCount: data.ratingCount }
+              : game,
+          ),
+        );
+        return data;
+      } catch (error) {
+        console.error("Lỗi khi đánh giá game", error);
+        const message = axios.isAxiosError(error)
+          ? error.response?.data?.message
+          : undefined;
+        toast.error(message ?? "Đã xảy ra lỗi khi đánh giá game!");
+        throw error;
+      }
+    },
+    [setGames],
+  );
+
+  const deleteGameRating = useCallback(async (gameId: string): Promise<GameRatingResult> => {
+    try {
+      const { data } = await gameService.deleteGameRating(gameId);
+      setGames((prev) =>
+        prev.map((game) =>
+          game.id === gameId
+            ? { ...game, avgRating: data.avgRating, ratingCount: data.ratingCount }
+            : game,
+        ),
+      );
+      return data;
+    } catch (error) {
+      console.error("Lỗi khi xóa đánh giá game", error);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      toast.error(message ?? "Đã xảy ra lỗi khi xóa đánh giá game!");
+      throw error;
+    }
+  }, [setGames]);
+
+  const fetchMyRating = useCallback(
+    async (gameId: string): Promise<GameRatingResponse | null> => {
+      try {
+        const { data } = await gameService.getMyRating(gameId);
+        return data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 404) {
+          return null;
+        }
+
+        console.error("Lỗi khi lấy đánh giá của tôi", error);
+        const message = axios.isAxiosError(error)
+          ? error.response?.data?.message
+          : undefined;
+        toast.error(message ?? "Đã xảy ra lỗi khi lấy đánh giá!");
+        throw error;
+      }
+    },
+    [],
+  );
 
   const fetchGameTags = useCallback(async () => {
     try {
@@ -245,6 +328,9 @@ export const useGame = (): UseGame => {
     fetchUserGames,
     fetchGameById,
     fetchGamePlayUrl,
+    upsertGameRating,
+    deleteGameRating,
+    fetchMyRating,
     fetchGameTags,
     games,
     setGames,

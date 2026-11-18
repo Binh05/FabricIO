@@ -2,7 +2,6 @@ package fabricio.backend.games.application.dtos;
 
 import fabricio.backend.games.domain.Game;
 import fabricio.backend.games.domain.GameTag;
-import fabricio.backend.shared.storage.ObjectStorage;
 
 import java.math.BigDecimal;
 import java.time.Instant;

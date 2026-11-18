@@ -16,5 +16,4 @@ public class GameRatingRequest {
     @Max(5)
     private int stars;
 
-    private String review;
 }

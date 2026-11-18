@@ -4,12 +4,12 @@ export interface Game {
   title: string;
   description: string;
   thumbnailUrl: string;
-  videoUrl: string;
+  videoUrl?: string;
   gameUrl: string;
   price: number;
   tags: GameTag[];
   avgRating: number;
-  ratingCount: number;
+  ratingCount?: number;
   createdAt: string;
   updatedAt: string;
   author?: GameAuthor | null;
@@ -37,4 +37,14 @@ export interface PostGameRequest {
 
 export interface GamePlayResponse {
   gamePlayUrl: string;
+}
+
+export interface GameRatingResponse {
+  stars: number;
+}
+
+export interface GameRatingResult {
+  stars: number;
+  avgRating: number;
+  ratingCount: number;
 }

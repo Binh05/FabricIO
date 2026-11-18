@@ -54,7 +54,7 @@ public class Game extends BaseEntity {
     private BigDecimal price = BigDecimal.ZERO;
 
     @Column()
-    private int avgRating;
+    private double avgRating;
 
     @Column()
     private int ratingCount;
@@ -160,5 +160,10 @@ public class Game extends BaseEntity {
             this.tags.clear();
             this.tags.addAll(tags);
         }
+    }
+
+    public void updateRatingStats(double avgRating, int ratingCount) {
+        this.avgRating = avgRating;
+        this.ratingCount = ratingCount;
     }
 }

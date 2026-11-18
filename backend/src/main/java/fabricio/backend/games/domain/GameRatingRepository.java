@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 public interface GameRatingRepository extends JpaRepository<GameRating, UUID> {
     Optional<GameRating> findByGameIdAndUserId(UUID gameId, UUID userId);
     Page<GameRating> findByGameId(UUID gameId, Pageable pageable);
+    int countByGameId(UUID gameId);
 
     @Query("SELECT COALESCE(AVG(gr.stars), 0.0) FROM GameRating gr WHERE gr.game.id = :gameId")
     Double getAvgByGameId(@Param("gameId") UUID gameId);

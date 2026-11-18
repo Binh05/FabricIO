@@ -1,6 +1,5 @@
 package fabricio.backend.games.domain;
 
-import fabricio.backend.users.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;

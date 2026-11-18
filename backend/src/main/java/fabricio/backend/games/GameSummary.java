@@ -17,7 +17,7 @@ public record GameSummary(
         String gameUrl,
         GameStatus status,
         BigDecimal price,
-        int avgRating,
+        double avgRating,
         int ratingCount,
         boolean isDelete,
         Instant createdAt,
