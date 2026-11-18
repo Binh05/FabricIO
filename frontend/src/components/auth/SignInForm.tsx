@@ -9,6 +9,7 @@ import {
   InputGroupInput,
 } from "../ui/input-group";
 import { Lock, Mail } from "lucide-react";
+import { loginSchema } from "@/lib/schemas/authSchema";
 
 export default function SignInForm() {
   const { login } = useAuth();
@@ -29,6 +30,13 @@ export default function SignInForm() {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const result = loginSchema.safeParse(formData);
+    if (!result.success) {
+      toast.error(result.error.issues[0]?.message ?? "Dữ liệu không hợp lệ");
+      return;
+    }
+
     await login(formData.email, formData.password);
   };
 
@@ -70,6 +78,7 @@ export default function SignInForm() {
                   placeholder="Nhập email"
                   value={formData.email}
                   onChange={handleChange("email")}
+                  maxLength={254}
                   className="text-foreground placeholder:text-muted-foreground px-3 text-sm"
                 />
               </InputGroup>
@@ -93,6 +102,8 @@ export default function SignInForm() {
                   placeholder="Nhập mật khẩu"
                   value={formData.password}
                   onChange={handleChange("password")}
+                  minLength={6}
+                  maxLength={64}
                   className="text-foreground placeholder:text-muted-foreground px-3 text-sm"
                 />
               </InputGroup>

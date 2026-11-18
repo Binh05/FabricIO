@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Menu, Search, Upload } from "lucide-react";
+import { LogOut, Menu, Search, Upload, UserRound } from "lucide-react";
 import {
   Link,
   useLocation,
@@ -28,6 +28,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navigation = [
   { href: "/", label: "Home" },
@@ -71,7 +79,7 @@ const NavLinks = ({
 );
 
 export default function Header({ user }: { user: User | null }) {
-  const { token } = useAuth();
+  const { token, signOut } = useAuth();
   const { loading } = useGame();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -148,13 +156,56 @@ export default function Header({ user }: { user: User | null }) {
               <Link to="/signin">Log in</Link>
             </Button>
           ) : (
-            <Link to="/profile" aria-label="Open profile">
-              <UserAvatar
-                name={user?.username ?? "FabricIO"}
-                avatarUrl={user?.avatarUrl ?? ""}
-                type="header"
-              />
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-9 rounded-full p-0"
+                  aria-label="Mở menu tài khoản"
+                >
+                  <UserAvatar
+                    name={user?.username ?? "FabricIO"}
+                    avatarUrl={user?.avatarUrl ?? ""}
+                    type="header"
+                  />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-48">
+                <DropdownMenuLabel className="flex gap-2 items-center">
+                  <UserAvatar
+                    name={user?.username ?? "FabricIO"}
+                    avatarUrl={user?.avatarUrl ?? ""}
+                    type="header"
+                  />
+                  <div className="flex flex-col gap-0.5">
+                    <span>{user?.username ?? "FabricIO"}</span>
+                    {user?.email && (
+                      <span className="text-muted-foreground truncate text-xs font-normal">
+                        {user.email}
+                      </span>
+                    )}
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  asChild
+                  variant="default"
+                >
+                  <Link to="/profile">
+                    <UserRound />
+                    Trang cá nhân
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  variant="destructive"
+                  onSelect={() => void signOut()}
+                >
+                  <LogOut />
+                  Đăng xuất
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
 
           <Sheet open={isOpen} onOpenChange={setIsOpen}>

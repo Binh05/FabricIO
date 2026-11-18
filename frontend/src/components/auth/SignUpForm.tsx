@@ -9,6 +9,7 @@ import {
   InputGroupInput,
 } from "../ui/input-group";
 import { Mail, Lock, UserRound } from "lucide-react";
+import { registerSchema } from "@/lib/schemas/authSchema";
 
 const SignUpForm = () => {
   const { signUp } = useAuth();
@@ -35,6 +36,18 @@ const SignUpForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const result = registerSchema.safeParse(formData);
+    if (!result.success) {
+      toast.error(result.error.issues[0]?.message ?? "Dữ liệu không hợp lệ");
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Mật khẩu xác nhận không khớp");
+      return;
+    }
+
     await signUp(formData);
   };
 
@@ -73,7 +86,7 @@ const SignUpForm = () => {
                   htmlFor="signup-username"
                   className="text-muted block text-sm font-medium"
                 >
-                  Tên đăng nhập
+                  Tên tài khoản
                 </label>
                 <InputGroup className="border-border bg-surface-container-low focus-within:border-primary h-11 rounded-sm">
                   <InputGroupAddon>
@@ -85,6 +98,10 @@ const SignUpForm = () => {
                     placeholder="Tên đăng nhập"
                     value={formData.username}
                     onChange={handleChange("username")}
+                    minLength={3}
+                    maxLength={30}
+                    pattern="[a-z0-9]+"
+                    title="Chỉ dùng chữ thường và số, viết liền, từ 3 đến 30 ký tự"
                     disabled={loading}
                     className="text-foreground placeholder:text-muted-foreground px-3 text-sm"
                   />
@@ -96,7 +113,7 @@ const SignUpForm = () => {
                   htmlFor="signup-full-name"
                   className="text-muted block text-sm font-medium"
                 >
-                  Họ tên
+                  Họ hiển thị
                 </label>
                 <InputGroup className="border-border bg-surface-container-low focus-within:border-primary h-11 rounded-sm">
                   <InputGroupAddon>
@@ -108,6 +125,7 @@ const SignUpForm = () => {
                     placeholder="Tên hiển thị"
                     value={formData.fullName}
                     onChange={handleChange("fullName")}
+                    maxLength={100}
                     disabled={loading}
                     className="text-foreground placeholder:text-muted-foreground px-3 text-sm"
                   />
@@ -132,6 +150,7 @@ const SignUpForm = () => {
                   placeholder="Nhập email"
                   value={formData.email}
                   onChange={handleChange("email")}
+                  maxLength={254}
                   disabled={loading}
                   className="text-foreground placeholder:text-muted-foreground px-3 text-sm"
                 />
@@ -156,6 +175,8 @@ const SignUpForm = () => {
                     placeholder="Mật khẩu"
                     value={formData.password}
                     onChange={handleChange("password")}
+                    minLength={6}
+                    maxLength={64}
                     disabled={loading}
                     className="text-foreground placeholder:text-muted-foreground px-3 text-sm"
                   />
@@ -179,6 +200,8 @@ const SignUpForm = () => {
                     placeholder="Xác nhận"
                     value={formData.confirmPassword}
                     onChange={handleChange("confirmPassword")}
+                    minLength={6}
+                    maxLength={64}
                     disabled={loading}
                     className="text-foreground placeholder:text-muted-foreground px-3 text-sm"
                   />

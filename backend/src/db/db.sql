@@ -6,12 +6,12 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- =============================================================================
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    username VARCHAR(50) NOT NULL UNIQUE,
+    username VARCHAR(30) NOT NULL UNIQUE,
     hashed_password VARCHAR(255) NOT NULL,
-    email VARCHAR(50) NOT NULL UNIQUE,
-    full_name VARCHAR(255) NOT NULL,
-    bio VARCHAR(200),
-    avatar_url VARCHAR(500),
+    email VARCHAR(255) NOT NULL UNIQUE,
+    full_name NVARCHAR(100) NOT NULL,
+    bio VARCHAR(500),
+    avatar_url VARCHAR(1024),
     role VARCHAR(20) NOT NULL DEFAULT 'User',
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
@@ -30,7 +30,7 @@ DROP INDEX CONCURRENTLY IF EXISTS idx_user_username;
 -- =============================================================================
 CREATE TABLE game_tags (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(50) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT uq_game_tags_name UNIQUE (name)
@@ -42,11 +42,11 @@ CREATE TABLE game_tags (
 CREATE TABLE games (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     owner_id UUID NOT NULL,
-    title VARCHAR(255) NOT NULL,
+    title VARCHAR(150) NOT NULL,
     description TEXT,
-    thumbnail_url VARCHAR(500),
-    video_key VARCHAR(500),
-    game_url VARCHAR(500),
+    thumbnail_url VARCHAR(1024),
+    video_key VARCHAR(1024),
+    game_url VARCHAR(1024),
     status VARCHAR(20) NOT NULL DEFAULT 'Draft',
     price NUMERIC(19, 2) NOT NULL DEFAULT 0.00,
     avg_rating DOUBLE PRECISION NOT NULL DEFAULT 0,
