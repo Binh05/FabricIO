@@ -112,9 +112,4 @@ public class GameController {
         gameService.deleteGame(id, userId);
         return ApiResponse.noContent();
     }
-
-    @GetMapping("/{gameId}/play")
-    public ApiResponse<GamePlayResponse> getGamePlayUrl(@PathVariable UUID gameId) {
-        return ApiResponse.success(gameService.getGamePlayUrl(gameId));
-    }
 }

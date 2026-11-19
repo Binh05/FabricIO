@@ -153,7 +153,6 @@ public interface GameApi {
 | Hiện tại | Đổi thành | Lý do |
 |---|---|---|
 | `GamePlayResponse` (DTO URL mở `index.html`) | `GameLaunchResponse` | Tránh nhầm với bản ghi lượt chơi |
-| `getGamePlayUrl` | `getLaunchUrl` | Đồng nhất |
 | `GamePlaySession` (bản ghi lượt chơi) | giữ `GamePlaySession`, hoặc `GamePlaySession` nếu có lưu thời lượng **[CẦN XÁC NHẬN]** | |
 | `IGameMapper` | `GameMapper` | Bỏ tiền tố `I` |
 | `AuthRepository` | `SessionRepository` nếu nó quản lý `Session` **[CẦN XÁC NHẬN]** | Tên đúng với nội dung |

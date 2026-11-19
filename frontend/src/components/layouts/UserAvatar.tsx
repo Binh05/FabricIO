@@ -39,16 +39,13 @@ function UserAvatar({
         <AvatarFallback
           className={cn(
             `${bgColor} text-foreground font-semibold`,
-            type === "profile" && "rounded-md text-3xl sm:text-4xl",
+            type === "profile" && "rounded-sm text-3xl sm:text-4xl",
             type === "describe" && "text-lg",
           )}
         >
           {name.charAt(0).toUpperCase()}
         </AvatarFallback>
       </Avatar>
-      {type === "header" && (
-        <span className="bg-cyan ring-surface absolute right-0 bottom-0 size-2.5 rounded-full ring-2" />
-      )}
     </div>
   );
 }

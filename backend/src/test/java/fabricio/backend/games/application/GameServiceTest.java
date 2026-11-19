@@ -257,21 +257,6 @@ class GameServiceTest {
         assertEquals(GameErrorCode.GAME_REQUIRE_NULL.name(), ex.getCode());
     }
 
-    // ==================== GET GAME PLAY URL ====================
-
-    @Test
-    @DisplayName("getGamePlayUrl: trả về GamePlayResponse với link index.html")
-    void getGamePlayUrl_success() {
-        when(gameRepository.findByIdOrThrow(gameId)).thenReturn(mockGame);
-        when(storage.publicUrl("games/supergame", "index.html"))
-                .thenReturn("https://storage/games/supergame/index.html");
-
-        GamePlayResponse response = gameService.getGamePlayUrl(gameId);
-
-        assertNotNull(response);
-        assertEquals("https://storage/games/supergame/index.html", response.gamePlayUrl());
-    }
-
     // ==================== GET / DELETE GAME DRAFT ====================
 
     @Test

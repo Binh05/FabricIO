@@ -12,3 +12,9 @@ export interface PageResponse<T> {
   totalPages: number;
   last: boolean;
 }
+
+export interface CursorResponse<T> {
+  hasMore: boolean;
+  cursor: string | null;
+  content: T[];
+}

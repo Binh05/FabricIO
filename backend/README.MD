@@ -242,6 +242,30 @@ The backend is packaged with the `Dockerfile` in this folder and deployed to **R
 
 ---
 
+# Create DB Backup
+
+1. Dump dữ liệu từ Neon bằng container tạm Postgres 18
+```text
+docker run --rm -v "${PWD}:/backup" postgres:18-alpine pg_dump "<NEON_DIRECT_URL>" --no-owner --no-acl -f /backup/neon_backup.sql
+```
+
+> [!Note]
+> Chuỗi kết nối không có -pooler
+
+2. Nạp file dump vào container fabricio_postgres đang chạy
+```
+cp neon_backup.sql fabricio_postgres:/tmp/neon_backup.sql
+docker cp neon_backup.sql fabricio_postgres:/tmp/neon_backup.sql
+docker exec fabricio_postgres psql -U postgres -d fabricio_db -f /tmp/neon_backup.sql
+```
+3. Dọn dẹp file backup tạm
+```
+docker exec fabricio_postgres rm -f /tmp/neon_backup.sql
+rm neon_backup.sql
+```
+
+---
+
 ## Roadmap
 
 - Favorites and ratings inside the `games` module

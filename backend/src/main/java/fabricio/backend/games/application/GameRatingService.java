@@ -80,22 +80,6 @@ public class GameRatingService {
                 .orElse(null);
     }
 
-    @Transactional(readOnly = true)
-    public PageResponse<GameRatingResponse> getGameRatingsByGame(UUID gameId, int page, int size) {
-        if (!gameRepository.existsById(gameId)) {
-            throw new GameException(GameErrorCode.GAME_NOT_FOUND);
-        }
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<GameRating> ratingPage = gameRatingRepository.findByGameId(gameId, pageable);
-
-        List<GameRatingResponse> content = ratingPage.getContent().stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
-
-        return PageResponse.from(ratingPage, content);
-    }
-
     private GameRatingResponse mapToResponse(GameRating rating) {
         return GameRatingResponse.builder()
                 .stars(rating.getStars())

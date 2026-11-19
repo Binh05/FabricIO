@@ -10,6 +10,7 @@ import { GameAuthorCard } from "@/components/games/play/GameAuthorCard";
 import { GameDetailsCard } from "@/components/games/play/GameDetailsCard";
 import { RelatedGames } from "@/components/games/play/RelatedGames";
 import GameRatingCard from "@/components/games/play/GameRatingCard";
+import { CommentSection } from "@/components/games/play/CommentSection";
 
 export const Play = () => {
   const { id } = useParams<{ id: string }>();
@@ -69,6 +70,7 @@ export const Play = () => {
           <GameDetailsCard game={game} />
           <GameAboutCard game={game} />
           <GameRatingCard gameId={game.id} />
+          <CommentSection gameId={game.id} />
         </div>
         <div className="lg:col-span-3">
           <RelatedGames games={games.filter((item) => item.id !== id).slice(0, 5)} />

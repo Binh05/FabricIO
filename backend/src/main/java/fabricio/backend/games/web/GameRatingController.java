@@ -51,13 +51,4 @@ public class GameRatingController {
             @AuthenticationPrincipal UserPrincipal userPrincipal) {
         return ApiResponse.success(gameRatingService.getMyRating(gameId, userPrincipal.getId()));
     }
-
-    @GetMapping
-    @Operation(summary = "Lấy danh sách đánh giá của game (phân trang)")
-    public ApiResponse<PageResponse<GameRatingResponse>> getGameRatings(
-            @PathVariable UUID gameId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return ApiResponse.success(gameRatingService.getGameRatingsByGame(gameId, page, size));
-    }
 }

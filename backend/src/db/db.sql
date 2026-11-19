@@ -9,7 +9,7 @@ CREATE TABLE users (
     username VARCHAR(30) NOT NULL UNIQUE,
     hashed_password VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
-    full_name NVARCHAR(100) NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
     bio VARCHAR(500),
     avatar_url VARCHAR(1024),
     role VARCHAR(20) NOT NULL DEFAULT 'User',
@@ -20,10 +20,8 @@ CREATE TABLE users (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_user_username ON users(username);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_user_username_lower
+CREATE INDEX IF NOT EXISTS idx_user_username_lower
     ON users (LOWER(username));
-DROP INDEX CONCURRENTLY IF EXISTS idx_user_username;
 
 -- =============================================================================
 -- 2. BẢNG GAME_TAGS
@@ -86,12 +84,9 @@ CREATE TABLE game_ratings (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_game_ratings_game FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE,
-    CONSTRAINT fk_game_ratings_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    CONSTRAINT fk_game_ratings_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT uq_game_ratings_game_user UNIQUE (game_id, user_id)
 );
-
-ALTER TABLE game_ratings DROP COLUMN IF EXISTS review;
-ALTER TABLE game_ratings
-ADD CONSTRAINT uq_game_ratings_game_user UNIQUE (game_id, user_id);
 
 -- =============================================================================
 -- 6. BẢNG GAME_PLAYS (Lịch sử session chơi game)
@@ -144,16 +139,29 @@ CREATE INDEX idx_sessions_token ON sessions(token);
 -- =============================================================================
 CREATE TABLE comments (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID UNIQUE,
-    parent_id UUID UNIQUE,
-    comment VARCHAR(512) NOT NULL,
-    like_count INT NOT NULL CHECK (like >= 0) DEFAULT 0,
-    updated_at TIMESTAMPZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    created_at TIMESTAMPZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    user_id UUID NOT NULL,
+    game_id UUID NOT NULL,
+    parent_id UUID,
+    content VARCHAR(1024) NOT NULL,
+    like_count INT NOT NULL CHECK (like_count >= 0) DEFAULT 0,
+    reply_count INT NOT NULL CHECK (reply_count >= 0) DEFAULT 0,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_comments_user FOREIGN KEY comments(user_id) REFERENCES user(id)
-    CONSTRAINT fk_comments_reply FOREIGN KEY comments(parent_id) REFERENCES user(id)
+    CONSTRAINT fk_comments_user
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_comments_game
+        FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE  CASCADE,
+    CONSTRAINT  fk_comments_parent
+        FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_comments_created_at ON comments(created_at)
-CREATE INDEX idx_comments_like_count ON comments(like_count)
+CREATE INDEX idx_comments_root_created
+    ON comments(game_id, created_at DESC, id DESC)
+    Where parent_id IS NULL;
+CREATE INDEX idx_comments_root_likes
+    ON comments(game_id, like_count DESC, id DESC)
+    WHERE parent_id IS NULL;
+CREATE INDEX idx_comments_replies_created
+    ON comments(parent_id, created_at ASC, id ASC)
+    WHERE parent_id IS NOT NULL;

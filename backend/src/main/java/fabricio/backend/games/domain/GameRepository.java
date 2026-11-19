@@ -19,6 +19,7 @@ public interface GameRepository extends JpaRepository<Game, UUID> {
     Page<Game> findByIsDeletedFalseAndTitleContainingIgnoreCaseAndStatus(String keyword, GameStatus status, Pageable pageable);
     Optional<Game> findByIdAndIsDeletedFalse(UUID id);
     boolean existsGameByIdAndOwnerIdAndIsDeletedFalse(UUID id, UUID ownerId);
+    boolean existsGameByIdAndIsDeletedFalse(UUID id);
     Optional<Game> findFirstByOwnerIdAndStatusAndIsDeletedFalse(UUID ownerId, GameStatus status);
     List<Game> findByOwnerIdAndIsDeletedFalseAndStatus(UUID ownerId, GameStatus status);
     void deleteGameById(UUID id);
