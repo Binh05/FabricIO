@@ -13,7 +13,11 @@ export interface UseComment {
   fetchComments: (gameId: string, reset?: boolean) => Promise<void>;
   fetchReplies: (commentId: string, reset?: boolean) => Promise<void>;
   createComment: (gameId: string, content: string) => Promise<Comment>;
-  createReply: (commentId: string, content: string) => Promise<Comment>;
+  createReply: (
+    commentId: string,
+    parentId: string,
+    content: string,
+  ) => Promise<Comment>;
 }
 
 export const useComment = (): UseComment => {
@@ -104,14 +108,21 @@ export const useComment = (): UseComment => {
     }
   }, [setCommentsByGame]);
 
-  const createReply = useCallback(async (commentId: string, content: string) => {
+  const createReply = useCallback(async (
+    commentId: string,
+    parentId: string,
+    content: string,
+  ) => {
     try {
-      const response = await commentService.createReply(commentId, { content });
+      const response = await commentService.createReply(commentId, {
+        content,
+        parent_id: parentId,
+      });
       setRepliesByComment((previous) => {
-        const page = previous[commentId];
+        const page = previous[parentId];
         return {
           ...previous,
-          [commentId]: page
+          [parentId]: page
             ? { ...page, items: [...page.items, response.data] }
             : { items: [response.data], cursor: null, hasMore: false },
         };
@@ -120,7 +131,7 @@ export const useComment = (): UseComment => {
         const next = Object.fromEntries(Object.entries(previous).map(([gameId, page]) => [gameId, {
             ...page,
             items: page.items.map((item) =>
-              item.id === commentId ? { ...item, replyCount: item.replyCount + 1 } : item,
+              item.id === parentId ? { ...item, replyCount: item.replyCount + 1 } : item,
             ),
           }]));
         return next;

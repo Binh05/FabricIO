@@ -2,8 +2,9 @@ package fabricio.backend.comment.web;
 
 import fabricio.backend.comment.application.command.CommentCommandService;
 import fabricio.backend.comment.application.command.dto.CreateCommentCommand;
-import fabricio.backend.comment.application.dto.CreateCommentResult;
+import fabricio.backend.comment.application.command.dto.CreateCommentResult;
 import fabricio.backend.comment.web.dto.CreateCommentRequest;
+import fabricio.backend.comment.web.dto.CreateReplyRequest;
 import fabricio.backend.shared.base.ApiResponse;
 import fabricio.backend.shared.security.UserPrincipal;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,18 +31,24 @@ public class CommentCommandController {
             @AuthenticationPrincipal UserPrincipal principal
     ) {
         return ApiResponse.success(commentCommandService.createComment(
-                new CreateCommentCommand(principal.getId(), gameId, null, request.content())
+                new CreateCommentCommand(principal.getId(), gameId, null, null, request.content())
         ));
     }
 
     @PostMapping("/comments/{commentId}/replies")
     public ApiResponse<CreateCommentResult> createReply(
-            @Valid @RequestBody CreateCommentRequest request,
+            @Valid @RequestBody CreateReplyRequest request,
             @PathVariable UUID commentId,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
         return ApiResponse.success(commentCommandService.createComment(
-                new CreateCommentCommand(principal.getId(), null, commentId, request.content())
+                new CreateCommentCommand(
+                        principal.getId(),
+                        null,
+                        request.parentId(),
+                        commentId,
+                        request.content()
+                )
         ));
     }
 }

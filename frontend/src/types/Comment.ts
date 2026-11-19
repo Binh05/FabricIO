@@ -8,6 +8,7 @@ export interface CommentAuthor {
 export interface Comment {
   id: string;
   parentId: string | null;
+  replyToCommentId: string | null;
   author: CommentAuthor;
   content: string;
   likeCount: number;
@@ -18,4 +19,9 @@ export interface Comment {
 
 export interface CreateCommentRequest {
   content: string;
+}
+
+export interface CreateReplyRequest {
+  content: string;
+  parent_id: string;
 }

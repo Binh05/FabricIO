@@ -1,6 +1,5 @@
 package fabricio.backend.comment.application.query.dto;
 
-import fabricio.backend.comment.application.dto.CommentAuthor;
 import fabricio.backend.comment.domain.Comment;
 
 import java.time.Instant;
@@ -9,6 +8,7 @@ import java.util.UUID;
 public record CommentView(
         UUID id,
         UUID parentId,
+        UUID replyToCommentId,
         CommentAuthor author,
         String content,
         int likeCount,
@@ -20,6 +20,7 @@ public record CommentView(
         return new CommentView(
                 comment.getId(),
                 comment.getParentId(),
+                comment.getReplyToCommentId(),
                 author,
                 comment.getContent(),
                 comment.getLikeCount(),

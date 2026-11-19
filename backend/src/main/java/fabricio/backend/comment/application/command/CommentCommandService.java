@@ -1,7 +1,8 @@
 package fabricio.backend.comment.application.command;
 
 import fabricio.backend.comment.application.command.dto.CreateCommentCommand;
-import fabricio.backend.comment.application.dto.CreateCommentResult;
+import fabricio.backend.comment.application.command.dto.CommentAuthor;
+import fabricio.backend.comment.application.command.dto.CreateCommentResult;
 import fabricio.backend.comment.domain.Comment;
 import fabricio.backend.comment.domain.CommentRepository;
 import fabricio.backend.comment.domain.exception.CommentErrorCode;
@@ -33,12 +34,15 @@ public class CommentCommandService {
             return resultWithAuthor(comment);
         }
 
-        Comment target = commentRepository.findById(command.parentId())
+        Comment parent = commentRepository.findById(command.parentId())
+                .orElseThrow(() -> new CommentException(CommentErrorCode.COMMENT_NOT_FOUND));
+        Comment target = commentRepository.findById(command.replyToCommentId())
                 .orElseThrow(() -> new CommentException(CommentErrorCode.COMMENT_NOT_FOUND));
         Comment reply = Comment.createReply(
                 command.userId(),
-                target.getGameId(),
-                target.isRoot() ? target.getId() : target.getParentId(),
+                parent.getGameId(),
+                parent.getId(),
+                target.getId(),
                 command.content()
         );
         commentRepository.save(reply);
@@ -48,6 +52,6 @@ public class CommentCommandService {
 
     private CreateCommentResult resultWithAuthor(Comment comment) {
         UserSummary author = userApi.getAuthorsByIds(java.util.List.of(comment.getUserId())).get(comment.getUserId());
-        return CreateCommentResult.fromComment(comment, fabricio.backend.comment.application.dto.CommentAuthor.fromSummary(author));
+        return CreateCommentResult.fromComment(comment, CommentAuthor.fromSummary(author));
     }
 }

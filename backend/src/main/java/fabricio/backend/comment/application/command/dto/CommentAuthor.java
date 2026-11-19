@@ -1,4 +1,4 @@
-package fabricio.backend.comment.application.dto;
+package fabricio.backend.comment.application.command.dto;
 
 import fabricio.backend.users.UserSummary;
 
@@ -12,10 +12,10 @@ public record CommentAuthor(
 ) {
     public static CommentAuthor fromSummary(UserSummary u) {
         return new CommentAuthor(
-            u.id(),
-            u.username(),
-            u.fullName(),
-            u.avatarUrl()
+                u.id(),
+                u.username(),
+                u.fullName(),
+                u.avatarUrl()
         );
     }
 }

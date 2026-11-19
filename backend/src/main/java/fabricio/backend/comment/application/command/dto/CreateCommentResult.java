@@ -1,4 +1,4 @@
-package fabricio.backend.comment.application.dto;
+package fabricio.backend.comment.application.command.dto;
 
 import fabricio.backend.comment.domain.Comment;
 import org.springframework.lang.Nullable;
@@ -12,6 +12,8 @@ public record CreateCommentResult(
         UUID gameId,
         @Nullable
         UUID parentId,
+        @Nullable
+        UUID replyToCommentId,
         CommentAuthor author,
         String content,
         Instant updatedAt,
@@ -22,7 +24,8 @@ public record CreateCommentResult(
                 c.getId(),
                 c.getUserId(),
                 c.getGameId(),
-                c.getParentId() == null ? null : c.getParentId(),
+                c.getParentId(),
+                c.getReplyToCommentId(),
                 author,
                 c.getContent(),
                 c.getUpdatedAt(),
