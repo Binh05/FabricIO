@@ -167,14 +167,6 @@ public class GameService implements GameApi {
         return GameResult.from(game, videoUrl, thumbnailUrl, author);
     }
 
-    public GamePlayResponse getGamePlayUrl(UUID gameId) {
-        Game game = gameRepository.findByIdOrThrow(gameId);
-
-        String gamePlayUrl = storage.publicUrl(game.getGameUrl(), "index.html");
-
-        return new GamePlayResponse(gamePlayUrl);
-    }
-
     public GameResult getMyGameDraft(UUID ownerId) {
         Game game = gameRepository.findFirstByOwnerIdAndStatusAndIsDeletedFalse(ownerId, GameStatus.Draft)
                 .orElse(null);
@@ -215,6 +207,12 @@ public class GameService implements GameApi {
     public void requireOwner(UUID userId, UUID gameId) {
         boolean owner = gameRepository.existsGameByIdAndOwnerIdAndIsDeletedFalse(gameId, userId);
         if (!owner) throw new GameException(GameErrorCode.GAME_ACCESS_DENIED);
+    }
+
+    @Override
+    public void requireExists(UUID gameId) {
+        boolean exists = gameRepository.existsGameByIdAndIsDeletedFalse(gameId);
+        if (!exists) throw new GameException(GameErrorCode.GAME_NOT_FOUND);
     }
 
     @Nullable

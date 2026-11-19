@@ -16,16 +16,19 @@ import { GameProvider } from "./context/GameContext";
 import MainLayoutRoute from "./components/layouts/MainLayoutRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
+import { CommentProvider } from "./context/CommentContext";
 import PlayPageWrapper from "@/pages/PlayPageWrapper.tsx";
 
 function App() {
   return (
     <AuthProvider>
       <GameProvider>
-        <Toaster richColors />
-        <div className="bg-background text-foreground min-h-screen">
-          <AppRouter />
-        </div>
+        <CommentProvider>
+          <Toaster richColors />
+          <div className="bg-background text-foreground min-h-screen">
+            <AppRouter />
+          </div>
+        </CommentProvider>
       </GameProvider>
     </AuthProvider>
   );
