@@ -142,6 +142,7 @@ CREATE TABLE comments (
     user_id UUID NOT NULL,
     game_id UUID NOT NULL,
     parent_id UUID,
+    reply_to_comment_id UUID,
     content VARCHAR(1024) NOT NULL,
     like_count INT NOT NULL CHECK (like_count >= 0) DEFAULT 0,
     reply_count INT NOT NULL CHECK (reply_count >= 0) DEFAULT 0,
@@ -153,7 +154,11 @@ CREATE TABLE comments (
     CONSTRAINT fk_comments_game
         FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE  CASCADE,
     CONSTRAINT  fk_comments_parent
-        FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE
+        FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE,
+    CONSTRAINT fk_comments_reply_to_comment
+        FOREIGN KEY (reply_to_comment_id) REFERENCES comments(id) ON DELETE SET NULL,
+    CONSTRAINT chk_comments_reply_to_consistency
+        CHECK (parent_id IS NOT NULL OR reply_to_comment_id IS NULL)
 );
 
 CREATE INDEX idx_comments_root_created

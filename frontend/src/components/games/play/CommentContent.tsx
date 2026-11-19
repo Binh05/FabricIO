@@ -3,19 +3,25 @@ interface CommentContentProps {
   targetCommentId?: string;
 }
 
-export const CommentContent = ({ content, targetCommentId }: CommentContentProps) => {
+export const CommentContent = ({
+  content,
+  targetCommentId,
+}: CommentContentProps) => {
   // Regex tìm kiếm mention @username (đặc biệt ở đầu hoặc trong nội dung)
   const parts = content.split(/(@[a-zA-Z0-9_.-]+)/g);
 
   const handleScrollToTarget = (usernameWithoutAt: string) => {
     // 1. Tìm theo targetCommentId nếu có
     let targetEl: HTMLElement | null = targetCommentId
-      ? document.getElementById(`comment-${targetCommentId}`)
+      ? (document.getElementById(`reply-${targetCommentId}`) ??
+        document.getElementById(`comment-${targetCommentId}`))
       : null;
 
     // 2. Tìm theo data-comment-username
     if (!targetEl) {
-      targetEl = document.querySelector(`[data-comment-username="${usernameWithoutAt}"]`);
+      targetEl = document.querySelector(
+        `[data-comment-username="${usernameWithoutAt}"]`,
+      );
     }
 
     // 3. Tìm theo id thẻ user
@@ -33,7 +39,7 @@ export const CommentContent = ({ content, targetCommentId }: CommentContentProps
   };
 
   return (
-    <p className="mt-2.5 whitespace-pre-wrap text-sm sm:text-[15px] leading-relaxed text-foreground/90">
+    <p className="text-foreground/90 mt-2.5 text-sm leading-relaxed whitespace-pre-wrap sm:text-[15px]">
       {parts.map((part, index) => {
         if (part.startsWith("@")) {
           const username = part.slice(1);
@@ -45,7 +51,7 @@ export const CommentContent = ({ content, targetCommentId }: CommentContentProps
                 e.stopPropagation();
                 handleScrollToTarget(username);
               }}
-              className="text-secondary-foreground font-semibold hover:underline inline cursor-pointer select-none transition-colors"
+              className="text-secondary-foreground inline cursor-pointer font-semibold transition-colors select-none hover:underline"
             >
               {part}
             </button>

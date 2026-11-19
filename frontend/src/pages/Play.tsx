@@ -32,7 +32,9 @@ export const Play = () => {
       try {
         const [gameRes] = await Promise.all([
           fetchGameById(id).catch(() => null),
-          games.length === 0 ? fetchGames("", 0, 10).catch(() => null) : Promise.resolve(),
+          games.length === 0
+            ? fetchGames("", 0, 10).catch(() => null)
+            : Promise.resolve(),
         ]);
 
         if (!isMounted) return;
@@ -56,15 +58,21 @@ export const Play = () => {
 
   return (
     <div className="mt-4 w-full pb-16 sm:px-3">
-      <nav aria-label="Breadcrumb" className="text-md mb-4 flex items-center gap-2">
-        <Link to="/games" className="text-muted-foreground hover:text-foreground font-medium transition-colors">
+      <nav
+        aria-label="Breadcrumb"
+        className="text-md mb-4 flex items-center gap-2"
+      >
+        <Link
+          to="/games"
+          className="text-muted-foreground hover:text-foreground font-medium transition-colors"
+        >
           Games
         </Link>
         <span className="text-muted-foreground/60">/</span>
         <span className="text-foreground font-semibold">{game.title}</span>
       </nav>
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
-        <div className="flex flex-col gap-6 lg:col-span-9">
+        <div className="flex flex-col gap-4 lg:col-span-9">
           <GamePlayerBox game={game} />
           <GameAuthorCard game={game} />
           <GameDetailsCard game={game} />
@@ -73,7 +81,9 @@ export const Play = () => {
           <CommentSection gameId={game.id} />
         </div>
         <div className="lg:col-span-3">
-          <RelatedGames games={games.filter((item) => item.id !== id).slice(0, 5)} />
+          <RelatedGames
+            games={games.filter((item) => item.id !== id).slice(0, 5)}
+          />
         </div>
       </div>
     </div>

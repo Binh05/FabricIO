@@ -42,7 +42,8 @@ const GameRatingCard = ({ gameId }: GameRatingCardProps) => {
   }, [fetchMyRating, gameId, token]);
 
   useEffect(() => {
-    if (!token || selectedRating === 0 || selectedRating === savedRating) return;
+    if (!token || selectedRating === 0 || selectedRating === savedRating)
+      return;
 
     const requestId = ++ratingRequestId.current;
     const timeoutId = window.setTimeout(async () => {
@@ -102,7 +103,11 @@ const GameRatingCard = ({ gameId }: GameRatingCardProps) => {
         <span className="text-foreground text-base font-bold sm:text-lg">
           Đánh giá của bạn:
         </span>
-        <div className="flex items-center gap-1" role="radiogroup" aria-label="Đánh giá game">
+        <div
+          className="flex items-center gap-1"
+          role="radiogroup"
+          aria-label="Đánh giá game"
+        >
           {Array.from({ length: 5 }, (_, index) => {
             const value = index + 1;
             const isFilled = value <= displayedRating;

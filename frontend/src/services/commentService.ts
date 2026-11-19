@@ -1,6 +1,10 @@
 import { api } from "@/lib/api";
 import type { ApiResponse, CursorResponse } from "@/types/BaseResponse";
-import type { Comment, CreateCommentRequest } from "@/types/Comment";
+import type {
+  Comment,
+  CreateCommentRequest,
+  CreateReplyRequest,
+} from "@/types/Comment";
 
 const ROOT_COMMENT_SIZE = 4;
 const REPLY_SIZE = 3;
@@ -36,7 +40,7 @@ export class commentService {
 
   static async createReply(
     commentId: string,
-    request: CreateCommentRequest,
+    request: CreateReplyRequest,
   ): Promise<ApiResponse<Comment>> {
     const res = await api.post(`/comments/${commentId}/replies`, request);
     return res.data;

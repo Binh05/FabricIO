@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 interface CommentComposerProps {
   placeholder: string;
@@ -19,6 +21,7 @@ export const CommentComposer = ({
   onSubmit,
   onCancel,
 }: CommentComposerProps) => {
+  const { token } = useAuth();
   const [content, setContent] = useState(initialValue);
   const [submitting, setSubmitting] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -32,6 +35,10 @@ export const CommentComposer = ({
   }, [initialValue]);
 
   const handleSubmit = async () => {
+    if (!token) {
+      toast.warning("Hãy đăng nhập để bình luận về trò chơi này");
+      return;
+    }
     const value = content.trim();
     if (!value || submitting) return;
     setSubmitting(true);
@@ -53,7 +60,7 @@ export const CommentComposer = ({
         maxLength={1024}
         rows={3}
         disabled={disabled || submitting}
-        className="min-h-20 resize-none rounded-md bg-surface-container border-border-subtle/60 text-sm focus-visible:ring-1"
+        className="bg-surface-container border-border-subtle/60 min-h-20 resize-none rounded-md text-sm focus-visible:ring-1"
       />
       <div className="flex items-center justify-end gap-2">
         {onCancel && (
@@ -62,7 +69,7 @@ export const CommentComposer = ({
             variant="ghost"
             onClick={onCancel}
             disabled={submitting}
-            className="rounded-md px-3 py-1.5 text-xs sm:text-sm font-medium"
+            className="rounded-md px-3 py-1.5 text-xs font-medium sm:text-sm"
           >
             Hủy
           </Button>
@@ -71,7 +78,7 @@ export const CommentComposer = ({
           type="button"
           onClick={() => void handleSubmit()}
           disabled={disabled || submitting || !content.trim()}
-          className="rounded-md px-4 py-2 text-xs sm:text-sm font-semibold"
+          className="rounded-md px-4 py-2 text-xs font-semibold sm:text-sm"
         >
           {submitting ? "Đang gửi..." : submitLabel}
         </Button>

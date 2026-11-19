@@ -37,6 +37,9 @@ public class Comment {
     @Column(name = "parent_id", updatable = false)
     private UUID parentId;
 
+    @Column(name = "reply_to_comment_id", updatable = false)
+    private UUID replyToCommentId;
+
     @Column(name = "content", length = MAX_CONTENT_LENGTH, nullable = false)
     private String content;
 
@@ -52,22 +55,30 @@ public class Comment {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    private Comment(UUID userId, UUID gameId, UUID parentId, String content) {
+    private Comment(UUID userId, UUID gameId, UUID parentId, UUID replyToCommentId, String content) {
         this.userId = Objects.requireNonNull(userId, "userId must not be null");
         this.gameId = Objects.requireNonNull(gameId, "gameId must not be null");
         this.parentId = parentId;
+        this.replyToCommentId = replyToCommentId;
         this.content = validateAndNormalizeContent(content);
         this.likeCount = 0;
         this.replyCount = 0;
     }
 
     public static Comment createRoot(UUID userId, UUID gameId, String content) {
-        return new Comment(userId, gameId, null, content);
+        return new Comment(userId, gameId, null, null, content);
     }
 
-    public static Comment createReply(UUID userId, UUID gameId, UUID parentId, String content) {
+    public static Comment createReply(
+            UUID userId,
+            UUID gameId,
+            UUID parentId,
+            UUID replyToCommentId,
+            String content
+    ) {
         Objects.requireNonNull(parentId, "parentId must not be null for a reply");
-        return new Comment(userId, gameId, parentId, content);
+        Objects.requireNonNull(replyToCommentId, "replyToCommentId must not be null for a reply");
+        return new Comment(userId, gameId, parentId, replyToCommentId, content);
     }
 
     public void editContent(String newContent) {

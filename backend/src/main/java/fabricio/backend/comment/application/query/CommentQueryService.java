@@ -1,6 +1,6 @@
 package fabricio.backend.comment.application.query;
 
-import fabricio.backend.comment.application.dto.CommentAuthor;
+import fabricio.backend.comment.application.query.dto.CommentAuthor;
 import fabricio.backend.comment.application.query.dto.CommentView;
 import fabricio.backend.comment.domain.Comment;
 import fabricio.backend.comment.domain.CommentRepository;
