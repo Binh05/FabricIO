@@ -11,7 +11,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import fabricio.backend.shared.security.UserPrincipal;
-import fabricio.backend.games.application.dtos.GamePlayResponse;
 import fabricio.backend.games.web.dto.GameRequest;
 import fabricio.backend.games.web.dto.GameResponse;
 import fabricio.backend.shared.base.ApiResponse;
@@ -68,8 +67,7 @@ public class GameController {
     @PostMapping("/draft")
     public ApiResponse<GameResponse> uploadGame(
             @AuthenticationPrincipal UserPrincipal principal,
-            @Valid @RequestBody GameRequest request)
-    {
+            @Valid @RequestBody GameRequest request) {
         return ApiResponse.success(GameResponse.from(gameService.uploadDraft(principal.getId(), request)));
     }
 
@@ -95,8 +93,7 @@ public class GameController {
     public ApiResponse<GameResponse> updateGameInfo(
             @PathVariable UUID gameId,
             @AuthenticationPrincipal UserPrincipal userPrincipal,
-            @Valid @RequestBody GameRequest request)
-    {
+            @Valid @RequestBody GameRequest request) {
         UUID ownerId = userPrincipal.getId();
         GameResult result = gameService.updateGame(gameId, request, ownerId);
         return ApiResponse.success(GameResponse.from(result));
@@ -106,8 +103,7 @@ public class GameController {
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteGame(
             @PathVariable UUID id,
-            @AuthenticationPrincipal UserPrincipal userPrincipal
-    ) {
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
         UUID userId = userPrincipal.getId();
         gameService.deleteGame(id, userId);
         return ApiResponse.noContent();
