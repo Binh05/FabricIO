@@ -3,6 +3,7 @@ package fabricio.backend.comment.web;
 import fabricio.backend.comment.application.command.CommentCommandService;
 import fabricio.backend.comment.application.command.dto.CreateCommentCommand;
 import fabricio.backend.comment.application.command.dto.CreateCommentResult;
+import fabricio.backend.comment.application.command.dto.DeleteReplyResult;
 import fabricio.backend.comment.web.dto.CreateCommentRequest;
 import fabricio.backend.comment.web.dto.CreateReplyRequest;
 import fabricio.backend.shared.base.ApiResponse;
@@ -50,5 +51,22 @@ public class CommentCommandController {
                         request.content()
                 )
         ));
+    }
+
+    @DeleteMapping("/comments/replies/{replyId}")
+    public ApiResponse<DeleteReplyResult> deleteReplyComment(
+            @PathVariable UUID replyId,
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        return ApiResponse.success(commentCommandService.deleteReply(replyId, principal.getId()));
+    }
+
+    @DeleteMapping("/comments/{commentId}")
+    public ApiResponse<Void> deleteComment(
+            @PathVariable UUID commentId,
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        commentCommandService.deleteComments(commentId, principal.getId());
+        return ApiResponse.noContent();
     }
 }

@@ -25,3 +25,8 @@ export interface CreateReplyRequest {
   content: string;
   parent_id: string;
 }
+
+export interface DeleteReplyResult {
+  parentId: string;
+  replyCount: number;
+}

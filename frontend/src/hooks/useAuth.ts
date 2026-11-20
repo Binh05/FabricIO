@@ -4,11 +4,12 @@ import { userService } from "@/services/userService";
 import type { RegisterForm } from "@/types/Auth";
 import axios from "axios";
 import { useCallback, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export const useAuth = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const context = useContext(AuthContext);
 
   if (!context) {
@@ -16,6 +17,7 @@ export const useAuth = () => {
   }
 
   const { setLoading } = context;
+  const returnTo = (location.state as { from?: string } | null)?.from;
 
   const signUp = useCallback(
     async (formData: RegisterForm) => {
@@ -50,7 +52,7 @@ export const useAuth = () => {
         const { data: user } = await userService.fetchMe();
         context.setUser(user);
 
-        navigate("/");
+        navigate(returnTo && returnTo !== "/signin" ? returnTo : "/", { replace: true });
         toast.success("Đăng nhập thành công");
       } catch (error) {
         console.error("Lỗi khi signin", error);
@@ -62,7 +64,7 @@ export const useAuth = () => {
         setLoading(false);
       }
     },
-    [navigate],
+    [navigate, returnTo],
   );
 
   const signOut = useCallback(async () => {

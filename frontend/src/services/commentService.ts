@@ -4,6 +4,7 @@ import type {
   Comment,
   CreateCommentRequest,
   CreateReplyRequest,
+  DeleteReplyResult,
 } from "@/types/Comment";
 
 const ROOT_COMMENT_SIZE = 4;
@@ -43,6 +44,18 @@ export class commentService {
     request: CreateReplyRequest,
   ): Promise<ApiResponse<Comment>> {
     const res = await api.post(`/comments/${commentId}/replies`, request);
+    return res.data;
+  }
+
+  static async deleteComment(commentId: string): Promise<ApiResponse<void>> {
+    const res = await api.delete(`/comments/${commentId}`);
+    return res.data;
+  }
+
+  static async deleteReply(
+    replyId: string,
+  ): Promise<ApiResponse<DeleteReplyResult | null>> {
+    const res = await api.delete(`/comments/replies/${replyId}`);
     return res.data;
   }
 }

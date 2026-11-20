@@ -18,6 +18,8 @@ export interface UseComment {
     parentId: string,
     content: string,
   ) => Promise<Comment>;
+  deleteComment: (commentId: string) => Promise<void>;
+  deleteReply: (replyId: string, parentId: string) => Promise<void>;
 }
 
 export const useComment = (): UseComment => {
@@ -144,6 +146,76 @@ export const useComment = (): UseComment => {
     }
   }, [setCommentsByGame, setRepliesByComment]);
 
+  const deleteComment = useCallback(async (commentId: string) => {
+    try {
+      await commentService.deleteComment(commentId);
+      setCommentsByGame((previous) =>
+        Object.fromEntries(
+          Object.entries(previous).map(([gameId, page]) => [
+            gameId,
+            {
+              ...page,
+              items: page.items.filter((item) => item.id !== commentId),
+            },
+          ]),
+        ),
+      );
+      setRepliesByComment((previous) => {
+        const next = { ...previous };
+        delete next[commentId];
+        return next;
+      });
+      toast.success("Đã xóa bình luận.");
+    } catch (error) {
+      console.error("Lỗi khi xóa bình luận", error);
+      toast.error(getErrorMessage(error, "Không thể xóa bình luận."));
+      throw error;
+    }
+  }, [setCommentsByGame, setRepliesByComment]);
+
+  const deleteReply = useCallback(async (replyId: string, parentId: string) => {
+    try {
+      const response = await commentService.deleteReply(replyId);
+      setRepliesByComment((previous) => {
+        const page = previous[parentId];
+        if (!page) return previous;
+        return {
+          ...previous,
+          [parentId]: {
+            ...page,
+            items: page.items.filter((item) => item.id !== replyId),
+          },
+        };
+      });
+      const updatedParentId = response.data?.parentId ?? parentId;
+      const replyCount = response.data?.replyCount;
+      setCommentsByGame((previous) =>
+        Object.fromEntries(
+          Object.entries(previous).map(([gameId, page]) => [
+            gameId,
+            {
+              ...page,
+              items: page.items.map((item) =>
+                item.id === updatedParentId
+                  ? {
+                      ...item,
+                      replyCount:
+                        replyCount ?? Math.max(0, item.replyCount - 1),
+                    }
+                  : item,
+              ),
+            },
+          ]),
+        ),
+      );
+      toast.success("Đã xóa phản hồi.");
+    } catch (error) {
+      console.error("Lỗi khi xóa phản hồi", error);
+      toast.error(getErrorMessage(error, "Không thể xóa phản hồi."));
+      throw error;
+    }
+  }, [setCommentsByGame, setRepliesByComment]);
+
   return {
     commentsByGame,
     repliesByComment,
@@ -153,5 +225,7 @@ export const useComment = (): UseComment => {
     fetchReplies,
     createComment,
     createReply,
+    deleteComment,
+    deleteReply,
   };
 };

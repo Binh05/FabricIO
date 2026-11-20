@@ -1,11 +1,18 @@
 import { useState } from "react";
-import { CornerUpLeft, MoreVertical, ThumbsUp } from "lucide-react";
+import { CornerUpLeft, MoreVertical, ThumbsUp, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useComment } from "@/hooks/useComment";
+import { useAuth } from "@/hooks/useAuth";
 import type { Comment } from "@/types/Comment";
 import { CommentComposer } from "./CommentComposer";
 import { CommentContent } from "./CommentContent";
 import { CommentReplyItem } from "./CommentReplyItem";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   formatTimeAgo,
   getAvatarBgColor,
@@ -17,7 +24,8 @@ interface CommentItemProps {
 }
 
 export const CommentItem = ({ comment }: CommentItemProps) => {
-  const { repliesByComment, loadingReplies, fetchReplies, createReply } =
+  const { user } = useAuth();
+  const { repliesByComment, loadingReplies, fetchReplies, createReply, deleteComment } =
     useComment();
   const [showReplies, setShowReplies] = useState(false);
   const [showComposer, setShowComposer] = useState(false);
@@ -78,13 +86,28 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
               </span>
             </div>
           </div>
-          <button
-            type="button"
-            aria-label="Tùy chọn"
-            className="text-muted-foreground hover:text-foreground cursor-pointer rounded-sm p-1 transition-colors"
-          >
-            <MoreVertical size={16} />
-          </button>
+          {user?.id === comment.author.id && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  aria-label="Tùy chọn bình luận"
+                  className="text-muted-foreground hover:text-foreground cursor-pointer rounded-sm p-1 transition-colors"
+                >
+                  <MoreVertical size={16} />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-36">
+                <DropdownMenuItem
+                  variant="destructive"
+                  onSelect={() => void deleteComment(comment.id)}
+                >
+                  <Trash2 />
+                  Xóa bình luận
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
         <CommentContent content={comment.content} />
         <div className="mt-3.5 flex flex-wrap items-center gap-4 text-xs sm:text-sm">
