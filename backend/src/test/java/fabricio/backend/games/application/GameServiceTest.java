@@ -20,7 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 
 import fabricio.backend.games.GameAsset;
-import fabricio.backend.games.application.dtos.GamePlayResponse;
 import fabricio.backend.games.application.dtos.GameResult;
 import fabricio.backend.games.domain.*;
 import fabricio.backend.games.domain.exception.GameErrorCode;

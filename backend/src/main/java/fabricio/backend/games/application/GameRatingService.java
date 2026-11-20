@@ -1,14 +1,8 @@
 package fabricio.backend.games.application;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import fabricio.backend.games.application.dtos.RatingResult;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +11,6 @@ import fabricio.backend.games.application.dtos.GameRatingResponse;
 import fabricio.backend.games.domain.*;
 import fabricio.backend.games.domain.exception.GameErrorCode;
 import fabricio.backend.games.domain.exception.GameException;
-import fabricio.backend.shared.base.PageResponse;
 
 @Service
 @Transactional
@@ -27,7 +20,7 @@ public class GameRatingService {
     private final GameRepository gameRepository;
 
     public GameRatingService(GameRatingRepository gameRatingRepository,
-                             GameRepository gameRepository) {
+            GameRepository gameRepository) {
         this.gameRatingRepository = gameRatingRepository;
         this.gameRepository = gameRepository;
     }

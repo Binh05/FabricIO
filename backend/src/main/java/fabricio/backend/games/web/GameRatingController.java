@@ -11,7 +11,6 @@ import fabricio.backend.shared.security.UserPrincipal;
 import fabricio.backend.games.application.dtos.GameRatingRequest;
 import fabricio.backend.games.application.dtos.GameRatingResponse;
 import fabricio.backend.shared.base.ApiResponse;
-import fabricio.backend.shared.base.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
