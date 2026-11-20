@@ -46,7 +46,7 @@ export const CommentSection = ({ gameId }: CommentSectionProps) => {
       {token ? (
         <div className="border-border-subtle/50 bg-surface-container-low rounded-md border p-4 sm:p-5">
           <h2 className="text-foreground mb-3 text-sm font-bold sm:text-base">
-            Bình luận ({page?.items.length ?? 0})
+            Bình luận
           </h2>
           <CommentComposer
             placeholder="Chia sẻ cảm nhận, mẹo chơi hoặc phản hồi của bạn..."
