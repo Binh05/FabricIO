@@ -12,11 +12,12 @@ public record CommentView(
         CommentAuthor author,
         String content,
         int likeCount,
+        boolean likedByMe,
         int replyCount,
         Instant updatedAt,
         Instant createdAt
 ) {
-    public static CommentView from(Comment comment, CommentAuthor author) {
+    public static CommentView from(Comment comment, CommentAuthor author, boolean likedByMe) {
         return new CommentView(
                 comment.getId(),
                 comment.getParentId(),
@@ -24,6 +25,7 @@ public record CommentView(
                 author,
                 comment.getContent(),
                 comment.getLikeCount(),
+                likedByMe,
                 comment.getReplyCount(),
                 comment.getUpdatedAt(),
                 comment.getCreatedAt()

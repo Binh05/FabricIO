@@ -12,6 +12,7 @@ export interface Comment {
   author: CommentAuthor;
   content: string;
   likeCount: number;
+  likedByMe: boolean;
   replyCount: number;
   updatedAt: string;
   createdAt: string;
@@ -29,4 +30,13 @@ export interface CreateReplyRequest {
 export interface DeleteReplyResult {
   parentId: string;
   replyCount: number;
+}
+
+export interface LikeCommentResult {
+  liked: boolean;
+  likeCount: number;
+}
+
+export interface SetCommentLikeRequest {
+  liked: boolean;
 }

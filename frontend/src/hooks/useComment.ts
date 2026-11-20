@@ -2,7 +2,7 @@ import { CommentContext, type CommentPage } from "@/context/CommentContext";
 import { commentService } from "@/services/commentService";
 import type { Comment } from "@/types/Comment";
 import axios from "axios";
-import { useCallback, useContext, useEffect, useRef } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export interface UseComment {
@@ -20,6 +20,8 @@ export interface UseComment {
   ) => Promise<Comment>;
   deleteComment: (commentId: string) => Promise<void>;
   deleteReply: (replyId: string, parentId: string) => Promise<void>;
+  toggleLike: (commentId: string) => void;
+  togglingLikes: Record<string, boolean>;
 }
 
 export const useComment = (): UseComment => {
@@ -38,10 +40,21 @@ export const useComment = (): UseComment => {
   } = context;
   const commentsRef = useRef(commentsByGame);
   const repliesRef = useRef(repliesByComment);
+  const likeTimersRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+  const optimisticLikesRef = useRef<Record<string, boolean>>({});
+  const serverLikesRef = useRef<Record<string, boolean>>({});
+  const inFlightLikesRef = useRef(new Set<string>());
+  const [togglingLikes, setTogglingLikes] = useState<Record<string, boolean>>({});
   useEffect(() => {
     commentsRef.current = commentsByGame;
     repliesRef.current = repliesByComment;
   }, [commentsByGame, repliesByComment]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(likeTimersRef.current).forEach((timer) => clearTimeout(timer));
+    };
+  }, []);
 
   const getErrorMessage = (error: unknown, fallback: string) =>
     axios.isAxiosError(error) ? error.response?.data?.message ?? fallback : fallback;
@@ -216,6 +229,165 @@ export const useComment = (): UseComment => {
     }
   }, [setCommentsByGame, setRepliesByComment]);
 
+  const scheduleLikeRequest = useCallback((commentId: string) => {
+    if (likeTimersRef.current[commentId]) {
+      clearTimeout(likeTimersRef.current[commentId]);
+    }
+    likeTimersRef.current[commentId] = setTimeout(() => {
+      delete likeTimersRef.current[commentId];
+
+      if (inFlightLikesRef.current.has(commentId)) {
+        scheduleLikeRequest(commentId);
+        return;
+      }
+
+      const targetLiked = optimisticLikesRef.current[commentId];
+      const serverLiked = serverLikesRef.current[commentId];
+      if (targetLiked === undefined || targetLiked === serverLiked) {
+        delete optimisticLikesRef.current[commentId];
+        return;
+      }
+
+      inFlightLikesRef.current.add(commentId);
+      setTogglingLikes((previous) => ({ ...previous, [commentId]: true }));
+
+      void commentService.setLike(commentId, { liked: targetLiked })
+        .then((response) => {
+          serverLikesRef.current[commentId] = response.data.liked;
+
+          const latestTarget = optimisticLikesRef.current[commentId];
+          const applyServerResult = (previous: Record<string, CommentPage>) =>
+            Object.fromEntries(
+              Object.entries(previous).map(([key, page]) => [
+                key,
+                {
+                  ...page,
+                  items: page.items.map((item) => {
+                    if (item.id !== commentId) return item;
+                    const likedByMe =
+                      latestTarget === undefined
+                        ? response.data.liked
+                        : latestTarget;
+                    return {
+                      ...item,
+                      likedByMe,
+                      likeCount:
+                        likedByMe === response.data.liked
+                          ? response.data.likeCount
+                          : Math.max(
+                              0,
+                              response.data.likeCount +
+                                (likedByMe ? 1 : -1),
+                            ),
+                    };
+                  }),
+                },
+              ]),
+            );
+
+          setCommentsByGame(applyServerResult);
+          setRepliesByComment(applyServerResult);
+
+          if (latestTarget === response.data.liked) {
+            delete optimisticLikesRef.current[commentId];
+          } else {
+            scheduleLikeRequest(commentId);
+          }
+        })
+        .catch((error) => {
+          const serverLiked = serverLikesRef.current[commentId] ?? false;
+          const applyRollback = (previous: Record<string, CommentPage>) =>
+            Object.fromEntries(
+              Object.entries(previous).map(([key, page]) => [
+                key,
+                {
+                  ...page,
+                  items: page.items.map((item) =>
+                    item.id === commentId
+                      ? {
+                          ...item,
+                          likedByMe: serverLiked,
+                          likeCount: Math.max(
+                            0,
+                            item.likeCount +
+                              (serverLiked === item.likedByMe
+                                ? 0
+                                : serverLiked
+                                  ? 1
+                                  : -1),
+                          ),
+                        }
+                      : item,
+                  ),
+                },
+              ]),
+            );
+          setCommentsByGame(applyRollback);
+          setRepliesByComment(applyRollback);
+          delete optimisticLikesRef.current[commentId];
+          console.error("Lỗi khi thích bình luận", error);
+          toast.error(getErrorMessage(error, "Không thể thích bình luận."));
+        })
+        .finally(() => {
+          inFlightLikesRef.current.delete(commentId);
+          setTogglingLikes((previous) => ({ ...previous, [commentId]: false }));
+        });
+    }, 1000);
+  }, [setCommentsByGame, setRepliesByComment]);
+
+  const toggleLike = useCallback((commentId: string) => {
+    let currentLiked: boolean | undefined =
+      optimisticLikesRef.current[commentId];
+
+    if (currentLiked === undefined) {
+      const currentComment =
+        commentsRef.current &&
+        Object.values(commentsRef.current)
+          .flatMap((page) => page.items)
+          .find((item) => item.id === commentId);
+      const currentReply =
+        repliesRef.current &&
+        Object.values(repliesRef.current)
+          .flatMap((page) => page.items)
+          .find((item) => item.id === commentId);
+      currentLiked = (currentComment ?? currentReply)?.likedByMe;
+      if (currentLiked !== undefined) {
+        serverLikesRef.current[commentId] = currentLiked;
+      }
+    }
+
+    if (currentLiked === undefined) return;
+    const targetLiked = !currentLiked;
+    optimisticLikesRef.current[commentId] = targetLiked;
+
+    const applyOptimisticLike = (
+      previous: Record<string, CommentPage>,
+    ) => Object.fromEntries(
+      Object.entries(previous).map(([key, page]) => [
+        key,
+        {
+          ...page,
+          items: page.items.map((item) =>
+            item.id === commentId && item.likedByMe !== targetLiked
+              ? {
+                  ...item,
+                  likedByMe: targetLiked,
+                  likeCount: Math.max(
+                    0,
+                    item.likeCount + (targetLiked ? 1 : -1),
+                  ),
+                }
+              : item,
+          ),
+        },
+      ]),
+    );
+
+    setCommentsByGame(applyOptimisticLike);
+    setRepliesByComment(applyOptimisticLike);
+    scheduleLikeRequest(commentId);
+  }, [scheduleLikeRequest, setCommentsByGame, setRepliesByComment]);
+
   return {
     commentsByGame,
     repliesByComment,
@@ -227,5 +399,7 @@ export const useComment = (): UseComment => {
     createReply,
     deleteComment,
     deleteReply,
+    toggleLike,
+    togglingLikes,
   };
 };

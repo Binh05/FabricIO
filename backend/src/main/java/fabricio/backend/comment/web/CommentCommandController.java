@@ -4,8 +4,10 @@ import fabricio.backend.comment.application.command.CommentCommandService;
 import fabricio.backend.comment.application.command.dto.CreateCommentCommand;
 import fabricio.backend.comment.application.command.dto.CreateCommentResult;
 import fabricio.backend.comment.application.command.dto.DeleteReplyResult;
+import fabricio.backend.comment.application.command.dto.LikeCommentResult;
 import fabricio.backend.comment.web.dto.CreateCommentRequest;
 import fabricio.backend.comment.web.dto.CreateReplyRequest;
+import fabricio.backend.comment.web.dto.SetCommentLikeRequest;
 import fabricio.backend.shared.base.ApiResponse;
 import fabricio.backend.shared.security.UserPrincipal;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -68,5 +70,16 @@ public class CommentCommandController {
     ) {
         commentCommandService.deleteComments(commentId, principal.getId());
         return ApiResponse.noContent();
+    }
+
+    @PutMapping("/comments/{commentId}/like")
+    public ApiResponse<LikeCommentResult> setLike(
+            @PathVariable UUID commentId,
+            @Valid @RequestBody SetCommentLikeRequest request,
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        return ApiResponse.success(
+                commentCommandService.setLike(commentId, principal.getId(), request.liked())
+        );
     }
 }

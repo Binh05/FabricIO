@@ -1,4 +1,4 @@
-import { CornerUpLeft, MoreVertical, Trash2 } from "lucide-react";
+import { CornerUpLeft, MoreVertical, ThumbsUp, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useComment } from "@/hooks/useComment";
 import { useAuth } from "@/hooks/useAuth";
@@ -24,7 +24,7 @@ export const CommentReplyItem = ({
   parentCommentId,
 }: CommentReplyItemProps) => {
   const { user } = useAuth();
-  const { createReply, deleteReply } = useComment();
+  const { createReply, deleteReply, toggleLike, togglingLikes } = useComment();
   const [showComposer, setShowComposer] = useState(false);
   const authorName = reply.author.fullName || reply.author.username;
 
@@ -86,6 +86,20 @@ export const CommentReplyItem = ({
           />
 
           <div className="mt-2 flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => void toggleLike(reply.id)}
+              disabled={togglingLikes[reply.id]}
+              className={`inline-flex cursor-pointer items-center gap-1 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
+                reply.likedByMe
+                  ? "text-secondary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+              aria-label={reply.likedByMe ? "Bỏ thích phản hồi" : "Thích phản hồi"}
+            >
+              <ThumbsUp size={13} />
+              <span>{reply.likeCount ?? 0}</span>
+            </button>
             <button
               type="button"
               onClick={() => setShowComposer(true)}

@@ -25,7 +25,7 @@ interface CommentItemProps {
 
 export const CommentItem = ({ comment }: CommentItemProps) => {
   const { user } = useAuth();
-  const { repliesByComment, loadingReplies, fetchReplies, createReply, deleteComment } =
+  const { repliesByComment, loadingReplies, fetchReplies, createReply, deleteComment, toggleLike, togglingLikes } =
     useComment();
   const [showReplies, setShowReplies] = useState(false);
   const [showComposer, setShowComposer] = useState(false);
@@ -111,10 +111,21 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
         </div>
         <CommentContent content={comment.content} />
         <div className="mt-3.5 flex flex-wrap items-center gap-4 text-xs sm:text-sm">
-          <span className="text-muted-foreground inline-flex items-center gap-1.5 font-medium select-none">
+          <button
+            type="button"
+            onClick={() => void toggleLike(comment.id)}
+            disabled={togglingLikes[comment.id]}
+            className={cn(
+              "inline-flex cursor-pointer items-center gap-1.5 font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60",
+              comment.likedByMe
+                ? "text-secondary-foreground"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+            aria-label={comment.likedByMe ? "Bỏ thích bình luận" : "Thích bình luận"}
+          >
             <ThumbsUp size={15} />
             <span>{comment.likeCount ?? 0}</span>
-          </span>
+          </button>
           <button
             type="button"
             onClick={() => handleStartReply(comment.author.username)}
