@@ -16,6 +16,9 @@ public record CreateCommentResult(
         UUID replyToCommentId,
         CommentAuthor author,
         String content,
+        int likeCount,
+        boolean likedByMe,
+        int replyCount,
         Instant updatedAt,
         Instant createdAt
 ) {
@@ -28,6 +31,9 @@ public record CreateCommentResult(
                 c.getReplyToCommentId(),
                 author,
                 c.getContent(),
+                c.getLikeCount(),
+                false,
+                c.getReplyCount(),
                 c.getUpdatedAt(),
                 c.getCreatedAt()
         );

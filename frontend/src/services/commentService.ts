@@ -5,6 +5,8 @@ import type {
   CreateCommentRequest,
   CreateReplyRequest,
   DeleteReplyResult,
+  LikeCommentResult,
+  SetCommentLikeRequest,
 } from "@/types/Comment";
 
 const ROOT_COMMENT_SIZE = 4;
@@ -56,6 +58,14 @@ export class commentService {
     replyId: string,
   ): Promise<ApiResponse<DeleteReplyResult | null>> {
     const res = await api.delete(`/comments/replies/${replyId}`);
+    return res.data;
+  }
+
+  static async setLike(
+    commentId: string,
+    request: SetCommentLikeRequest,
+  ): Promise<ApiResponse<LikeCommentResult>> {
+    const res = await api.put(`/comments/${commentId}/like`, request);
     return res.data;
   }
 }

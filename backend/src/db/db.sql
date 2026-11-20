@@ -170,3 +170,21 @@ CREATE INDEX idx_comments_root_likes
 CREATE INDEX idx_comments_replies_created
     ON comments(parent_id, created_at ASC, id ASC)
     WHERE parent_id IS NOT NULL;
+
+-- =============================================================================
+-- 10. BẢNG COMMENT LIKE
+-- =============================================================================
+CREATE TABLE comment_likes (
+    comment_id UUID NOT NULL,
+    user_id UUID NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (comment_id, user_id),
+    CONSTRAINT fk_comment_likes_comment
+        FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE,
+    CONSTRAINT fk_comment_likes_user
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_comment_likes_user_comment
+    ON comment_likes(user_id, comment_id);

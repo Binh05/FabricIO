@@ -5,7 +5,9 @@ import fabricio.backend.comment.application.query.dto.CommentView;
 import fabricio.backend.shared.base.ApiResponse;
 import fabricio.backend.shared.base.CursorResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import fabricio.backend.shared.security.UserPrincipal;
 
 import java.util.UUID;
 
@@ -23,17 +25,23 @@ public class CommentQueryController {
     public ApiResponse<CursorResponse<CommentView>> getRootComments(
             @PathVariable UUID gameId,
             @RequestParam(defaultValue = "4") int size,
-            @RequestParam(defaultValue = "") String cursor
+            @RequestParam(defaultValue = "") String cursor,
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
-        return ApiResponse.success(commentQueryService.getRootComments(gameId, size, cursor));
+        return ApiResponse.success(commentQueryService.getRootComments(
+                gameId, size, cursor, principal == null ? null : principal.getId()
+        ));
     }
 
     @GetMapping("/comments/{commentId}/replies")
     public ApiResponse<CursorResponse<CommentView>> getReplies(
             @PathVariable UUID commentId,
             @RequestParam(defaultValue = "3") int size,
-            @RequestParam(defaultValue = "") String cursor
+            @RequestParam(defaultValue = "") String cursor,
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
-        return ApiResponse.success(commentQueryService.getReplies(commentId, size, cursor));
+        return ApiResponse.success(commentQueryService.getReplies(
+                commentId, size, cursor, principal == null ? null : principal.getId()
+        ));
     }
 }

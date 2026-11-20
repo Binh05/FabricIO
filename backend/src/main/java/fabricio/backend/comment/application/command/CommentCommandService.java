@@ -4,7 +4,11 @@ import fabricio.backend.comment.application.command.dto.CreateCommentCommand;
 import fabricio.backend.comment.application.command.dto.CommentAuthor;
 import fabricio.backend.comment.application.command.dto.CreateCommentResult;
 import fabricio.backend.comment.application.command.dto.DeleteReplyResult;
+import fabricio.backend.comment.application.command.dto.LikeCommentResult;
 import fabricio.backend.comment.domain.Comment;
+import fabricio.backend.comment.domain.CommentLike;
+import fabricio.backend.comment.domain.CommentLikeRepository;
+import fabricio.backend.comment.domain.CommentLikeId;
 import fabricio.backend.comment.domain.CommentRepository;
 import fabricio.backend.comment.domain.exception.CommentErrorCode;
 import fabricio.backend.comment.domain.exception.CommentException;
@@ -21,13 +25,41 @@ import java.util.UUID;
 @Transactional
 public class CommentCommandService {
     private final CommentRepository commentRepository;
+    private final CommentLikeRepository commentLikeRepository;
     private final GameApi gameApi;
     private final UserApi userApi;
 
-    public CommentCommandService(CommentRepository commentRepository, GameApi gameApi, UserApi userApi) {
+    public CommentCommandService(
+            CommentRepository commentRepository,
+            CommentLikeRepository commentLikeRepository,
+            GameApi gameApi,
+            UserApi userApi
+    ) {
         this.commentRepository = commentRepository;
+        this.commentLikeRepository = commentLikeRepository;
         this.gameApi = gameApi;
         this.userApi = userApi;
+    }
+
+    public LikeCommentResult setLike(UUID commentId, UUID userId, boolean liked) {
+        Comment comment = commentRepository.findByIdForLike(commentId)
+                .orElseThrow(() -> new CommentException(CommentErrorCode.COMMENT_NOT_FOUND));
+        CommentLikeId likeId = new CommentLikeId(commentId, userId);
+        boolean currentlyLiked = commentLikeRepository.existsById(likeId);
+
+        if (currentlyLiked == liked) {
+            return new LikeCommentResult(liked, comment.getLikeCount());
+        }
+
+        if (liked) {
+            commentLikeRepository.save(new CommentLike(likeId));
+            comment.incrementLikeCount();
+        } else {
+            commentLikeRepository.deleteById(likeId);
+            comment.decrementLikeCount();
+        }
+        commentRepository.save(comment);
+        return new LikeCommentResult(liked, comment.getLikeCount());
     }
 
     public CreateCommentResult createComment(CreateCommentCommand command) {
