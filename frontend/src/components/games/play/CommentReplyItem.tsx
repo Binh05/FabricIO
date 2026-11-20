@@ -1,11 +1,18 @@
-import { CornerUpLeft, MoreVertical } from "lucide-react";
+import { CornerUpLeft, MoreVertical, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useComment } from "@/hooks/useComment";
+import { useAuth } from "@/hooks/useAuth";
 import type { Comment } from "@/types/Comment";
 import { CommentComposer } from "./CommentComposer";
 import { CommentContent } from "./CommentContent";
 import { formatTimeAgo } from "@/lib/commentUtils.ts";
 import UserAvatar from "@/components/layouts/UserAvatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface CommentReplyItemProps {
   reply: Comment;
@@ -16,7 +23,8 @@ export const CommentReplyItem = ({
   reply,
   parentCommentId,
 }: CommentReplyItemProps) => {
-  const { createReply } = useComment();
+  const { user } = useAuth();
+  const { createReply, deleteReply } = useComment();
   const [showComposer, setShowComposer] = useState(false);
   const authorName = reply.author.fullName || reply.author.username;
 
@@ -47,13 +55,28 @@ export const CommentReplyItem = ({
                 @{reply.author.username}
               </span>
             </div>
-            <button
-              type="button"
-              aria-label="Tùy chọn"
-              className="text-muted-foreground hover:text-foreground cursor-pointer rounded-sm p-1 transition-colors"
-            >
-              <MoreVertical size={16} />
-            </button>
+            {user?.id === reply.author.id && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    aria-label="Tùy chọn phản hồi"
+                    className="text-muted-foreground hover:text-foreground cursor-pointer rounded-sm p-1 transition-colors"
+                  >
+                    <MoreVertical size={16} />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="min-w-36">
+                  <DropdownMenuItem
+                    variant="destructive"
+                    onSelect={() => void deleteReply(reply.id, parentCommentId)}
+                  >
+                    <Trash2 />
+                    Xóa phản hồi
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
 
           {/* Nội dung tô màu @username và scroll tới id của tag */}

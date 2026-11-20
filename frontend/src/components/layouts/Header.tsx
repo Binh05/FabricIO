@@ -153,7 +153,14 @@ export default function Header({ user }: { user: User | null }) {
               asChild
               className="hidden sm:inline-flex"
             >
-              <Link to="/signin">Log in</Link>
+              <Link
+                to="/signin"
+                state={{
+                  from: `${location.pathname}${location.search}${location.hash}`,
+                }}
+              >
+                Log in
+              </Link>
             </Button>
           ) : (
             <DropdownMenu>
@@ -275,7 +282,13 @@ export default function Header({ user }: { user: User | null }) {
 
                 {!token && (
                   <Button variant="outline" asChild className="w-full">
-                    <Link to="/signin" onClick={() => setIsOpen(false)}>
+                    <Link
+                      to="/signin"
+                      state={{
+                        from: `${location.pathname}${location.search}${location.hash}`,
+                      }}
+                      onClick={() => setIsOpen(false)}
+                    >
                       Log in
                     </Link>
                   </Button>

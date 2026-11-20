@@ -74,7 +74,15 @@ export const Profile = () => {
     return <HomeSkeleton />;
   }
 
-  if (!user) return <Navigate to={"/signin"} replace />;
+  if (!user) {
+    return (
+      <Navigate
+        to="/signin"
+        replace
+        state={{ from: `${location.pathname}${location.search}${location.hash}` }}
+      />
+    );
+  }
 
   const onSignOut = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,

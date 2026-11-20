@@ -5,10 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -66,4 +68,29 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
             @Param("id") UUID id,
             Pageable pageable
     );
+
+    @Modifying
+    @Query("DELETE FROM Comment c WHERE c.id = :id AND c.parentId IS NOT NULL AND c.userId = :userId")
+    int deleteReplyById(@Param("id") UUID id, @Param("userId") UUID userID);
+
+    @Modifying
+    @Query("""
+        DELETE FROM Comment c 
+        WHERE c.id = :id 
+            AND c.parentId IS NULL 
+            AND c.userId = :userId
+    """)
+    int deleteRootCommentById(@Param("id") UUID id, @Param("userId") UUID userId);
+
+    @Nullable
+    @Query(value="""
+        UPDATE comments 
+        SET reply_count = reply_count - 1 
+        WHERE id = :id AND reply_count > 0
+        RETURNING reply_count
+    """, nativeQuery = true)
+    Integer decrementReplyCount(@Param("id") UUID id);
+
+    @Query("SELECT c.replyCount FROM Comment  c WHERE c.id = :id")
+    Optional<Integer> findReplyCountById(@Param("id") UUID id);
 }
