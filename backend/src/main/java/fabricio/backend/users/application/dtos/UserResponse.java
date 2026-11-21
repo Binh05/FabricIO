@@ -5,10 +5,6 @@ import java.util.UUID;
 
 import fabricio.backend.shared.security.Role;
 import fabricio.backend.users.domain.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 public record UserResponse(
     UUID id,
