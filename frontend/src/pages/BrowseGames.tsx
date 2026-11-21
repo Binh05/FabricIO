@@ -9,12 +9,7 @@ import { useGame } from "@/hooks/useGame";
 const PAGE_SIZE = 12;
 
 export const BrowseGames = () => {
-  const {
-    loading,
-    games,
-    fetchGames,
-    totalPages,
-  } = useGame();
+  const { loading, games, fetchGames, totalPages } = useGame();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const pageParam = Number(searchParams.get("p"));
@@ -23,9 +18,9 @@ export const BrowseGames = () => {
   const keyword = searchParams.get("q")?.trim() ?? "";
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
     void fetchGames(keyword, currentPage - 1, PAGE_SIZE);
   }, [currentPage, fetchGames, keyword]);
-
 
   const handlePageChange = (page: number) => {
     setSearchParams((previous) => {
@@ -40,7 +35,7 @@ export const BrowseGames = () => {
   }
 
   return (
-    <div className="mx-auto w-full sm:px-3 pb-16 lg:px-8">
+    <div className="mx-auto w-full pb-16 sm:px-3 lg:px-8">
       <section aria-labelledby="games-heading" className="mt-4">
         <div className="mb-6 flex lg:flex-row lg:items-end lg:justify-between">
           <div>
@@ -56,7 +51,7 @@ export const BrowseGames = () => {
         {games.length === 0 ? (
           <NotGame />
         ) : (
-          <div className="grid grid-cols-2 gap-1.5 md:gap-3 md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-1.5 md:grid-cols-4 md:gap-3">
             {games.map((game) => (
               <GameCard key={game.id} game={game} />
             ))}
@@ -73,7 +68,6 @@ export const BrowseGames = () => {
           </div>
         )}
       </section>
-
     </div>
   );
 };
