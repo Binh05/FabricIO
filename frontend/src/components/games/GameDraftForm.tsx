@@ -15,6 +15,7 @@ import {
 import type { Game, PostGameRequest } from "@/types/Game";
 import { cn } from "@/lib/utils";
 import { FieldError } from "./FieldError";
+import { useAuth } from "@/hooks/useAuth";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-input px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors outline-none focus:border-primary focus:ring-4 focus:ring-primary/20";
@@ -28,13 +29,10 @@ interface GameDraftFormProps {
   className?: string;
 }
 
-const GameDraftForm = ({
-  draft,
-  onSuccess,
-  className,
-}: GameDraftFormProps) => {
+const GameDraftForm = ({ draft, onSuccess, className }: GameDraftFormProps) => {
   const { tags, fetchGameTags, createDraft, updateGameInfo, deleteGameDraft } =
     useGame();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [isCanceling, setIsCanceling] = useState(false);
 
@@ -82,6 +80,13 @@ const GameDraftForm = ({
     };
 
     try {
+      if (user?.role !== "Admin") {
+        toast.warning(
+          "Hiện đã khóa chức năng upload game. Liên hệ Admin để được hỗ trợ.",
+        );
+        return;
+      }
+
       if (draft?.id) {
         const updated = await updateGameInfo(draft.id, request);
         toast.success("Đã cập nhật thông tin bản nháp thành công!");
@@ -130,7 +135,7 @@ const GameDraftForm = ({
     <div className={cn("flex flex-1 flex-col gap-10", className)}>
       {/* FORM */}
       <form
-        className="glass-strong flex-1 rounded-xl p-6 md:p-8 flex flex-col"
+        className="glass-strong flex flex-1 flex-col rounded-xl p-6 md:p-8"
         onSubmit={handleSubmit(onSubmit)}
         noValidate
       >
@@ -158,7 +163,11 @@ const GameDraftForm = ({
             </label>
 
             <input
-              className={cn(inputClass, "read-only:bg-muted/20 read-only:text-muted-foreground cursor-default opacity-80", errors.price && "border-destructive")}
+              className={cn(
+                inputClass,
+                "read-only:bg-muted/20 read-only:text-muted-foreground cursor-default opacity-80",
+                errors.price && "border-destructive",
+              )}
               type="number"
               min={0}
               step={0.01}
@@ -221,16 +230,16 @@ const GameDraftForm = ({
         </div>
 
         {/* Actions */}
-        <div className="mt-8 self-end flex flex-wrap gap-3">
+        <div className="mt-8 flex flex-wrap gap-3 self-end">
           <Button
             variant="outline"
             type="button"
-            disabled={isSubmitting || isCanceling}
+            disabled={isSubmitting || isCanceling || user?.role !== "Admin"}
             onClick={handleCancel}
           >
             {isCanceling ? (
               <>
-                <Loader2 size={16} className="animate-spin mr-2" />
+                <Loader2 size={16} className="mr-2 animate-spin" />
                 Đang hủy draft...
               </>
             ) : (
@@ -246,7 +255,7 @@ const GameDraftForm = ({
           >
             {isSubmitting ? (
               <>
-                <Loader2 size={16} className="animate-spin mr-2" />
+                <Loader2 size={16} className="mr-2 animate-spin" />
                 Đang xử lý...
               </>
             ) : (

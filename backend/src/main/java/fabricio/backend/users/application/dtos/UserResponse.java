@@ -3,22 +3,39 @@ package fabricio.backend.users.application.dtos;
 import java.time.Instant;
 import java.util.UUID;
 
+import fabricio.backend.shared.security.Role;
+import fabricio.backend.users.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class UserResponse {
-    public UUID id;
-    public String username;
-    public String email;
-    public String fullName;
-    public String bio;
-    public String avatarUrl;
-    public Instant createdAt;
-    public Instant updatedAt;
+public record UserResponse(
+    UUID id,
+    String username,
+    String email,
+    String fullName,
+    String bio,
+    String avatarUrl,
+    Role role,
+    Instant createdAt,
+    Instant updatedAt
+) {
+    public UserResponse(UUID id, String username, String email, String fullName) {
+        this(id, username, email, fullName, null, null, Role.User, Instant.now(), Instant.now());
+    }
+
+    public static UserResponse fromEntity(User u, String avatarUrl) {
+        return new UserResponse(
+            u.getId(),
+            u.getUsername(),
+            u.getEmail(),
+            u.getFullName(),
+            u.getBio(),
+            avatarUrl,
+            u.getRole(),
+            u.getCreatedAt(),
+            u.getUpdatedAt()
+        );
+    }
 }

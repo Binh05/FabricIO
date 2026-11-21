@@ -5,6 +5,7 @@ export interface User {
   fullName: string;
   bio: string | null;
   avatarUrl: string | null;
+  role: "User" | "Admin";
   createdAt: Date;
   updatedAt: Date;
 }

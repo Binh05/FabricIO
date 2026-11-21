@@ -63,7 +63,7 @@ public class GameController {
         return ApiResponse.success(gameService.getGameById(id));
     }
 
-    @PreAuthorize("hasAuthority('GAME_CREATE')")
+    @PreAuthorize("hasRole('Admin')")
     @PostMapping("/draft")
     public ApiResponse<GameResponse> uploadGame(
             @AuthenticationPrincipal UserPrincipal principal,
@@ -77,18 +77,20 @@ public class GameController {
         return ApiResponse.success(GameResponse.from(result));
     }
 
+    @PreAuthorize("hasRole('Admin')")
     @DeleteMapping("/{gameId}/draft")
     public ApiResponse<GameResponse> deleteGame(@PathVariable UUID gameId) {
         gameService.deleteGameDraft(gameId);
         return ApiResponse.noContent();
     }
 
-    @PreAuthorize("hasAuthority('GAME_CREATE')")
+    @PreAuthorize("hasRole('Admin')")
     @PostMapping("/{gameId}/publish")
     public ApiResponse<GameResponse> publishGame(@PathVariable UUID gameId) {
         return ApiResponse.success(GameResponse.from(gameService.publishGame(gameId)));
     }
 
+    @PreAuthorize("hasRole('Admin')")
     @PutMapping(value = "/{gameId}")
     public ApiResponse<GameResponse> updateGameInfo(
             @PathVariable UUID gameId,

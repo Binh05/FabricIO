@@ -4,5 +4,6 @@ public enum Permission {
     GAME_CREATE,
     GAME_UPDATE_OWN,
     GAME_DELETE_OWN,
+    USER_UPLOAD_AVATAR,
     USER_BAN
 }

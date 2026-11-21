@@ -39,12 +39,12 @@ class UserControllerTest {
     @BeforeEach
     void setUp() {
         userId = UUID.randomUUID();
-        mockUserResponse = UserResponse.builder()
-                .id(userId)
-                .username("testuser")
-                .email("test@example.com")
-                .fullName("Test User")
-                .build();
+        mockUserResponse = new UserResponse(
+            userId,
+            "testuser",
+            "test@example.com",
+            "Test User"
+        );
         userPrincipal = new UserPrincipal(userId, "testuser", "test@example.com", "pass", Role.User);
     }
 

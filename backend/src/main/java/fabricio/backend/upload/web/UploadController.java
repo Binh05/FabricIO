@@ -9,6 +9,7 @@ import fabricio.backend.upload.application.dtos.PresignCommand;
 import fabricio.backend.upload.application.dtos.PresignResult;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +26,10 @@ public class UploadController {
         this.uploads = uploads;
     }
 
+    @PreAuthorize(
+        "(#cmd.purpose.name() == 'USER_AVATAR' and hasAuthority('USER_UPLOAD_AVATAR')) or " +
+        "(#cmd.purpose.name() != 'USER_AVATAR' and hasAuthority('GAME_CREATE'))"
+    )
     @PostMapping("/presign")
     public ApiResponse<PresignResult> presign(
             @AuthenticationPrincipal UserPrincipal principal,
@@ -33,6 +38,10 @@ public class UploadController {
         return ApiResponse.success(uploads.presign(principal.getId(), cmd));
     }
 
+    @PreAuthorize(
+        "(#cmd.purpose.name() == 'USER_AVATAR' and hasAuthority('USER_UPLOAD_AVATAR')) or " +
+        "(#cmd.purpose.name() != 'USER_AVATAR' and hasAuthority('GAME_CREATE'))"
+    )
     @PostMapping("/complete")
     public ApiResponse<CompleteResult> complete(
             @AuthenticationPrincipal UserPrincipal principal,

@@ -11,7 +11,7 @@ import java.util.Set;
 import static fabricio.backend.shared.security.Permission.*;
 
 public enum Role {
-    User(EnumSet.of(GAME_CREATE, GAME_DELETE_OWN, GAME_UPDATE_OWN)),
+    User(EnumSet.of(GAME_DELETE_OWN, GAME_UPDATE_OWN, USER_UPLOAD_AVATAR)),
     Admin(EnumSet.allOf(Permission.class));
 
     private final Set<Permission> permissions;

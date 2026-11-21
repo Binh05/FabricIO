@@ -50,17 +50,8 @@ public class UserService implements UserApi {
     public UserResponse getCurrentUserById(UUID id) {
         var entity = userRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
-
-        return UserResponse.builder()
-                .id(entity.getId())
-                .username(entity.getUsername())
-                .fullName(entity.getFullName())
-                .email(entity.getEmail())
-                .bio(entity.getBio())
-                .avatarUrl(storage.publicUrl(entity.getAvatarUrl()))
-                .createdAt(entity.getCreatedAt())
-                .updatedAt(entity.getUpdatedAt())
-                .build();
+        String avatarUrl = storage.publicUrl(entity.getAvatarUrl());
+        return UserResponse.fromEntity(entity, avatarUrl);
     }
 
     public List<User> getAllUser() {
@@ -73,18 +64,9 @@ public class UserService implements UserApi {
             .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
         user.updateFromDTO(req);
+        String avatarUrl = storage.publicUrl(user.getAvatarUrl());
 
-        return UserResponse
-            .builder()
-            .id(user.getId())
-            .email(user.getEmail())
-            .username(user.getUsername())
-            .fullName(user.getFullName())
-            .bio(user.getBio())
-            .avatarUrl(storage.publicUrl(user.getAvatarUrl()))
-            .createdAt(user.getCreatedAt())
-            .updatedAt(user.getUpdatedAt())
-            .build();
+        return UserResponse.fromEntity(user, avatarUrl);
     }
 
     @Override

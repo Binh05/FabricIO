@@ -61,7 +61,7 @@ export const UploadGame = () => {
   if (!user || loadingDraft) return <SubmitGamePageSkeleton />;
 
   return (
-    <section className="mb-16 sm:px-3 w-full flex flex-col items-center">
+    <section className="mb-16 flex w-full flex-col items-center sm:px-3">
       <div className="w-full max-w-4xl">
         {/* Header */}
         <div className="mb-8">
@@ -72,8 +72,14 @@ export const UploadGame = () => {
             Đăng game mới lên FabricIO
           </h1>
           <p className="text-muted-foreground mt-2">
-            Điền thông tin giới thiệu, đặt giá bán và tải lên file build WebGL kèm hình ảnh / video demo.
+            Điền thông tin giới thiệu, đặt giá bán và tải lên file build WebGL
+            kèm hình ảnh / video demo.
           </p>
+          {user.role !== "Admin" && (
+            <div className="border-warning/40 bg-warning/10 text-warning mt-4 rounded-md border px-4 py-3 text-sm">
+              Hiện đã khóa chức năng upload game. Liên hệ Admin để được hỗ trợ.
+            </div>
+          )}
         </div>
 
         {/* Multi-step progress indicator */}
@@ -83,7 +89,7 @@ export const UploadGame = () => {
               if (draft) setStep(1);
             }}
             className={cn(
-              "p-4 rounded-xl border flex items-center gap-3 transition-all",
+              "flex items-center gap-3 rounded-xl border p-4 transition-all",
               step === 1
                 ? "border-primary bg-primary/10 text-foreground"
                 : draft
@@ -93,7 +99,7 @@ export const UploadGame = () => {
           >
             <div
               className={cn(
-                "size-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0",
+                "flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-bold",
                 step === 1
                   ? "bg-primary text-primary-foreground"
                   : draft
@@ -104,13 +110,13 @@ export const UploadGame = () => {
               {draft && step === 2 ? <Check size={16} /> : "1"}
             </div>
             <div className="truncate">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
                 Bước 1
               </p>
-              <p className="text-sm font-bold flex items-center gap-1.5 truncate">
+              <p className="flex items-center gap-1.5 truncate text-sm font-bold">
                 Thông tin cơ bản
                 {draft && step === 2 && (
-                  <span className="text-xs font-normal text-muted-foreground">
+                  <span className="text-muted-foreground text-xs font-normal">
                     (Nhấp để chỉnh sửa)
                   </span>
                 )}
@@ -120,7 +126,7 @@ export const UploadGame = () => {
 
           <div
             className={cn(
-              "p-4 rounded-xl border flex items-center gap-3 transition-all",
+              "flex items-center gap-3 rounded-xl border p-4 transition-all",
               step === 2
                 ? "border-primary bg-primary/10 text-foreground"
                 : "border-border bg-card/30 text-muted-foreground",
@@ -128,7 +134,7 @@ export const UploadGame = () => {
           >
             <div
               className={cn(
-                "size-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0",
+                "flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-bold",
                 step === 2
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground",
@@ -137,25 +143,30 @@ export const UploadGame = () => {
               2
             </div>
             <div className="truncate">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
                 Bước 2
               </p>
-              <p className="text-sm font-bold truncate">Tải lên tệp đa phương tiện & build</p>
+              <p className="truncate text-sm font-bold">
+                Tải lên tệp đa phương tiện & build
+              </p>
             </div>
           </div>
         </div>
 
         {/* Existing draft notification if on step 2 */}
         {step === 2 && draft && (
-          <div className="mb-6 p-4 rounded-xl border border-primary/30 bg-primary/5 flex items-center justify-between gap-4">
+          <div className="border-primary/30 bg-primary/5 mb-6 flex items-center justify-between gap-4 rounded-xl border p-4">
             <div className="text-sm">
-              <span className="font-semibold text-primary">Bản nháp đang mở: </span>
-              <span className="text-foreground">"{draft.title}"</span>. Bạn có thể tiếp tục tải file lên hoặc quay lại sửa thông tin cơ bản.
+              <span className="text-primary font-semibold">
+                Bản nháp đang mở:{" "}
+              </span>
+              <span className="text-foreground">"{draft.title}"</span>. Bạn có
+              thể tiếp tục tải file lên hoặc quay lại sửa thông tin cơ bản.
             </div>
             <button
               type="button"
               onClick={() => setStep(1)}
-              className="text-xs font-semibold text-primary hover:underline flex items-center gap-1 shrink-0"
+              className="text-primary flex shrink-0 items-center gap-1 text-xs font-semibold hover:underline"
             >
               <Edit3 size={13} /> Sửa thông tin
             </button>
