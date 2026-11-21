@@ -46,12 +46,12 @@ export const getAvatarInitials = (name: string): string => {
 
 export const getAvatarBgColor = (name: string): string => {
   const colors = [
-    "bg-slate-800 text-slate-200",
-    "bg-emerald-950/80 text-emerald-300",
-    "bg-amber-950/80 text-amber-200",
-    "bg-rose-950/80 text-rose-300",
-    "bg-indigo-950/80 text-indigo-300",
-    "bg-cyan-950/80 text-secondary-foreground",
+    "bg-slate-800 text-slate-200 border border-slate-700",
+    "bg-emerald-900 text-emerald-200 border border-emerald-700/60",
+    "bg-amber-900 text-amber-200 border border-amber-700/60",
+    "bg-rose-900 text-rose-200 border border-rose-700/60",
+    "bg-indigo-900 text-indigo-200 border border-indigo-700/60",
+    "bg-cyan-900 text-cyan-200 border border-cyan-700/60",
   ];
   let hash = 0;
   for (let i = 0; i < name.length; i++) {

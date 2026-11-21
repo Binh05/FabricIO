@@ -51,8 +51,9 @@ export const useComment = (): UseComment => {
   }, [commentsByGame, repliesByComment]);
 
   useEffect(() => {
+    const likeTimers = likeTimersRef.current;
     return () => {
-      Object.values(likeTimersRef.current).forEach((timer) => clearTimeout(timer));
+      Object.values(likeTimers).forEach((timer) => clearTimeout(timer));
     };
   }, []);
 
@@ -230,14 +231,18 @@ export const useComment = (): UseComment => {
   }, [setCommentsByGame, setRepliesByComment]);
 
   const scheduleLikeRequest = useCallback((commentId: string) => {
-    if (likeTimersRef.current[commentId]) {
-      clearTimeout(likeTimersRef.current[commentId]);
-    }
-    likeTimersRef.current[commentId] = setTimeout(() => {
+    const scheduleTimer = () => {
+      if (likeTimersRef.current[commentId]) {
+        clearTimeout(likeTimersRef.current[commentId]);
+      }
+      likeTimersRef.current[commentId] = setTimeout(processRequest, 1000);
+    };
+
+    function processRequest() {
       delete likeTimersRef.current[commentId];
 
       if (inFlightLikesRef.current.has(commentId)) {
-        scheduleLikeRequest(commentId);
+        scheduleTimer();
         return;
       }
 
@@ -291,7 +296,7 @@ export const useComment = (): UseComment => {
           if (latestTarget === response.data.liked) {
             delete optimisticLikesRef.current[commentId];
           } else {
-            scheduleLikeRequest(commentId);
+            scheduleTimer();
           }
         })
         .catch((error) => {
@@ -332,7 +337,9 @@ export const useComment = (): UseComment => {
           inFlightLikesRef.current.delete(commentId);
           setTogglingLikes((previous) => ({ ...previous, [commentId]: false }));
         });
-    }, 1000);
+    }
+
+    scheduleTimer();
   }, [setCommentsByGame, setRepliesByComment]);
 
   const toggleLike = useCallback((commentId: string) => {

@@ -176,7 +176,7 @@ export default function Header({ user }: { user: User | null }) {
                   aria-label="Mở menu tài khoản"
                 >
                   <UserAvatar
-                    name={user?.username ?? "FabricIO"}
+                    name={user?.fullName ?? "FabricIO"}
                     avatarUrl={user?.avatarUrl ?? ""}
                     type="header"
                   />
@@ -185,7 +185,7 @@ export default function Header({ user }: { user: User | null }) {
               <DropdownMenuContent align="end" className="min-w-48">
                 <DropdownMenuLabel className="flex items-center gap-2">
                   <UserAvatar
-                    name={user?.username ?? "FabricIO"}
+                    name={user?.fullName ?? "FabricIO"}
                     avatarUrl={user?.avatarUrl ?? ""}
                     type="header"
                   />

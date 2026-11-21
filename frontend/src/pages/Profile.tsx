@@ -79,7 +79,9 @@ export const Profile = () => {
       <Navigate
         to="/signin"
         replace
-        state={{ from: `${location.pathname}${location.search}${location.hash}` }}
+        state={{
+          from: `${location.pathname}${location.search}${location.hash}`,
+        }}
       />
     );
   }
@@ -112,7 +114,7 @@ export const Profile = () => {
           <div className="flex min-w-0 flex-1 flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:gap-6 sm:text-left">
             <div className="relative shrink-0">
               <UserAvatar
-                name={user.username}
+                name={user.fullName}
                 avatarUrl={user?.avatarUrl ?? undefined}
                 type="profile"
               />

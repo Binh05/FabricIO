@@ -13,11 +13,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  formatTimeAgo,
-  getAvatarBgColor,
-  getAvatarInitials,
-} from "@/lib/commentUtils.ts";
+import { formatTimeAgo } from "@/lib/commentUtils.ts";
+import UserAvatar from "@/components/layouts/UserAvatar";
 
 interface CommentItemProps {
   comment: Comment;
@@ -25,16 +22,21 @@ interface CommentItemProps {
 
 export const CommentItem = ({ comment }: CommentItemProps) => {
   const { user } = useAuth();
-  const { repliesByComment, loadingReplies, fetchReplies, createReply, deleteComment, toggleLike, togglingLikes } =
-    useComment();
+  const {
+    repliesByComment,
+    loadingReplies,
+    fetchReplies,
+    createReply,
+    deleteComment,
+    toggleLike,
+    togglingLikes,
+  } = useComment();
   const [showReplies, setShowReplies] = useState(false);
   const [showComposer, setShowComposer] = useState(false);
   const [replyTargetUser, setReplyTargetUser] = useState<string>("");
 
   const replies = repliesByComment[comment.id];
   const authorName = comment.author.fullName || comment.author.username;
-  const initials = getAvatarInitials(authorName);
-  const avatarBg = getAvatarBgColor(authorName);
 
   const toggleReplies = async () => {
     if (!showReplies && !replies) {
@@ -56,22 +58,11 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
       <div id={`comment-${comment.id}`} className="rounded-md p-4 sm:p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div
-              className={cn(
-                "flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-md text-sm font-bold select-none sm:size-11 sm:text-base",
-                avatarBg,
-              )}
-            >
-              {comment.author.avatarUrl ? (
-                <img
-                  src={comment.author.avatarUrl}
-                  alt={authorName}
-                  className="size-full object-cover"
-                />
-              ) : (
-                <span>{initials}</span>
-              )}
-            </div>
+            <UserAvatar
+              type="comment"
+              name={authorName}
+              avatarUrl={comment.author.avatarUrl}
+            />
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <span className="text-foreground text-sm leading-tight font-semibold sm:text-base">
@@ -121,7 +112,9 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
                 ? "text-secondary-foreground"
                 : "text-muted-foreground hover:text-foreground",
             )}
-            aria-label={comment.likedByMe ? "Bỏ thích bình luận" : "Thích bình luận"}
+            aria-label={
+              comment.likedByMe ? "Bỏ thích bình luận" : "Thích bình luận"
+            }
           >
             <ThumbsUp size={15} />
             <span>{comment.likeCount ?? 0}</span>
