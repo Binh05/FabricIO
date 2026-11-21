@@ -1,9 +1,10 @@
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { cn } from "@/lib/utils";
+import { getAvatarBgColor, getAvatarInitials } from "@/lib/commentUtils";
 
 interface IUserAvatarProps {
-  type: "header" | "profile" | "describe";
+  type: "header" | "profile" | "describe" | "comment";
   name: string;
   avatarUrl?: string;
   className?: string;
@@ -15,17 +16,18 @@ function UserAvatar({
   avatarUrl,
   className,
 }: IUserAvatarProps) {
-  const bgColor = !avatarUrl ? "bg-muted-foreground/30" : "";
+  const bgColor = !avatarUrl ? getAvatarBgColor(name) : "";
 
   return (
     <div className="relative inline-flex">
       <Avatar
         className={cn(
           className,
-          type === "header" && "size-8 text-sm",
+          type === "header" && "size-9 text-sm",
           type === "profile" &&
-            "size-24 sm:size-28 text-3xl sm:text-4xl shadow-md rounded-md after:rounded-md border border-border-chip bg-surface-container-high",
+            "border-border-chip bg-surface-container-high size-24 rounded-sm border text-3xl shadow-md after:rounded-md sm:size-28 sm:text-4xl",
           type === "describe" && "size-12 text-lg",
+          type === "comment" && "size-10 text-sm sm:size-11 sm:text-base",
         )}
       >
         <AvatarImage
@@ -38,12 +40,13 @@ function UserAvatar({
         />
         <AvatarFallback
           className={cn(
-            `${bgColor} text-foreground font-semibold`,
-            type === "profile" && "rounded-sm text-3xl sm:text-4xl",
+            `${bgColor} text-foreground rounded-sm font-semibold`,
+            type === "profile" && "text-3xl sm:text-4xl",
             type === "describe" && "text-lg",
+            type === "comment" && "text-sm sm:text-base",
           )}
         >
-          {name.charAt(0).toUpperCase()}
+          {getAvatarInitials(name)}
         </AvatarFallback>
       </Avatar>
     </div>
