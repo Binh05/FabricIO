@@ -74,7 +74,6 @@ export const useAuth = () => {
       sessionStorage.clear();
       context.clearAuthState();
 
-      navigate("/");
       toast.success("Đã đăng xuất");
     } catch (error) {
       console.error("Lỗi khi sign out", error);
