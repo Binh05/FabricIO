@@ -98,6 +98,10 @@ export default function Header({ user }: { user: User | null }) {
     setIsOpen(false);
   };
 
+  const onSignOut = async () => {
+    await signOut();
+  };
+
   return (
     <header className="border-border-subtle bg-surface/95 sticky top-0 z-30 h-12 border-b px-2 py-8 backdrop-blur-md sm:px-4 lg:px-8">
       <div className="mx-auto flex h-full max-w-400 items-center justify-between gap-4">
@@ -179,7 +183,7 @@ export default function Header({ user }: { user: User | null }) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="min-w-48">
-                <DropdownMenuLabel className="flex gap-2 items-center">
+                <DropdownMenuLabel className="flex items-center gap-2">
                   <UserAvatar
                     name={user?.username ?? "FabricIO"}
                     avatarUrl={user?.avatarUrl ?? ""}
@@ -195,19 +199,13 @@ export default function Header({ user }: { user: User | null }) {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  asChild
-                  variant="default"
-                >
+                <DropdownMenuItem asChild variant="default">
                   <Link to="/profile">
                     <UserRound />
                     Trang cá nhân
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  variant="destructive"
-                  onSelect={() => void signOut()}
-                >
+                <DropdownMenuItem variant="destructive" onSelect={onSignOut}>
                   <LogOut />
                   Đăng xuất
                 </DropdownMenuItem>
