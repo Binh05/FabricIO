@@ -111,10 +111,10 @@ class UserServiceTest {
         UserResponse response = userService.updateProfile(userId, req);
 
         assertNotNull(response);
-        assertEquals("Updated Name", response.getFullName());
-        assertEquals("Updated Bio", response.getBio());
-        assertEquals(mockUser.getUsername(), response.getUsername());
-        assertEquals("https://storage/avatars/avatar1.png", response.getAvatarUrl());
+        assertEquals("Updated Name", response.fullName());
+        assertEquals("Updated Bio", response.bio());
+        assertEquals(mockUser.getUsername(), response.username());
+        assertEquals("https://storage/avatars/avatar1.png", response.avatarUrl());
     }
 
     @Test

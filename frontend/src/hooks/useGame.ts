@@ -10,6 +10,7 @@ import type {
 import axios from "axios";
 import { useCallback, useContext } from "react";
 import { toast } from "sonner";
+import { useAuth } from "./useAuth";
 
 interface UseGame {
   uploadGame: (formData: PostGameRequest) => Promise<Game | undefined>;
@@ -42,6 +43,7 @@ interface UseGame {
 
 export const useGame = (): UseGame => {
   const context = useContext(GameContext);
+  const { user } = useAuth();
 
   if (!context) {
     throw new Error("useGame phải được sử dụng bên trong GameProvider");
@@ -72,6 +74,10 @@ export const useGame = (): UseGame => {
   }, []);
 
   const createDraft = async (data: PostGameRequest): Promise<Game> => {
+    if (user?.role !== "Admin") {
+      toast.error("Hiện đã khóa chức năng upload game. Liên hệ Admin để được hỗ trợ.");
+      throw new Error("permission required");
+    }
     try {
       const res = await gameService.createDraft(data);
       return res.data;
@@ -89,6 +95,10 @@ export const useGame = (): UseGame => {
     gameId: string,
     data: PostGameRequest,
   ): Promise<Game> => {
+    if (user?.role !== "Admin") {
+      toast.error("Hiện đã khóa chức năng cập nhật bản nháp game. Liên hệ Admin để được hỗ trợ.");
+      throw new Error("permission required");
+    }
     try {
       const res = await gameService.updateGameInfo(gameId, data);
       return res.data;
@@ -103,6 +113,10 @@ export const useGame = (): UseGame => {
   };
 
   const deleteGameDraft = async (gameId: string): Promise<void> => {
+    if (user?.role !== "Admin") {
+      toast.error("Hiện đã khóa chức năng xóa bản nháp game. Liên hệ Admin để được hỗ trợ.");
+      throw new Error("permission required");
+    }
     try {
       await gameService.deleteGameDraft(gameId);
     } catch (error) {
@@ -116,6 +130,10 @@ export const useGame = (): UseGame => {
   };
 
   const publishGame = async (gameId: string): Promise<Game> => {
+    if (user?.role !== "Admin") {
+      toast.error("Hiện đã khóa chức năng xuất bản game. Liên hệ Admin để được hỗ trợ.");
+      throw new Error("permission required");
+    }
     try {
       const res = await gameService.publishGame(gameId);
       setGames((prev) => [...prev, res.data]);
