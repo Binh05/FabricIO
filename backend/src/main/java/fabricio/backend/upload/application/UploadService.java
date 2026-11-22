@@ -69,6 +69,7 @@ public class UploadService {
             throw new UploadException(UploadErrorCode.FILE_UPLOADED_INVALID);
         }
 
+        storage.registerObject(key, meta.size());
         String objectUrl = handler(purpose).onComplete(purpose, userId, objectId, cmd.key());
         return new CompleteResult(objectUrl);
     }

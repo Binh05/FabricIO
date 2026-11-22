@@ -6,16 +6,19 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import fabricio.backend.shared.storage.ObjectMeta;
 import fabricio.backend.shared.storage.ObjectStorage;
 import fabricio.backend.shared.storage.PresignedUpload;
+import fabricio.backend.shared.storage.R2UsageTracker;
 import fabricio.backend.shared.storage.StorageProperties;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 
@@ -26,11 +29,25 @@ public class S3ObjectStorage implements ObjectStorage {
     private final S3Client s3;
     private final S3Presigner presigner;
     private final StorageProperties props;
+    private final R2UsageTracker usage;
 
-    public S3ObjectStorage(S3Client s3, S3Presigner presigner, StorageProperties props) {
+    public S3ObjectStorage(S3Client s3, S3Presigner presigner, StorageProperties props, R2UsageTracker usage) {
         this.s3 = s3;
         this.presigner = presigner;
         this.props = props;
+        this.usage = usage;
+    }
+
+    @PostConstruct
+    void initializeUsage() {
+        usage.reset();
+        try {
+            s3.listObjectsV2Paginator(ListObjectsV2Request.builder().bucket(props.bucket()).build())
+                    .forEach(page -> page.contents().forEach(object ->
+                            usage.initialize(object.key(), object.size())));
+        } catch (S3Exception e) {
+            throw new IllegalStateException("Could not initialize R2 usage from bucket " + props.bucket(), e);
+        }
     }
 
     @Override
@@ -79,11 +96,19 @@ public class S3ObjectStorage implements ObjectStorage {
         s3.putObject(
                 b -> b.bucket(props.bucket()).key(key).contentType(contentType).contentLength(length),
                 RequestBody.fromInputStream(in, length));
+        usage.registerObject(key, length);
     }
 
     @Override
     public void delete(String key) {
+        Optional<ObjectMeta> meta = head(key);
         s3.deleteObject(b -> b.bucket(props.bucket()).key(key));
+        meta.ifPresent(m -> usage.removeObject(key));
+    }
+
+    @Override
+    public void registerObject(String key, long size) {
+        usage.registerObject(key, size);
     }
 
     @Override
