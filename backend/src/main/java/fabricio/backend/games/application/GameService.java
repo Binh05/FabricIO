@@ -45,6 +45,11 @@ public class GameService implements GameApi {
     }
 
     @Transactional(readOnly = true)
+    public List<GameRepository.GameSitemapProjection> getReadyGamesForSitemap() {
+        return gameRepository.findSitemapGames(GameStatus.Ready);
+    }
+
+    @Transactional(readOnly = true)
     public PageResponse<GameResult> getPagiGames(int page, int size, String keyword) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Game> gamePage = gameRepository.findByIsDeletedFalseAndTitleContainingIgnoreCaseAndStatus(keyword, GameStatus.Ready, pageable);

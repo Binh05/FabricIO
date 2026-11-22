@@ -2,7 +2,6 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate,
 } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { BrowseGames } from "./pages/BrowseGames";
@@ -45,15 +44,11 @@ const AppRouter = () => {
         <Route element={<MainLayoutRoute />}>
           <Route index element={<Home />} />
           <Route path="/games" element={<BrowseGames />} />
-          <Route path="/play/:id" element={<PlayPageWrapper />} />
+          <Route path="/games/:id" element={<PlayPageWrapper />} />
           <Route path="/u/:username" element={<PublicProfile />} />
 
           <Route element={<ProtectedRoute />}>
             <Route path="/upload-game" element={<UploadGame />} />
-            <Route
-              path="/submit-game"
-              element={<Navigate to="/upload-game" replace />}
-            />
             <Route path="/profile" element={<Profile />} />
           </Route>
         </Route>
