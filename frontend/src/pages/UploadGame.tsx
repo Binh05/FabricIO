@@ -8,7 +8,7 @@ import SubmitGamePageSkeleton from "@/components/skeletons/SubmitGamePageSkeleto
 import GameDraftForm from "@/components/games/GameDraftForm";
 import GameUploadFilesForm from "@/components/games/GameUploadFilesForm";
 import type { Game } from "@/types/Game";
-import { cn } from "@/lib/utils";
+import { cn, createGamePlayUrl } from "@/lib/utils";
 
 export const UploadGame = () => {
   const { user } = useAuth();
@@ -188,7 +188,7 @@ export const UploadGame = () => {
               draft={draft}
               onBack={() => setStep(1)}
               onSuccess={(publishedGame) => {
-                navigate(`/play/${publishedGame.id}`);
+                navigate(createGamePlayUrl(publishedGame));
               }}
             />
           )

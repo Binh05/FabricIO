@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Play, Sparkles, Star, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { Game } from "@/types/Game";
-import { getYearFromISOString } from "@/lib/utils";
+import { createGamePlayUrl, getYearFromISOString } from "@/lib/utils";
 
 interface GameFeaturedDropProps {
   game: Game;
@@ -121,7 +121,7 @@ const GameNewestDrop = ({
             {/* Actions & Price */}
             <div className="mt-6 flex flex-wrap items-center gap-4">
               <Link
-                to={`/play/${currentDisplayedGame.id}`}
+                to={createGamePlayUrl(currentDisplayedGame)}
                 className="flex items-center gap-2 rounded-xs bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:bg-primary-glow hover:shadow-primary/40"
               >
                 <Play size={15} className="fill-primary-foreground" />

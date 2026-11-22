@@ -1,5 +1,6 @@
 package fabricio.backend.games.domain;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,21 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GameRepository extends JpaRepository<Game, UUID> {
+    interface GameSitemapProjection {
+        UUID getId();
+        String getTitle();
+        Instant getUpdatedAt();
+    }
+
+    @Query("""
+        SELECT g.id AS id, g.title AS title, g.updatedAt AS updatedAt
+        FROM Game g
+        WHERE g.status = :status
+          AND g.isDeleted = false
+        ORDER BY g.updatedAt DESC
+    """)
+    List<GameSitemapProjection> findSitemapGames(@Param("status") GameStatus status);
+
     Page<Game> findByIsDeletedFalseAndTitleContainingIgnoreCaseAndStatus(String keyword, GameStatus status, Pageable pageable);
     Optional<Game> findByIdAndIsDeletedFalse(UUID id);
     boolean existsGameByIdAndOwnerIdAndIsDeletedFalse(UUID id, UUID ownerId);

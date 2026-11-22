@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { Star } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, createGamePlayUrl } from "@/lib/utils";
 import type { Game } from "@/types/Game";
 
 export interface GameCardProps {
@@ -58,7 +58,7 @@ export const GameCard = ({
 
   return (
     <Link
-      to={`/play/${game.id}`}
+      to={createGamePlayUrl(game)}
       aria-label={`Play ${game.title}`}
       className={cn(
         "group relative flex h-full flex-col overflow-hidden rounded-sm bg-surface-container-low transition-all duration-300 hover:-translate-y-1 hover:border-border-chip hover:shadow-xl hover:shadow-black/50",

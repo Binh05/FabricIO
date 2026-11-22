@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useGame } from "@/hooks/useGame";
 import { PlayPageSkeleton } from "@/components/skeletons/PlayPageSkeleton";
@@ -11,9 +11,13 @@ import { GameDetailsCard } from "@/components/games/play/GameDetailsCard";
 import { RelatedGames } from "@/components/games/play/RelatedGames";
 import GameRatingCard from "@/components/games/play/GameRatingCard";
 import { CommentSection } from "@/components/games/play/CommentSection";
+import { createGamePlayUrl, getGameIdFromPlayParam } from "@/lib/utils";
 
 export const Play = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id: gameParam } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const gameId = gameParam ? getGameIdFromPlayParam(gameParam) : "";
   const { games, fetchGameById, fetchGames } = useGame();
   const { loading: authLoading } = useAuth();
   const [currentGame, setCurrentGame] = useState<Game | null>(null);
@@ -23,7 +27,7 @@ export const Play = () => {
     let isMounted = true;
 
     const init = async () => {
-      if (!id) {
+      if (!gameId) {
         setIsFetching(false);
         return;
       }
@@ -31,14 +35,20 @@ export const Play = () => {
       setIsFetching(true);
       try {
         const [gameRes] = await Promise.all([
-          fetchGameById(id).catch(() => null),
+          fetchGameById(gameId).catch(() => null),
           games.length === 0
             ? fetchGames("", 0, 10).catch(() => null)
             : Promise.resolve(),
         ]);
 
         if (!isMounted) return;
-        if (gameRes) setCurrentGame(gameRes);
+        if (gameRes) {
+          setCurrentGame(gameRes);
+          const canonicalUrl = createGamePlayUrl(gameRes);
+          if (gameParam !== canonicalUrl.split("/games/")[1]) {
+            navigate(`${canonicalUrl}${location.search}${location.hash}`, { replace: true });
+          }
+        }
         window.scrollTo({ top: 30, behavior: "smooth" });
       } finally {
         if (isMounted) setIsFetching(false);
@@ -49,11 +59,11 @@ export const Play = () => {
     return () => {
       isMounted = false;
     };
-  }, [id]);
+  }, [gameId, gameParam]);
 
   if (isFetching || authLoading) return <PlayPageSkeleton />;
 
-  const game = games.find((item) => item.id === id) || currentGame;
+  const game = games.find((item) => item.id === gameId) || currentGame;
   if (!game) return null;
 
   return (
@@ -82,7 +92,7 @@ export const Play = () => {
         </div>
         <div className="lg:col-span-3">
           <RelatedGames
-            games={games.filter((item) => item.id !== id).slice(0, 5)}
+            games={games.filter((item) => item.id !== gameId).slice(0, 5)}
           />
         </div>
       </div>
