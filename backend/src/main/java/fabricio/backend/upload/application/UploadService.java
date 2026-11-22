@@ -3,6 +3,7 @@ package fabricio.backend.upload.application;
 import fabricio.backend.shared.storage.ObjectMeta;
 import fabricio.backend.shared.storage.ObjectStorage;
 import fabricio.backend.shared.storage.PresignedUpload;
+import fabricio.backend.shared.storage.R2UsageTracker;
 import fabricio.backend.shared.storage.StorageProperties;
 import fabricio.backend.upload.application.dtos.CompleteCommand;
 import fabricio.backend.upload.application.dtos.CompleteResult;
@@ -14,6 +15,7 @@ import fabricio.backend.upload.domain.exception.UploadErrorCode;
 import fabricio.backend.upload.domain.exception.UploadException;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -24,17 +26,20 @@ public class UploadService {
     private final ObjectStorage storage;
     private final ObjectKeyFactory keys;
     private final StorageProperties props;
+    private final R2UsageTracker usage;
     private final Map<UploadPurpose, UploadPurposeHandler> handlers = new EnumMap<>(UploadPurpose.class);
 
     public UploadService(
             ObjectStorage storage,
             ObjectKeyFactory keys,
             StorageProperties props,
+            R2UsageTracker usage,
             List<UploadPurposeHandler> handlerList
     ) {
         this.storage = storage;
         this.keys = keys;
         this.props = props;
+        this.usage = usage;
         handlerList.forEach(h -> h.purposes().forEach(purpose -> handlers.put(purpose, h)));
     }
 
@@ -49,7 +54,21 @@ public class UploadService {
 
         String key = keys.newKey(objectId, cmd.purpose(), cmd.contentType());
 
-        PresignedUpload upload = storage.presignUpload(key, cmd.contentType(), cmd.size(), props.presignTtl());
+        if (purpose.reservationBytes() > 0) {
+            Instant expiresAt = Instant.now().plus(purpose.presignTtl());
+            boolean reserved = usage.tryReserve(
+                    key,
+                    purpose.reservationBytes(),
+                    expiresAt,
+                    props.limitBytes());
+            if (!reserved) throw new UploadException(UploadErrorCode.STORAGE_LIMIT_EXCEEDED);
+        }
+
+        PresignedUpload upload = storage.presignUpload(
+                key,
+                cmd.contentType(),
+                cmd.size(),
+                purpose.presignTtl());
         return new PresignResult(key, upload);
     }
 
@@ -69,7 +88,7 @@ public class UploadService {
             throw new UploadException(UploadErrorCode.FILE_UPLOADED_INVALID);
         }
 
-        storage.registerObject(key, meta.size());
+        storage.confirmObject(key, meta.size());
         String objectUrl = handler(purpose).onComplete(purpose, userId, objectId, cmd.key());
         return new CompleteResult(objectUrl);
     }

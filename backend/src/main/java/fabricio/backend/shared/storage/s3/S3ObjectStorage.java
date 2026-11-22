@@ -112,6 +112,11 @@ public class S3ObjectStorage implements ObjectStorage {
     }
 
     @Override
+    public void confirmObject(String key, long size) {
+        usage.confirmObject(key, size);
+    }
+
+    @Override
     public String publicUrl(String key) {
         if (key == null || key.isBlank()) return key;
 
