@@ -18,6 +18,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 import fabricio.backend.shared.security.JwtAuthenticationFilter;
+import fabricio.backend.shared.security.RateLimitFilter;
 import fabricio.backend.shared.storage.R2PresignLimitFilter;
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final RateLimitFilter rateLimitFilter;
     private final R2PresignLimitFilter r2PresignLimitFilter;
 
     @Value("${ALLOWED_ORIGINS:http://localhost:5173}")
@@ -58,7 +60,8 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .addFilterBefore(r2PresignLimitFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(rateLimitFilter, JwtAuthenticationFilter.class);
             
         return http.build();
     }

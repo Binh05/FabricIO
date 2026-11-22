@@ -191,6 +191,18 @@ The API exposes 20+ REST endpoints. The full, always up-to-date list is in Swagg
 
 Protected endpoints require a `Authorization: Bearer <token>` header. Access is limited by role.
 
+### Rate limiting
+
+The backend uses Bucket4j with an in-memory Caffeine cache. Limits are per application instance:
+
+| Policy | Key | Endpoints | Limit |
+| :----- | :-- | :-------- | :---- |
+| `AUTH_STRICT` | Client IP | register, login, refresh token | 10 requests/minute |
+| `UPLOAD_LIMIT` | User ID | presign, complete | 30 requests/minute |
+| `WRITE_ACTION` | User ID | create comment/reply, like comment, upsert rating, update profile | 60 requests/minute |
+
+When a limit is exceeded, the API returns HTTP `429` and a `Retry-After` header. Caffeine evicts inactive buckets after one hour and caps the cache at 100,000 keys.
+
 ---
 
 ## Storage
