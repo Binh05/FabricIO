@@ -6,6 +6,7 @@ import lombok.Getter;
 public enum UploadErrorCode {
     CONTENT_TYPE_NOT_SUPPORTED(400, "Content type chưa được hỗ trợ"),
     MAX_FILE_UPLOAD_EXCEEDED(400, "Lỗi file đăng tải vượt quá giới hạn cho phép"),
+    STORAGE_LIMIT_EXCEEDED(413, "Dung lượng lưu trữ R2 đã đạt giới hạn"),
     KEY_INVALID(400, "Key upload không hợp lệ"),
     FILE_NOT_UPLOADED(400, "File này chưa được upload"),
     FILE_UPLOADED_INVALID(400, "File được upload có dung lượng hoặc thuộc loại không hợp lệ"),

@@ -32,7 +32,8 @@ public class RateLimitFilter extends OncePerRequestFilter {
     private static final String RATING_PREFIX = "/api/v1/game/";
 
     private static final RateLimit AUTH_STRICT = new RateLimit("AUTH_STRICT", 10, Duration.ofMinutes(1));
-    private static final RateLimit UPLOAD_LIMIT = new RateLimit("UPLOAD_LIMIT", 30, Duration.ofMinutes(1));
+    private static final RateLimit UPLOAD_PRESIGN_LIMIT = new RateLimit("UPLOAD_PRESIGN_LIMIT", 3, Duration.ofMinutes(1));
+    private static final RateLimit UPLOAD_COMPLETE_LIMIT = new RateLimit("UPLOAD_COMPLETE_LIMIT", 30, Duration.ofMinutes(1));
     private static final RateLimit WRITE_ACTION = new RateLimit("WRITE_ACTION", 60, Duration.ofMinutes(1));
 
     private final Cache<String, Bucket> buckets = Caffeine.newBuilder()
@@ -85,8 +86,12 @@ public class RateLimitFilter extends OncePerRequestFilter {
             return AUTH_STRICT;
         }
         if ("POST".equalsIgnoreCase(method)
-                && (UPLOAD_PRESIGN.equals(path) || UPLOAD_COMPLETE.equals(path))) {
-            return UPLOAD_LIMIT;
+                && UPLOAD_PRESIGN.equals(path)) {
+            return UPLOAD_PRESIGN_LIMIT;
+        }
+        if ("POST".equalsIgnoreCase(method)
+                && UPLOAD_COMPLETE.equals(path)) {
+            return UPLOAD_COMPLETE_LIMIT;
         }
         if ("POST".equalsIgnoreCase(method)
                 && (path.startsWith(COMMENT_CREATE_PREFIX) && path.endsWith("/comments")
