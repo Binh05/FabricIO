@@ -10,6 +10,7 @@ public interface ObjectStorage {
     InputStream get(String key);
     void put(String key, InputStream in, long length, String contentType);
     void delete(String key);
+    default void registerObject(String key, long size) {}
     String publicUrl(String key);
     String publicUrl(String key, String addPath);
 }

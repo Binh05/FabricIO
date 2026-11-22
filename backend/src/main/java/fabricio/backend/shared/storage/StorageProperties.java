@@ -26,11 +26,13 @@ public record StorageProperties(
         String accessKey,
         String secretKey,
         boolean pathStyle,
-        Duration presignTtl) {
+        Duration presignTtl,
+        long limitBytes) {
 
     public StorageProperties {
         if (region == null || region.isBlank()) region = "us-east-1";
         if (presignTtl == null) presignTtl = Duration.ofMinutes(10);
         if (publicEndpoint == null || publicEndpoint.isBlank()) publicEndpoint = endpoint;
+        if (limitBytes <= 0) limitBytes = 5L * 1024 * 1024 * 1024;
     }
 }
