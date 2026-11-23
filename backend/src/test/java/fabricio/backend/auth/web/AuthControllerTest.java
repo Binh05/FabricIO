@@ -54,7 +54,7 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("login: thêm header Set-Cookie với SameSite=None, Secure và trả về access token")
+    @DisplayName("login: thêm header Set-Cookie với SameSite=Lax, Secure và trả về access token")
     void login_success() {
         LoginResult loginResult = new LoginResult("refresh-secret-token", "access-jwt-token");
         when(authService.login(loginRequest)).thenReturn(loginResult);
@@ -76,7 +76,7 @@ class AuthControllerTest {
         assertTrue(cookieHeader.contains("refreshToken=refresh-secret-token"));
         assertTrue(cookieHeader.contains("HttpOnly"));
         assertTrue(cookieHeader.contains("Secure"));
-        assertTrue(cookieHeader.contains("SameSite=None"));
+        assertTrue(cookieHeader.contains("SameSite=Lax"));
         assertTrue(cookieHeader.contains("Path=/"));
         assertTrue(cookieHeader.contains("Max-Age=604800")); // 7 * 24 * 60 * 60 seconds
     }
@@ -101,7 +101,7 @@ class AuthControllerTest {
 
         assertTrue(cookieHeader.contains("refreshToken="));
         assertTrue(cookieHeader.contains("Max-Age=0"));
-        assertTrue(cookieHeader.contains("SameSite=None"));
+        assertTrue(cookieHeader.contains("SameSite=Lax"));
         assertTrue(cookieHeader.contains("Secure"));
     }
 
@@ -147,7 +147,7 @@ class AuthControllerTest {
 
         assertTrue(cookieHeader.contains("refreshToken="));
         assertTrue(cookieHeader.contains("Max-Age=0"));
-        assertTrue(cookieHeader.contains("SameSite=None"));
+        assertTrue(cookieHeader.contains("SameSite=Lax"));
         assertTrue(cookieHeader.contains("Secure"));
     }
 }
